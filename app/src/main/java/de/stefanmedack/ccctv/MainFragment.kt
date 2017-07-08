@@ -14,28 +14,13 @@
 
 package de.stefanmedack.ccctv
 
-import java.util.Collections
-import java.util.Timer
-import java.util.TimerTask
-
-import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.os.Handler
 import android.support.v17.leanback.app.BackgroundManager
 import android.support.v17.leanback.app.BrowseFragment
-import android.support.v17.leanback.widget.ArrayObjectAdapter
-import android.support.v17.leanback.widget.HeaderItem
-import android.support.v17.leanback.widget.ImageCardView
-import android.support.v17.leanback.widget.ListRow
-import android.support.v17.leanback.widget.ListRowPresenter
-import android.support.v17.leanback.widget.OnItemViewClickedListener
-import android.support.v17.leanback.widget.OnItemViewSelectedListener
-import android.support.v17.leanback.widget.Presenter
-import android.support.v17.leanback.widget.Row
-import android.support.v17.leanback.widget.RowPresenter
-import android.support.v4.app.ActivityOptionsCompat
+import android.support.v17.leanback.widget.*
 import android.support.v4.content.ContextCompat
 import android.util.DisplayMetrics
 import android.util.Log
@@ -43,16 +28,32 @@ import android.view.Gravity
 import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
-
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.GlideDrawable
 import com.bumptech.glide.request.animation.GlideAnimation
 import com.bumptech.glide.request.target.SimpleTarget
+import info.metadude.kotlin.library.c3media.ApiModule
+import info.metadude.kotlin.library.c3media.C3MediaService
+import info.metadude.kotlin.library.c3media.models.Conference
+import info.metadude.kotlin.library.c3media.models.ConferencesResponse
+import info.metadude.kotlin.library.c3media.models.Event
+import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import java.util.*
 
 /**
  * Loads a grid of cards with movies to browse.
  */
 class MainFragment : BrowseFragment() {
+
+    val TAG = "MainFragment"
+
+    val BACKGROUND_UPDATE_DELAY = 300
+    val GRID_ITEM_WIDTH = 200
+    val GRID_ITEM_HEIGHT = 200
 
     private val mHandler = Handler()
     private lateinit var mRowsAdapter: ArrayObjectAdapter
@@ -62,6 +63,8 @@ class MainFragment : BrowseFragment() {
     private var mBackgroundTimer: Timer? = null
     private var mBackgroundUri: String? = null
 
+    val conferencesWithEvents = ArrayList<Conference>()
+
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         Log.i(TAG, "onCreate")
         super.onActivityCreated(savedInstanceState)
@@ -70,7 +73,7 @@ class MainFragment : BrowseFragment() {
 
         setupUIElements()
 
-        loadRows()
+        loadConferencesAsync()
 
         setupEventListeners()
     }
@@ -102,32 +105,25 @@ class MainFragment : BrowseFragment() {
         searchAffordanceColor = ContextCompat.getColor(activity, R.color.search_opaque)
     }
 
-    private fun loadRows() {
-        val list = MovieList.list
-
+    private fun showRows(conferences: List<Conference>) {
         mRowsAdapter = ArrayObjectAdapter(ListRowPresenter())
         val cardPresenter = CardPresenter()
 
-        for (i in 0 until NUM_ROWS) {
-            if (i != 0) {
-                Collections.shuffle(list)
-            }
+        for ((index, conference) in conferences.sortedWith(compareBy(Conference::title)).withIndex()) {
             val listRowAdapter = ArrayObjectAdapter(cardPresenter)
-            for (j in 0 until NUM_COLS) {
-                listRowAdapter.add(list[j % 5])
-            }
-            val header = HeaderItem(i.toLong(), MovieList.MOVIE_CATEGORY[i])
+            listRowAdapter.addAll(0, conference.events)
+            val header = HeaderItem(index.toLong(), conference.title ?: "")
             mRowsAdapter.add(ListRow(header, listRowAdapter))
         }
 
-        val gridHeader = HeaderItem(NUM_ROWS.toLong(), "PREFERENCES")
+        //        val gridHeader = HeaderItem(NUM_ROWS.toLong(), "PREFERENCES")
 
-        val mGridPresenter = GridItemPresenter()
-        val gridRowAdapter = ArrayObjectAdapter(mGridPresenter)
-        gridRowAdapter.add(resources.getString(R.string.grid_view))
-        gridRowAdapter.add(getString(R.string.error_fragment))
-        gridRowAdapter.add(resources.getString(R.string.personal_settings))
-        mRowsAdapter.add(ListRow(gridHeader, gridRowAdapter))
+        //        val mGridPresenter = GridItemPresenter()
+        //        val gridRowAdapter = ArrayObjectAdapter(mGridPresenter)
+        //        gridRowAdapter.add(resources.getString(R.string.grid_view))
+        //        gridRowAdapter.add(getString(R.string.error_fragment))
+        //        gridRowAdapter.add(resources.getString(R.string.personal_settings))
+        //        mRowsAdapter.add(ListRow(gridHeader, gridRowAdapter))
 
         adapter = mRowsAdapter
     }
@@ -138,40 +134,41 @@ class MainFragment : BrowseFragment() {
                     .show()
         }
 
-        onItemViewClickedListener = ItemViewClickedListener()
+        //        onItemViewClickedListener = ItemViewClickedListener()
         onItemViewSelectedListener = ItemViewSelectedListener()
     }
 
-    private inner class ItemViewClickedListener : OnItemViewClickedListener {
-        override fun onItemClicked(itemViewHolder: Presenter.ViewHolder, item: Any,
-                                   rowViewHolder: RowPresenter.ViewHolder, row: Row) {
-
-            if (item is Movie) {
-                Log.d(TAG, "Item: " + item.toString())
-                val intent = Intent(activity, DetailsActivity::class.java)
-                intent.putExtra(DetailsActivity.MOVIE, item)
-
-                val bundle = ActivityOptionsCompat.makeSceneTransitionAnimation(
-                        activity,
-                        (itemViewHolder.view as ImageCardView).mainImageView,
-                        DetailsActivity.SHARED_ELEMENT_NAME).toBundle()
-                activity.startActivity(intent, bundle)
-            } else if (item is String) {
-                if (item.contains(getString(R.string.error_fragment))) {
-                    val intent = Intent(activity, BrowseErrorActivity::class.java)
-                    startActivity(intent)
-                } else {
-                    Toast.makeText(activity, item, Toast.LENGTH_SHORT).show()
-                }
-            }
-        }
-    }
+    // TODO
+    //    private inner class ItemViewClickedListener : OnItemViewClickedListener {
+    //        override fun onItemClicked(itemViewHolder: Presenter.ViewHolder, item: Any,
+    //                                   rowViewHolder: RowPresenter.ViewHolder, row: Row) {
+    //
+    //            if (item is Movie) {
+    //                Log.d(TAG, "Item: " + item.toString())
+    //                val intent = Intent(activity, DetailsActivity::class.java)
+    //                intent.putExtra(DetailsActivity.MOVIE, item)
+    //
+    //                val bundle = ActivityOptionsCompat.makeSceneTransitionAnimation(
+    //                        activity,
+    //                        (itemViewHolder.view as ImageCardView).mainImageView,
+    //                        DetailsActivity.SHARED_ELEMENT_NAME).toBundle()
+    //                activity.startActivity(intent, bundle)
+    //            } else if (item is String) {
+    //                if (item.contains(getString(R.string.error_fragment))) {
+    //                    val intent = Intent(activity, BrowseErrorActivity::class.java)
+    //                    startActivity(intent)
+    //                } else {
+    //                    Toast.makeText(activity, item, Toast.LENGTH_SHORT).show()
+    //                }
+    //            }
+    //        }
+    //    }
 
     private inner class ItemViewSelectedListener : OnItemViewSelectedListener {
         override fun onItemSelected(itemViewHolder: Presenter.ViewHolder?, item: Any?,
                                     rowViewHolder: RowPresenter.ViewHolder, row: Row) {
-            if (item is Movie) {
-                mBackgroundUri = item.backgroundImageUrl
+            if (item is Event) {
+                mBackgroundUri = item.posterUrl
                 startBackgroundTimer()
             }
         }
@@ -226,13 +223,63 @@ class MainFragment : BrowseFragment() {
         override fun onUnbindViewHolder(viewHolder: Presenter.ViewHolder) {}
     }
 
-    companion object {
-        private val TAG = "MainFragment"
+    // *********************************************
+    // TODO encapsulate (MVP/MVVM/MVI)
+    // *********************************************
 
-        private val BACKGROUND_UPDATE_DELAY = 300
-        private val GRID_ITEM_WIDTH = 200
-        private val GRID_ITEM_HEIGHT = 200
-        private val NUM_ROWS = 6
-        private val NUM_COLS = 15
+    private fun loadConferencesAsync() {
+        val call = service.getConferences()
+        call.enqueue(object : Callback<ConferencesResponse> {
+            override fun onResponse(call: Call<ConferencesResponse>?, response: Response<ConferencesResponse>?) {
+                if (response?.isSuccessful as Boolean) {
+                    val conferences = response.body()?.conferences
+                    if (conferences != null) {
+                        loadConferenceDetailReccursively(conferences, 0)
+                    }
+                } else {
+                    Log.e(TAG, "loadConferencesAsync() response is not successful.")
+                }
+            }
+
+            override fun onFailure(call: Call<ConferencesResponse>?, t: Throwable?) {
+                Log.e(TAG, "Should not throw {$t}")
+            }
+        })
+    }
+
+    // TODO this is really shitty, takes too long, should be parallelized
+    private fun loadConferenceDetailReccursively(conferences: List<Conference?>, index: Int) {
+        if (conferences.size <= index) {
+            showRows(conferencesWithEvents)
+            return
+        }
+        val conferenceId = conferences.getOrNull(index)?.url?.substringAfterLast('/')?.toInt() ?: -1
+        if (conferenceId > -1) {
+            val call = service.getConference(conferenceId)
+            call.enqueue(object : Callback<Conference?> {
+                override fun onResponse(call: Call<Conference?>?, response: Response<Conference?>) {
+                    if (response.isSuccessful) {
+                        response.body()?.let { conferencesWithEvents.add(it) }
+                    } else {
+                        Log.e(TAG, "getEvent() response is not successful.")
+                    }
+                    loadConferenceDetailReccursively(conferences, index + 1)
+                }
+
+                override fun onFailure(call: Call<Conference?>?, t: Throwable?) {
+                    Log.e(TAG, "Should not throw {$t}")
+                    loadConferenceDetailReccursively(conferences, index + 1)
+                }
+            })
+        }
+    }
+
+    private val service: C3MediaService by lazy {
+        val interceptor = HttpLoggingInterceptor()
+        interceptor.level = HttpLoggingInterceptor.Level.NONE
+        val okHttpClient = OkHttpClient.Builder()
+                .addNetworkInterceptor(interceptor)
+                .build()
+        ApiModule.provideC3MediaService("https://api.media.ccc.de", okHttpClient)
     }
 }
