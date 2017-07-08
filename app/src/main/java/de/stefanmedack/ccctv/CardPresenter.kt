@@ -12,7 +12,7 @@
  * the License.
  */
 
-package de.stefanmedack.ccctv;
+package de.stefanmedack.ccctv
 
 import android.graphics.drawable.Drawable
 import android.support.v17.leanback.widget.ImageCardView
