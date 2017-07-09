@@ -32,16 +32,15 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.GlideDrawable
 import com.bumptech.glide.request.animation.GlideAnimation
 import com.bumptech.glide.request.target.SimpleTarget
+import de.stefanmedack.ccctv.util.transformer.AsyncTransformer
 import info.metadude.kotlin.library.c3media.ApiModule
-import info.metadude.kotlin.library.c3media.C3MediaService
+import info.metadude.kotlin.library.c3media.RxC3MediaService
 import info.metadude.kotlin.library.c3media.models.Conference
 import info.metadude.kotlin.library.c3media.models.ConferencesResponse
 import info.metadude.kotlin.library.c3media.models.Event
+import io.reactivex.rxkotlin.subscribeBy
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 import java.util.*
 
 /**
@@ -62,8 +61,6 @@ class MainFragment : BrowseFragment() {
     private lateinit var mMetrics: DisplayMetrics
     private var mBackgroundTimer: Timer? = null
     private var mBackgroundUri: String? = null
-
-    val conferencesWithEvents = ArrayList<Conference>()
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         Log.i(TAG, "onCreate")
@@ -229,57 +226,28 @@ class MainFragment : BrowseFragment() {
 
     private fun loadConferencesAsync() {
         val call = service.getConferences()
-        call.enqueue(object : Callback<ConferencesResponse> {
-            override fun onResponse(call: Call<ConferencesResponse>?, response: Response<ConferencesResponse>?) {
-                if (response?.isSuccessful as Boolean) {
-                    val conferences = response.body()?.conferences
-                    if (conferences != null) {
-                        loadConferenceDetailReccursively(conferences, 0)
-                    }
-                } else {
-                    Log.e(TAG, "loadConferencesAsync() response is not successful.")
-                }
-            }
-
-            override fun onFailure(call: Call<ConferencesResponse>?, t: Throwable?) {
-                Log.e(TAG, "Should not throw {$t}")
-            }
-        })
+        call.compose(AsyncTransformer<ConferencesResponse>())
+                // TODO use toMaybe for Nullables
+                .map { it.conferences ?: listOf<Conference>() }
+                .flattenAsObservable { it }
+                .map { it.url?.substringAfterLast('/')?.toInt() ?: -1 }
+                .filter { it > 0 }
+                .flatMap { service.getConference(it)
+                        .compose(AsyncTransformer<Conference>())
+                        .toObservable() }
+                .toList()
+                .subscribeBy(// named arguments for lambda Subscribers
+                        onSuccess = { showRows(it) },
+                        onError = { it.printStackTrace() }
+                )
     }
 
-    // TODO this is really shitty, takes too long, should be parallelized
-    private fun loadConferenceDetailReccursively(conferences: List<Conference?>, index: Int) {
-        if (conferences.size <= index) {
-            showRows(conferencesWithEvents)
-            return
-        }
-        val conferenceId = conferences.getOrNull(index)?.url?.substringAfterLast('/')?.toInt() ?: -1
-        if (conferenceId > -1) {
-            val call = service.getConference(conferenceId)
-            call.enqueue(object : Callback<Conference?> {
-                override fun onResponse(call: Call<Conference?>?, response: Response<Conference?>) {
-                    if (response.isSuccessful) {
-                        response.body()?.let { conferencesWithEvents.add(it) }
-                    } else {
-                        Log.e(TAG, "getEvent() response is not successful.")
-                    }
-                    loadConferenceDetailReccursively(conferences, index + 1)
-                }
-
-                override fun onFailure(call: Call<Conference?>?, t: Throwable?) {
-                    Log.e(TAG, "Should not throw {$t}")
-                    loadConferenceDetailReccursively(conferences, index + 1)
-                }
-            })
-        }
-    }
-
-    private val service: C3MediaService by lazy {
+    private val service: RxC3MediaService by lazy {
         val interceptor = HttpLoggingInterceptor()
         interceptor.level = HttpLoggingInterceptor.Level.NONE
         val okHttpClient = OkHttpClient.Builder()
                 .addNetworkInterceptor(interceptor)
                 .build()
-        ApiModule.provideC3MediaService("https://api.media.ccc.de", okHttpClient)
+        ApiModule.provideRxC3MediaService("https://api.media.ccc.de", okHttpClient)
     }
 }
