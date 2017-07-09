@@ -38,6 +38,7 @@ import info.metadude.kotlin.library.c3media.RxC3MediaService
 import info.metadude.kotlin.library.c3media.models.Conference
 import info.metadude.kotlin.library.c3media.models.ConferencesResponse
 import info.metadude.kotlin.library.c3media.models.Event
+import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.subscribeBy
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -62,6 +63,9 @@ class MainFragment : BrowseFragment() {
     private var mBackgroundTimer: Timer? = null
     private var mBackgroundUri: String? = null
 
+    // TODO move into BaseFragment
+    lateinit var mDisposables: CompositeDisposable
+
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         Log.i(TAG, "onCreate")
         super.onActivityCreated(savedInstanceState)
@@ -78,6 +82,7 @@ class MainFragment : BrowseFragment() {
     override fun onDestroy() {
         super.onDestroy()
         Log.d(TAG, "onDestroy: " + mBackgroundTimer?.toString())
+        mDisposables.clear()
         mBackgroundTimer?.cancel()
     }
 
@@ -225,21 +230,27 @@ class MainFragment : BrowseFragment() {
     // *********************************************
 
     private fun loadConferencesAsync() {
-        val call = service.getConferences()
-        call.compose(AsyncTransformer<ConferencesResponse>())
+        val loadConferencesSingle = service.getConferences()
+                .compose(AsyncTransformer<ConferencesResponse>())
                 // TODO use toMaybe for Nullables
                 .map { it.conferences ?: listOf<Conference>() }
                 .flattenAsObservable { it }
                 .map { it.url?.substringAfterLast('/')?.toInt() ?: -1 }
                 .filter { it > 0 }
-                .flatMap { service.getConference(it)
-                        .compose(AsyncTransformer<Conference>())
-                        .toObservable() }
+                .flatMap {
+                    service.getConference(it)
+                            .compose(AsyncTransformer<Conference>())
+                            .toObservable()
+                }
                 .toList()
+
+        mDisposables = CompositeDisposable()
+        mDisposables.add(loadConferencesSingle
                 .subscribeBy(// named arguments for lambda Subscribers
                         onSuccess = { showRows(it) },
+                        // TODO proper error handling
                         onError = { it.printStackTrace() }
-                )
+                ))
     }
 
     private val service: RxC3MediaService by lazy {
