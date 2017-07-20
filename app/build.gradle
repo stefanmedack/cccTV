@@ -1,6 +1,7 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-kapt'
 
 ext {
     assertjVersion = "3.8.0"
@@ -8,6 +9,7 @@ ext {
     junitVersion = "4.12"
     moshiVersion = "1.4.0"
     okhttpVersion = "3.8.1"
+    paperParcelVersion = "2.0.1"
     retrofitVersion = "2.3.0"
     rxAndroidVersion = "2.0.1"
     rxJavaVersion = "2.1.1"
@@ -50,6 +52,10 @@ dependencies {
     implementation "io.reactivex.rxjava2:rxkotlin:$rxKotlinVersion"
     implementation "io.reactivex.rxjava2:rxandroid:$rxAndroidVersion"
     implementation "com.squareup.retrofit2:adapter-rxjava2:$retrofitVersion"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
+    implementation "nz.bradcampbell:paperparcel:$paperParcelVersion"
+    implementation "nz.bradcampbell:paperparcel-kotlin:$paperParcelVersion" // Optional
+    kapt "nz.bradcampbell:paperparcel-compiler:$paperParcelVersion"
 
     testCompile "junit:junit:$junitVersion"
     testCompile "org.assertj:assertj-core:$assertjVersion"

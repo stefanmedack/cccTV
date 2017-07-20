@@ -64,7 +64,7 @@ class CardPresenter : Presenter() {
         cardView.contentText = event.description
         cardView.setMainImageDimensions(CARD_WIDTH, CARD_HEIGHT)
         Glide.with(viewHolder.view.context)
-                .load(event.posterUrl)
+                .load(event.thumbUrl)
                 .centerCrop()
                 .error(mDefaultCardImage)
                 .into(cardView.mainImageView)

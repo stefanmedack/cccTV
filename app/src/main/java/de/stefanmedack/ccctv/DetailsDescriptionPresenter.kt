@@ -15,16 +15,17 @@
 package de.stefanmedack.ccctv
 
 import android.support.v17.leanback.widget.AbstractDetailsDescriptionPresenter
+import info.metadude.kotlin.library.c3media.models.Event
 
 class DetailsDescriptionPresenter : AbstractDetailsDescriptionPresenter() {
 
     override fun onBindDescription(
             viewHolder: AbstractDetailsDescriptionPresenter.ViewHolder,
             item: Any) {
-        val movie = item as Movie
+        val event = item as Event
 
-        viewHolder.title.text = movie.title
-        viewHolder.subtitle.text = movie.studio
-        viewHolder.body.text = movie.description
+        viewHolder.title.text = event.title
+        viewHolder.subtitle.text = event.subtitle
+        viewHolder.body.text = event.description
     }
 }

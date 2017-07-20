@@ -19,6 +19,10 @@ import android.support.v17.leanback.app.VideoSupportFragment
 import android.support.v17.leanback.app.VideoSupportFragmentGlueHost
 import android.support.v17.leanback.media.MediaPlayerGlue
 import android.support.v17.leanback.media.PlaybackGlue
+import android.util.Log
+import de.stefanmedack.ccctv.util.EVENT
+import de.stefanmedack.ccctv.util.playableVideoUrl
+import info.metadude.kotlin.library.c3media.models.Event
 
 /** Handles video playback with media controls. */
 class PlaybackVideoFragment : VideoSupportFragment() {
@@ -28,8 +32,8 @@ class PlaybackVideoFragment : VideoSupportFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val (_, title, description, _, _, videoUrl) = activity
-                .intent.getSerializableExtra(DetailsActivity.MOVIE) as Movie
+        val event = activity
+                .intent.getParcelableExtra<Event>(EVENT)
 
         val glueHost = VideoSupportFragmentGlueHost(this@PlaybackVideoFragment)
 
@@ -41,9 +45,11 @@ class PlaybackVideoFragment : VideoSupportFragment() {
                 mMediaPlayerGlue.play()
             }
         })
-        mMediaPlayerGlue.setTitle(title)
-        mMediaPlayerGlue.setArtist(description)
-        mMediaPlayerGlue.setVideoUrl(videoUrl)
+        mMediaPlayerGlue.setTitle(event.title)
+        mMediaPlayerGlue.setArtist(event.description)
+        val playableVideoUrl = event.playableVideoUrl()
+        Log.wtf("PVF", playableVideoUrl ?: "no_url")
+        mMediaPlayerGlue.setVideoUrl(playableVideoUrl)
     }
 
     override fun onPause() {

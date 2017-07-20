@@ -1,7 +1,10 @@
 package info.metadude.kotlin.library.c3media.models
 
 import com.squareup.moshi.Json
+import paperparcel.PaperParcel
+import paperparcel.PaperParcelable
 
+@PaperParcel
 data class Recording(
 
         @Json(name = "conference_url")
@@ -32,4 +35,8 @@ data class Recording(
         val url: String? = null,
         val width: Int? = null
 
-)
+) : PaperParcelable {
+        companion object {
+                @JvmField val CREATOR = PaperParcelRecording.CREATOR
+        }
+}

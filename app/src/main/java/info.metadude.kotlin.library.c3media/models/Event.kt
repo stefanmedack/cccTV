@@ -3,7 +3,10 @@ package info.metadude.kotlin.library.c3media.models
 import com.squareup.moshi.Json
 import org.threeten.bp.LocalDate
 import org.threeten.bp.OffsetDateTime
+import paperparcel.PaperParcel
+import paperparcel.PaperParcelable
 
+@PaperParcel
 data class Event(
 
         @Json(name = "conference_id")
@@ -49,4 +52,8 @@ data class Event(
         @Json(name = "view_count")
         val viewCount: Int? = null
 
-)
+) : PaperParcelable {
+        companion object {
+                @JvmField val CREATOR = PaperParcelEvent.CREATOR
+        }
+}
