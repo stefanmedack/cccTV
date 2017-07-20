@@ -14,13 +14,14 @@
 
 package de.stefanmedack.ccctv
 
+import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.Drawable
 import android.os.Bundle
-import android.os.Handler
 import android.support.v17.leanback.app.BackgroundManager
 import android.support.v17.leanback.app.BrowseFragment
 import android.support.v17.leanback.widget.*
+import android.support.v4.app.ActivityOptionsCompat
 import android.support.v4.content.ContextCompat
 import android.util.DisplayMetrics
 import android.util.Log
@@ -28,20 +29,14 @@ import android.view.Gravity
 import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.resource.drawable.GlideDrawable
-import com.bumptech.glide.request.animation.GlideAnimation
-import com.bumptech.glide.request.target.SimpleTarget
 import de.stefanmedack.ccctv.util.applySchedulers
 import info.metadude.kotlin.library.c3media.ApiModule
 import info.metadude.kotlin.library.c3media.RxC3MediaService
 import info.metadude.kotlin.library.c3media.models.Conference
-import info.metadude.kotlin.library.c3media.models.Event
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.subscribeBy
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
-import java.util.*
 
 /**
  * Loads a grid of cards with movies to browse.
@@ -50,17 +45,13 @@ class MainFragment : BrowseFragment() {
 
     val TAG = "MainFragment"
 
-    val BACKGROUND_UPDATE_DELAY = 300
     val GRID_ITEM_WIDTH = 200
     val GRID_ITEM_HEIGHT = 200
 
-    private val mHandler = Handler()
     private lateinit var mRowsAdapter: ArrayObjectAdapter
     private lateinit var mBackgroundManager: BackgroundManager
     private lateinit var mDefaultBackground: Drawable
     private lateinit var mMetrics: DisplayMetrics
-    private var mBackgroundTimer: Timer? = null
-    private var mBackgroundUri: String? = null
 
     // TODO move into BaseFragment
     lateinit var mDisposables: CompositeDisposable
@@ -80,9 +71,7 @@ class MainFragment : BrowseFragment() {
 
     override fun onDestroy() {
         super.onDestroy()
-        Log.d(TAG, "onDestroy: " + mBackgroundTimer?.toString())
         mDisposables.clear()
-        mBackgroundTimer?.cancel()
     }
 
     private fun prepareBackgroundManager() {
@@ -117,14 +106,14 @@ class MainFragment : BrowseFragment() {
             mRowsAdapter.add(ListRow(header, listRowAdapter))
         }
 
-        //        val gridHeader = HeaderItem(NUM_ROWS.toLong(), "PREFERENCES")
+        val gridHeader = HeaderItem(conferences.size.toLong(), "PREFERENCES")
 
-        //        val mGridPresenter = GridItemPresenter()
-        //        val gridRowAdapter = ArrayObjectAdapter(mGridPresenter)
-        //        gridRowAdapter.add(resources.getString(R.string.grid_view))
-        //        gridRowAdapter.add(getString(R.string.error_fragment))
-        //        gridRowAdapter.add(resources.getString(R.string.personal_settings))
-        //        mRowsAdapter.add(ListRow(gridHeader, gridRowAdapter))
+        val mGridPresenter = GridItemPresenter()
+        val gridRowAdapter = ArrayObjectAdapter(mGridPresenter)
+        gridRowAdapter.add(resources.getString(R.string.grid_view))
+        gridRowAdapter.add(getString(R.string.error_fragment))
+        gridRowAdapter.add(resources.getString(R.string.personal_settings))
+        mRowsAdapter.add(ListRow(gridHeader, gridRowAdapter))
 
         adapter = mRowsAdapter
     }
@@ -135,73 +124,31 @@ class MainFragment : BrowseFragment() {
                     .show()
         }
 
-        //        onItemViewClickedListener = ItemViewClickedListener()
-        onItemViewSelectedListener = ItemViewSelectedListener()
+        onItemViewClickedListener = ItemViewClickedListener()
     }
 
-    // TODO
-    //    private inner class ItemViewClickedListener : OnItemViewClickedListener {
-    //        override fun onItemClicked(itemViewHolder: Presenter.ViewHolder, item: Any,
-    //                                   rowViewHolder: RowPresenter.ViewHolder, row: Row) {
-    //
-    //            if (item is Movie) {
-    //                Log.d(TAG, "Item: " + item.toString())
-    //                val intent = Intent(activity, DetailsActivity::class.java)
-    //                intent.putExtra(DetailsActivity.MOVIE, item)
-    //
-    //                val bundle = ActivityOptionsCompat.makeSceneTransitionAnimation(
-    //                        activity,
-    //                        (itemViewHolder.view as ImageCardView).mainImageView,
-    //                        DetailsActivity.SHARED_ELEMENT_NAME).toBundle()
-    //                activity.startActivity(intent, bundle)
-    //            } else if (item is String) {
-    //                if (item.contains(getString(R.string.error_fragment))) {
-    //                    val intent = Intent(activity, BrowseErrorActivity::class.java)
-    //                    startActivity(intent)
-    //                } else {
-    //                    Toast.makeText(activity, item, Toast.LENGTH_SHORT).show()
-    //                }
-    //            }
-    //        }
-    //    }
+    private inner class ItemViewClickedListener : OnItemViewClickedListener {
+        override fun onItemClicked(itemViewHolder: Presenter.ViewHolder, item: Any,
+                                   rowViewHolder: RowPresenter.ViewHolder, row: Row) {
 
-    private inner class ItemViewSelectedListener : OnItemViewSelectedListener {
-        override fun onItemSelected(itemViewHolder: Presenter.ViewHolder?, item: Any?,
-                                    rowViewHolder: RowPresenter.ViewHolder, row: Row) {
-            if (item is Event) {
-                mBackgroundUri = item.posterUrl
-                startBackgroundTimer()
+            if (item is Movie) {
+                Log.d(TAG, "Item: " + item.toString())
+                val intent = Intent(activity, DetailsActivity::class.java)
+                intent.putExtra(DetailsActivity.MOVIE, item)
+
+                val bundle = ActivityOptionsCompat.makeSceneTransitionAnimation(
+                        activity,
+                        (itemViewHolder.view as ImageCardView).mainImageView,
+                        DetailsActivity.SHARED_ELEMENT_NAME).toBundle()
+                activity.startActivity(intent, bundle)
+            } else if (item is String) {
+                if (item.contains(getString(R.string.error_fragment))) {
+                    val intent = Intent(activity, BrowseErrorActivity::class.java)
+                    startActivity(intent)
+                } else {
+                    Toast.makeText(activity, item, Toast.LENGTH_SHORT).show()
+                }
             }
-        }
-    }
-
-    private fun updateBackground(uri: String?) {
-        val width = mMetrics.widthPixels
-        val height = mMetrics.heightPixels
-        Glide.with(activity)
-                .load(uri)
-                .centerCrop()
-                .error(mDefaultBackground)
-                .into<SimpleTarget<GlideDrawable>>(
-                        object : SimpleTarget<GlideDrawable>(width, height) {
-                            override fun onResourceReady(resource: GlideDrawable,
-                                                         glideAnimation: GlideAnimation<in GlideDrawable>) {
-                                mBackgroundManager.drawable = resource
-                            }
-                        })
-        mBackgroundTimer?.cancel()
-    }
-
-    private fun startBackgroundTimer() {
-        mBackgroundTimer?.cancel()
-        mBackgroundTimer = Timer()
-        mBackgroundTimer?.schedule(UpdateBackgroundTask(), BACKGROUND_UPDATE_DELAY.toLong())
-    }
-
-    private inner class UpdateBackgroundTask : TimerTask() {
-
-        override fun run() {
-            mHandler.post { updateBackground(mBackgroundUri) }
         }
     }
 
