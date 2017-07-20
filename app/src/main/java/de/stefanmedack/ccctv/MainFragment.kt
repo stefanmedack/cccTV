@@ -32,11 +32,10 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.GlideDrawable
 import com.bumptech.glide.request.animation.GlideAnimation
 import com.bumptech.glide.request.target.SimpleTarget
-import de.stefanmedack.ccctv.util.transformer.AsyncTransformer
+import de.stefanmedack.ccctv.util.applySchedulers
 import info.metadude.kotlin.library.c3media.ApiModule
 import info.metadude.kotlin.library.c3media.RxC3MediaService
 import info.metadude.kotlin.library.c3media.models.Conference
-import info.metadude.kotlin.library.c3media.models.ConferencesResponse
 import info.metadude.kotlin.library.c3media.models.Event
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.subscribeBy
@@ -231,15 +230,14 @@ class MainFragment : BrowseFragment() {
 
     private fun loadConferencesAsync() {
         val loadConferencesSingle = service.getConferences()
-                .compose(AsyncTransformer<ConferencesResponse>())
-                // TODO use toMaybe for Nullables
-                .map { it.conferences ?: listOf<Conference>() }
+                .applySchedulers()
+                .map { it.conferences ?: listOf() }
                 .flattenAsObservable { it }
                 .map { it.url?.substringAfterLast('/')?.toInt() ?: -1 }
                 .filter { it > 0 }
                 .flatMap {
                     service.getConference(it)
-                            .compose(AsyncTransformer<Conference>())
+                            .applySchedulers()
                             .toObservable()
                 }
                 .toList()
