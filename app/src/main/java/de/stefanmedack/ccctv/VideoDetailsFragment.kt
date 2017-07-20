@@ -21,7 +21,6 @@ import android.os.Bundle
 import android.support.v17.leanback.app.DetailsFragment
 import android.support.v17.leanback.app.DetailsFragmentBackgroundController
 import android.support.v17.leanback.widget.*
-import android.support.v4.app.ActivityOptionsCompat
 import android.support.v4.content.ContextCompat
 import android.util.Log
 import android.widget.Toast
@@ -30,7 +29,14 @@ import com.bumptech.glide.load.resource.drawable.GlideDrawable
 import com.bumptech.glide.request.animation.GlideAnimation
 import com.bumptech.glide.request.target.SimpleTarget
 import de.stefanmedack.ccctv.util.EVENT
+import de.stefanmedack.ccctv.util.applySchedulers
+import info.metadude.kotlin.library.c3media.ApiModule
+import info.metadude.kotlin.library.c3media.RxC3MediaService
 import info.metadude.kotlin.library.c3media.models.Event
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.rxkotlin.subscribeBy
+import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 
 /**
  * A wrapper fragment for leanback details screens.
@@ -53,6 +59,11 @@ class VideoDetailsFragment : DetailsFragment() {
     private lateinit var mPresenterSelector: ClassPresenterSelector
     private lateinit var mAdapter: ArrayObjectAdapter
 
+    // TODO move into BaseFragment
+    lateinit var mDisposables: CompositeDisposable
+
+    var mFullEvent : Event? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.d(TAG, "onCreate DetailsFragment")
         super.onCreate(savedInstanceState)
@@ -60,7 +71,8 @@ class VideoDetailsFragment : DetailsFragment() {
         mDetailsBackground = DetailsFragmentBackgroundController(this)
 
         mSelectedEvent = activity.intent.getParcelableExtra<Event>(EVENT)
-        if (mSelectedEvent != null) {
+        val selectedId = mSelectedEvent?.url?.substringAfterLast('/')?.toInt()
+        if (mSelectedEvent != null && selectedId != null) {
             mPresenterSelector = ClassPresenterSelector()
             mAdapter = ArrayObjectAdapter(mPresenterSelector)
             setupDetailsOverviewRow()
@@ -68,11 +80,18 @@ class VideoDetailsFragment : DetailsFragment() {
             //            setupRelatedMovieListRow()
             adapter = mAdapter
             initializeBackground(mSelectedEvent)
-            onItemViewClickedListener = ItemViewClickedListener()
+//            onItemViewClickedListener = ItemViewClickedListener()
+
+            loadEventDetailAsync(selectedId)
         } else {
             val intent = Intent(activity, MainActivity::class.java)
             startActivity(intent)
         }
+    }
+
+    override fun onDestroy() {
+        mDisposables.clear()
+        super.onDestroy()
     }
 
     private fun initializeBackground(event: Event?) {
@@ -135,9 +154,10 @@ class VideoDetailsFragment : DetailsFragment() {
         detailsPresenter.isParticipatingEntranceTransition = true
 
         detailsPresenter.onActionClickedListener = OnActionClickedListener { action ->
-            if (action.id == ACTION_WATCH) {
+            // TODO needs better async loading
+            if (action.id == ACTION_WATCH && mFullEvent != null) {
                 val intent = Intent(activity, PlaybackActivity::class.java)
-                intent.putExtra(EVENT, mSelectedEvent)
+                intent.putExtra(EVENT, mFullEvent)
                 startActivity(intent)
             } else {
                 Toast.makeText(activity, action.toString(), Toast.LENGTH_SHORT).show()
@@ -166,20 +186,50 @@ class VideoDetailsFragment : DetailsFragment() {
         return Math.round(dp.toFloat() * density)
     }
 
-    private inner class ItemViewClickedListener : OnItemViewClickedListener {
-        override fun onItemClicked(itemViewHolder: Presenter.ViewHolder?, item: Any?,
-                                   rowViewHolder: RowPresenter.ViewHolder, row: Row) {
-            if (item is Event) {
-                Log.d(TAG, "Item: " + item.toString())
-                val intent = Intent(activity, DetailsActivity::class.java)
-                intent.putExtra(EVENT, mSelectedEvent)
+//    private inner class ItemViewClickedListener : OnItemViewClickedListener {
+//        override fun onItemClicked(itemViewHolder: Presenter.ViewHolder?, item: Any?,
+//                                   rowViewHolder: RowPresenter.ViewHolder, row: Row) {
+//            if (item is Event) {
+//                Log.d(TAG, "Item: " + item.toString())
+//                val intent = Intent(activity, DetailsActivity::class.java)
+//                intent.putExtra(EVENT, mSelectedEvent)
+//
+//                val bundle = ActivityOptionsCompat.makeSceneTransitionAnimation(
+//                        activity,
+//                        (itemViewHolder?.view as ImageCardView).mainImageView,
+//                        DetailsActivity.SHARED_ELEMENT_NAME).toBundle()
+//                activity.startActivity(intent, bundle)
+//            }
+//        }
+//    }
 
-                val bundle = ActivityOptionsCompat.makeSceneTransitionAnimation(
-                        activity,
-                        (itemViewHolder?.view as ImageCardView).mainImageView,
-                        DetailsActivity.SHARED_ELEMENT_NAME).toBundle()
-                activity.startActivity(intent, bundle)
-            }
-        }
+    // *********************************************
+    // TODO encapsulate (MVP/MVVM/MVI)
+    // *********************************************
+
+    private fun loadEventDetailAsync(eventId: Int) {
+        val loadConferencesSingle = service.getEvent(eventId)
+                .applySchedulers()
+
+        mDisposables = CompositeDisposable()
+        mDisposables.add(loadConferencesSingle
+                .subscribeBy(// named arguments for lambda Subscribers
+                        onSuccess = { setFullEvent(it) },
+                        // TODO proper error handling
+                        onError = { it.printStackTrace() }
+                ))
+    }
+
+    private fun setFullEvent(event: Event) {
+        mFullEvent = event
+    }
+
+    private val service: RxC3MediaService by lazy {
+        val interceptor = HttpLoggingInterceptor()
+        interceptor.level = HttpLoggingInterceptor.Level.NONE
+        val okHttpClient = OkHttpClient.Builder()
+                .addNetworkInterceptor(interceptor)
+                .build()
+        ApiModule.provideRxC3MediaService("https://api.media.ccc.de", okHttpClient)
     }
 }

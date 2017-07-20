@@ -62,8 +62,8 @@ class MainFragment : BrowseFragment() {
     }
 
     override fun onDestroy() {
-        super.onDestroy()
         mDisposables.clear()
+        super.onDestroy()
     }
 
     private fun setupUIElements() {
