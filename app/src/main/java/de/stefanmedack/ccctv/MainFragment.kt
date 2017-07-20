@@ -16,14 +16,11 @@ package de.stefanmedack.ccctv
 
 import android.content.Intent
 import android.graphics.Color
-import android.graphics.drawable.Drawable
 import android.os.Bundle
-import android.support.v17.leanback.app.BackgroundManager
 import android.support.v17.leanback.app.BrowseFragment
 import android.support.v17.leanback.widget.*
 import android.support.v4.app.ActivityOptionsCompat
 import android.support.v4.content.ContextCompat
-import android.util.DisplayMetrics
 import android.util.Log
 import android.view.Gravity
 import android.view.ViewGroup
@@ -49,9 +46,6 @@ class MainFragment : BrowseFragment() {
     val GRID_ITEM_HEIGHT = 200
 
     private lateinit var mRowsAdapter: ArrayObjectAdapter
-    private lateinit var mBackgroundManager: BackgroundManager
-    private lateinit var mDefaultBackground: Drawable
-    private lateinit var mMetrics: DisplayMetrics
 
     // TODO move into BaseFragment
     lateinit var mDisposables: CompositeDisposable
@@ -60,27 +54,14 @@ class MainFragment : BrowseFragment() {
         Log.i(TAG, "onCreate")
         super.onActivityCreated(savedInstanceState)
 
-        prepareBackgroundManager()
-
         setupUIElements()
-
         loadConferencesAsync()
-
         setupEventListeners()
     }
 
     override fun onDestroy() {
         super.onDestroy()
         mDisposables.clear()
-    }
-
-    private fun prepareBackgroundManager() {
-
-        mBackgroundManager = BackgroundManager.getInstance(activity)
-        mBackgroundManager.attach(activity.window)
-        mDefaultBackground = ContextCompat.getDrawable(activity, R.drawable.default_background)
-        mMetrics = DisplayMetrics()
-        activity.windowManager.defaultDisplay.getMetrics(mMetrics)
     }
 
     private fun setupUIElements() {
