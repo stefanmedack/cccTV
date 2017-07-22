@@ -19,7 +19,7 @@ import android.os.Bundle
 import de.stefanmedack.ccctv.R
 
 /**
- * Loads [MainFragment].
+ * Loads [MainFragmentGrouped].
  */
 class MainActivity : Activity() {
 
