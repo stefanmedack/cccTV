@@ -11,12 +11,12 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
-package de.stefanmedack.ccctv
+package de.stefanmedack.ccctv.ui
 
 import android.os.Bundle
 import android.support.v4.content.ContextCompat
-import android.util.Log
 import android.view.View
+import de.stefanmedack.ccctv.R
 
 /**
  * This class demonstrates how to extend [android.support.v17.leanback.app.ErrorFragment].

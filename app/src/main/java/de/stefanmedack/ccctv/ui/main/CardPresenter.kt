@@ -12,7 +12,7 @@
  * the License.
  */
 
-package de.stefanmedack.ccctv
+package de.stefanmedack.ccctv.ui.main
 
 import android.graphics.drawable.Drawable
 import android.support.v17.leanback.widget.ImageCardView
@@ -22,6 +22,7 @@ import android.util.Log
 import android.view.ViewGroup
 
 import com.bumptech.glide.Glide
+import de.stefanmedack.ccctv.R
 import info.metadude.kotlin.library.c3media.models.Event
 import kotlin.properties.Delegates
 
@@ -30,6 +31,14 @@ import kotlin.properties.Delegates
  * It contains an ImageCardView.
  */
 class CardPresenter : Presenter() {
+
+    private val TAG = "CardPresenter"
+
+    // TODO move to dimens
+    private val CARD_WIDTH = 500
+    private val CARD_HEIGHT = 282
+
+
     private lateinit var mDefaultCardImage: Drawable
     private var sSelectedBackgroundColor: Int by Delegates.notNull<Int>()
     private var sDefaultBackgroundColor: Int by Delegates.notNull<Int>()
@@ -84,12 +93,5 @@ class CardPresenter : Presenter() {
         // during animations.
         view.setBackgroundColor(color)
         view.setInfoAreaBackgroundColor(color)
-    }
-
-    companion object {
-        private val TAG = "CardPresenter"
-
-        private val CARD_WIDTH = 313
-        private val CARD_HEIGHT = 176
     }
 }

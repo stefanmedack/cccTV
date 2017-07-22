@@ -11,7 +11,7 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
-package de.stefanmedack.ccctv
+package de.stefanmedack.ccctv.ui
 
 import android.app.Activity
 import android.app.Fragment
@@ -23,6 +23,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.ProgressBar
+import de.stefanmedack.ccctv.R
 
 /**
  * BrowseErrorActivity shows how to use ErrorFragment.

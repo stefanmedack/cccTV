@@ -12,20 +12,19 @@
  * the License.
  */
 
-package de.stefanmedack.ccctv
+package de.stefanmedack.ccctv.ui.main
 
-import android.support.v17.leanback.widget.AbstractDetailsDescriptionPresenter
-import info.metadude.kotlin.library.c3media.models.Event
+import android.app.Activity
+import android.os.Bundle
+import de.stefanmedack.ccctv.R
 
-class DetailsDescriptionPresenter : AbstractDetailsDescriptionPresenter() {
+/**
+ * Loads [MainFragment].
+ */
+class MainActivity : Activity() {
 
-    override fun onBindDescription(
-            viewHolder: AbstractDetailsDescriptionPresenter.ViewHolder,
-            item: Any) {
-        val event = item as Event
-
-        viewHolder.title.text = event.title
-        viewHolder.subtitle.text = event.subtitle
-        viewHolder.body.text = event.description
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
     }
 }

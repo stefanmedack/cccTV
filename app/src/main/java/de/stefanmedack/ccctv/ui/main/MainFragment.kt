@@ -12,7 +12,7 @@
  * the License.
  */
 
-package de.stefanmedack.ccctv
+package de.stefanmedack.ccctv.ui.main
 
 import android.content.Intent
 import android.graphics.Color
@@ -26,6 +26,9 @@ import android.view.Gravity
 import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
+import de.stefanmedack.ccctv.R
+import de.stefanmedack.ccctv.ui.BrowseErrorActivity
+import de.stefanmedack.ccctv.ui.details.DetailsActivity
 import de.stefanmedack.ccctv.util.EVENT
 import de.stefanmedack.ccctv.util.applySchedulers
 import info.metadude.kotlin.library.c3media.ApiModule

@@ -12,7 +12,7 @@
  * the License.
  */
 
-package de.stefanmedack.ccctv
+package de.stefanmedack.ccctv.ui.details
 
 import android.content.Context
 import android.content.Intent
@@ -28,6 +28,9 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.GlideDrawable
 import com.bumptech.glide.request.animation.GlideAnimation
 import com.bumptech.glide.request.target.SimpleTarget
+import de.stefanmedack.ccctv.R
+import de.stefanmedack.ccctv.ui.main.MainActivity
+import de.stefanmedack.ccctv.ui.playback.ExoPlayerActivity
 import de.stefanmedack.ccctv.util.EVENT
 import de.stefanmedack.ccctv.util.applySchedulers
 import info.metadude.kotlin.library.c3media.ApiModule
@@ -156,7 +159,7 @@ class VideoDetailsFragment : DetailsFragment() {
         detailsPresenter.onActionClickedListener = OnActionClickedListener { action ->
             // TODO needs better async loading
             if (action.id == ACTION_WATCH && mFullEvent != null) {
-                val intent = Intent(activity, PlaybackActivity::class.java)
+                val intent = Intent(activity, ExoPlayerActivity::class.java)
                 intent.putExtra(EVENT, mFullEvent)
                 startActivity(intent)
             } else {

@@ -12,10 +12,11 @@
  * the License.
  */
 
-package de.stefanmedack.ccctv
+package de.stefanmedack.ccctv.ui.details
 
 import android.app.Activity
 import android.os.Bundle
+import de.stefanmedack.ccctv.R
 
 /**
  * Details activity class that loads [VideoDetailsFragment] class.

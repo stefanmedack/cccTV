@@ -25,7 +25,7 @@
         android:theme="@style/Theme.Leanback"
         >
         <activity
-            android:name=".MainActivity"
+            android:name=".ui.main.MainActivity"
             android:icon="@mipmap/ic_launcher"
             android:label="@string/app_name"
             android:logo="@mipmap/ic_launcher"
@@ -37,9 +37,16 @@
                 <category android:name="android.intent.category.LEANBACK_LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity android:name=".DetailsActivity"/>
-        <activity android:name=".PlaybackActivity"/>
-        <activity android:name=".BrowseErrorActivity"/>
+        <activity android:name=".ui.details.DetailsActivity"/>
+        <activity android:name=".ui.BrowseErrorActivity"/>
+        <activity
+            android:name=".ui.playback.ExoPlayerActivity"
+            android:exported="true"
+            android:configChanges="screenSize|smallestScreenSize|screenLayout|orientation|layoutDirection"
+            android:launchMode="singleTask"
+            android:resizeableActivity="true"
+            android:supportsPictureInPicture="true"/>
+
     </application>
 
 </manifest>
