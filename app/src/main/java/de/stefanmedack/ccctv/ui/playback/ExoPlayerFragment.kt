@@ -17,12 +17,12 @@ package de.stefanmedack.ccctv.ui.playback
 import android.content.Context
 import android.media.AudioManager
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.support.v17.leanback.app.PlaybackFragment
 import android.support.v17.leanback.app.VideoFragment
 import android.support.v17.leanback.app.VideoFragmentGlueHost
 import android.support.v17.leanback.media.PlaybackGlue
-import android.support.v17.leanback.widget.PlaybackControlsRow
 import android.util.Log
 import de.stefanmedack.ccctv.util.EVENT
 import de.stefanmedack.ccctv.util.playableVideoUrl
@@ -49,7 +49,6 @@ class ExoPlayerFragment : VideoFragment() {
             Log.w(TAG, "video player cannot obtain audio focus!")
         }
 
-        mMediaPlayerGlue.setMode(PlaybackControlsRow.RepeatAction.NONE)
         val event = activity.intent.getParcelableExtra<Event>(EVENT)
         if (event != null) {
             mMediaPlayerGlue.title = event.title
@@ -68,7 +67,9 @@ class ExoPlayerFragment : VideoFragment() {
     }
 
     override fun onPause() {
-        mMediaPlayerGlue.pause()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N && activity.isInPictureInPictureMode) {
+            mMediaPlayerGlue.pause()
+        }
         super.onPause()
     }
 
