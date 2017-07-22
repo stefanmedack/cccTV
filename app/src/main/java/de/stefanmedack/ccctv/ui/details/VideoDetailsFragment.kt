@@ -14,7 +14,6 @@
 
 package de.stefanmedack.ccctv.ui.details
 
-import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.os.Bundle
@@ -51,11 +50,6 @@ class VideoDetailsFragment : DetailsFragment() {
 
     private val ACTION_WATCH = 1L
 
-    private val DETAIL_THUMB_WIDTH = 274
-    private val DETAIL_THUMB_HEIGHT = 274
-
-    private val NUM_COLS = 10
-
     private var mSelectedEvent: Event? = null
 
     private lateinit var mDetailsBackground: DetailsFragmentBackgroundController
@@ -65,7 +59,7 @@ class VideoDetailsFragment : DetailsFragment() {
     // TODO move into BaseFragment
     lateinit var mDisposables: CompositeDisposable
 
-    var mFullEvent : Event? = null
+    var mFullEvent: Event? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.d(TAG, "onCreate DetailsFragment")
@@ -80,10 +74,8 @@ class VideoDetailsFragment : DetailsFragment() {
             mAdapter = ArrayObjectAdapter(mPresenterSelector)
             setupDetailsOverviewRow()
             setupDetailsOverviewRowPresenter()
-            //            setupRelatedMovieListRow()
             adapter = mAdapter
             initializeBackground(mSelectedEvent)
-//            onItemViewClickedListener = ItemViewClickedListener()
 
             loadEventDetailAsync(selectedId)
         } else {
@@ -117,13 +109,14 @@ class VideoDetailsFragment : DetailsFragment() {
         Log.d(TAG, "doInBackground: " + mSelectedEvent?.toString())
         val row = DetailsOverviewRow(mSelectedEvent)
         row.imageDrawable = ContextCompat.getDrawable(activity, R.drawable.default_background)
-        val width = convertDpToPixel(activity, DETAIL_THUMB_WIDTH)
-        val height = convertDpToPixel(activity, DETAIL_THUMB_HEIGHT)
+
         Glide.with(activity)
                 .load(mSelectedEvent?.thumbUrl)
                 .centerCrop()
                 .error(R.drawable.default_background)
-                .into<SimpleTarget<GlideDrawable>>(object : SimpleTarget<GlideDrawable>(width, height) {
+                .into<SimpleTarget<GlideDrawable>>(object : SimpleTarget<GlideDrawable>(
+                        resources.getDimensionPixelSize(R.dimen.card_width),
+                        resources.getDimensionPixelSize(R.dimen.card_height)) {
                     override fun onResourceReady(resource: GlideDrawable,
                                                  glideAnimation: GlideAnimation<in GlideDrawable>) {
                         Log.d(TAG, "details overview card image url ready: " + resource)
@@ -168,43 +161,6 @@ class VideoDetailsFragment : DetailsFragment() {
         }
         mPresenterSelector.addClassPresenter(DetailsOverviewRow::class.java, detailsPresenter)
     }
-
-    //    private fun setupRelatedMovieListRow() {
-    //        val subcategories = arrayOf(getString(R.string.related_movies))
-    //        val list = MovieList.list
-    //
-    //        Collections.shuffle(list)
-    //        val listRowAdapter = ArrayObjectAdapter(CardPresenter())
-    //        for (j in 0 until NUM_COLS) {
-    //            listRowAdapter.add(list[j % 5])
-    //        }
-    //
-    //        val header = HeaderItem(0, subcategories[0])
-    //        mAdapter.add(ListRow(header, listRowAdapter))
-    //        mPresenterSelector.addClassPresenter(ListRow::class.java, ListRowPresenter())
-    //    }
-
-    fun convertDpToPixel(context: Context, dp: Int): Int {
-        val density = context.applicationContext.resources.displayMetrics.density
-        return Math.round(dp.toFloat() * density)
-    }
-
-//    private inner class ItemViewClickedListener : OnItemViewClickedListener {
-//        override fun onItemClicked(itemViewHolder: Presenter.ViewHolder?, item: Any?,
-//                                   rowViewHolder: RowPresenter.ViewHolder, row: Row) {
-//            if (item is Event) {
-//                Log.d(TAG, "Item: " + item.toString())
-//                val intent = Intent(activity, DetailsActivity::class.java)
-//                intent.putExtra(EVENT, mSelectedEvent)
-//
-//                val bundle = ActivityOptionsCompat.makeSceneTransitionAnimation(
-//                        activity,
-//                        (itemViewHolder?.view as ImageCardView).mainImageView,
-//                        DetailsActivity.SHARED_ELEMENT_NAME).toBundle()
-//                activity.startActivity(intent, bundle)
-//            }
-//        }
-//    }
 
     // *********************************************
     // TODO encapsulate (MVP/MVVM/MVI)

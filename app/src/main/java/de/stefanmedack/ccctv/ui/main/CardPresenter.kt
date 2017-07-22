@@ -20,7 +20,6 @@ import android.support.v17.leanback.widget.Presenter
 import android.support.v4.content.ContextCompat
 import android.util.Log
 import android.view.ViewGroup
-
 import com.bumptech.glide.Glide
 import de.stefanmedack.ccctv.R
 import info.metadude.kotlin.library.c3media.models.Event
@@ -34,21 +33,20 @@ class CardPresenter : Presenter() {
 
     private val TAG = "CardPresenter"
 
-    // TODO move to dimens
-    private val CARD_WIDTH = 500
-    private val CARD_HEIGHT = 282
-
-
-    private lateinit var mDefaultCardImage: Drawable
-    private var sSelectedBackgroundColor: Int by Delegates.notNull<Int>()
-    private var sDefaultBackgroundColor: Int by Delegates.notNull<Int>()
+    private var mCardWidth: Int by Delegates.notNull<Int>()
+    private var mCardHeight: Int by Delegates.notNull<Int>()
+    private var mSelectedBackgroundColor: Int by Delegates.notNull<Int>()
+    private var mDefaultBackgroundColor: Int by Delegates.notNull<Int>()
+    private var mDefaultCardImage: Drawable by Delegates.notNull<Drawable>()
 
     override fun onCreateViewHolder(parent: ViewGroup): Presenter.ViewHolder {
         Log.d(TAG, "onCreateViewHolder")
-
-        sDefaultBackgroundColor = ContextCompat.getColor(parent.context, R.color.default_background)
-        sSelectedBackgroundColor =
-                ContextCompat.getColor(parent.context, R.color.selected_background)
+        parent.context.resources.apply {
+            mCardWidth = getDimensionPixelSize(R.dimen.card_width)
+            mCardHeight = getDimensionPixelSize(R.dimen.card_height)
+        }
+        mDefaultBackgroundColor = ContextCompat.getColor(parent.context, R.color.default_background)
+        mSelectedBackgroundColor = ContextCompat.getColor(parent.context, R.color.selected_background)
         mDefaultCardImage = ContextCompat.getDrawable(parent.context, R.drawable.movie)
 
         val cardView = object : ImageCardView(parent.context) {
@@ -71,7 +69,7 @@ class CardPresenter : Presenter() {
         Log.d(TAG, "onBindViewHolder")
         cardView.titleText = event.title
         cardView.contentText = event.description
-        cardView.setMainImageDimensions(CARD_WIDTH, CARD_HEIGHT)
+        cardView.setMainImageDimensions(mCardWidth, mCardHeight)
         Glide.with(viewHolder.view.context)
                 .load(event.thumbUrl)
                 .centerCrop()
@@ -88,7 +86,7 @@ class CardPresenter : Presenter() {
     }
 
     private fun updateCardBackgroundColor(view: ImageCardView, selected: Boolean) {
-        val color = if (selected) sSelectedBackgroundColor else sDefaultBackgroundColor
+        val color = if (selected) mSelectedBackgroundColor else mDefaultBackgroundColor
         // Both background colors should be set because the view's background is temporarily visible
         // during animations.
         view.setBackgroundColor(color)
