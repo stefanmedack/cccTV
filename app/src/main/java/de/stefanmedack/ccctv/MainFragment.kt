@@ -82,7 +82,7 @@ class MainFragment : BrowseFragment() {
         mRowsAdapter = ArrayObjectAdapter(ListRowPresenter())
         val cardPresenter = CardPresenter()
 
-        for ((index, conference) in conferences.sortedWith(compareBy(Conference::title)).withIndex()) {
+        for ((index, conference) in conferences.withIndex()) {
             val listRowAdapter = ArrayObjectAdapter(cardPresenter)
             listRowAdapter.addAll(0, conference.events)
             val header = HeaderItem(index.toLong(), conference.title ?: "")
@@ -170,7 +170,12 @@ class MainFragment : BrowseFragment() {
                             .applySchedulers()
                             .toObservable()
                 }
-                .toList()
+
+                .toSortedList(compareBy(Conference::title))
+        // TODO use this for grouping conferences in the future
+        //                .groupBy { it.type() }
+        //                .flatMap { it.toList().toObservable() }
+        //                .toMap { it[0].type() }
 
         mDisposables = CompositeDisposable()
         mDisposables.add(loadConferencesSingle
