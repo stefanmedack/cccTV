@@ -8,13 +8,15 @@ import android.support.v17.leanback.media.PlayerAdapter
 import android.support.v17.leanback.media.SurfaceHolderGlueHost
 import android.view.SurfaceHolder
 import com.google.android.exoplayer2.*
+import com.google.android.exoplayer2.C.StreamType
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory
 import com.google.android.exoplayer2.source.ExtractorMediaSource
 import com.google.android.exoplayer2.source.MediaSource
 import com.google.android.exoplayer2.source.TrackGroupArray
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray
-import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
+import com.google.android.exoplayer2.upstream.DefaultHttpDataSource
+import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory
 import com.google.android.exoplayer2.util.Util
 import de.stefanmedack.ccctv.R
 
@@ -43,7 +45,7 @@ class ExoPlayerAdapter
     internal var mMediaSourceUri: Uri? = null
     internal var mHasDisplay: Boolean = false
     internal var mBufferingStart: Boolean = false
-    @C.StreamType var audioStreamType: Int = 0
+    @StreamType var audioStreamType: Int = 0
 
     init {
         this.context = context
@@ -209,7 +211,8 @@ class ExoPlayerAdapter
     fun onCreateMediaSource(uri: Uri): MediaSource {
         val userAgent = Util.getUserAgent(context, "ExoPlayerAdapter")
         return ExtractorMediaSource(uri,
-                DefaultDataSourceFactory(context, userAgent),
+                DefaultHttpDataSourceFactory(userAgent, null, DefaultHttpDataSource.DEFAULT_CONNECT_TIMEOUT_MILLIS,
+                        DefaultHttpDataSource.DEFAULT_READ_TIMEOUT_MILLIS, true),
                 DefaultExtractorsFactory(), null, null)
     }
 
