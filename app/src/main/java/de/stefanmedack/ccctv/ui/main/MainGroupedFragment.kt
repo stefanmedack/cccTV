@@ -7,22 +7,24 @@ import android.support.v17.leanback.app.BrowseFragment
 import android.support.v17.leanback.widget.*
 import android.support.v4.content.ContextCompat
 import android.widget.Toast
+import de.stefanmedack.ccctv.C3TVApp
 import de.stefanmedack.ccctv.R
 import de.stefanmedack.ccctv.util.applySchedulers
 import de.stefanmedack.ccctv.util.type
-import info.metadude.kotlin.library.c3media.ApiModule
 import info.metadude.kotlin.library.c3media.RxC3MediaService
 import info.metadude.kotlin.library.c3media.models.Conference
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.subscribeBy
-import okhttp3.OkHttpClient
-import okhttp3.logging.HttpLoggingInterceptor
+import javax.inject.Inject
 
 /**
  * Sample [BrowseFragment] implementation showcasing the use of [PageRow] and
  * [ListRow].
  */
-class MainFragmentGrouped : BrowseFragment() {
+class MainGroupedFragment : BrowseFragment() {
+
+    @Inject
+    lateinit var c3MediaService: RxC3MediaService
 
     lateinit var mRowsAdapter: ArrayObjectAdapter
     lateinit var mDisposables: CompositeDisposable
@@ -31,6 +33,7 @@ class MainFragmentGrouped : BrowseFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        C3TVApp.graph.inject(this)
         setupUi()
         loadConferencesAsync()
     }
@@ -80,12 +83,12 @@ class MainFragmentGrouped : BrowseFragment() {
         override fun createFragment(rowObj: Any): Fragment {
             val row = rowObj as Row
             mBackgroundManager.drawable = null
-            return ConferencesFragment(mLoadedConferencesMap[row.headerItem.id.toInt()])
+            return GroupedConferencesFragment(mLoadedConferencesMap[row.headerItem.id.toInt()])
         }
     }
 
     private fun loadConferencesAsync() {
-        val loadConferencesSingle = service.getConferences()
+        val loadConferencesSingle = c3MediaService.getConferences()
                 .applySchedulers()
                 .map { it.conferences ?: listOf() }
                 .flattenAsObservable { it }
@@ -101,14 +104,5 @@ class MainFragmentGrouped : BrowseFragment() {
                         // TODO proper error handling
                         onError = { it.printStackTrace() }
                 ))
-    }
-
-    private val service: RxC3MediaService by lazy {
-        val interceptor = HttpLoggingInterceptor()
-        interceptor.level = HttpLoggingInterceptor.Level.NONE
-        val okHttpClient = OkHttpClient.Builder()
-                .addNetworkInterceptor(interceptor)
-                .build()
-        ApiModule.provideRxC3MediaService("https://api.media.ccc.de", okHttpClient)
     }
 }

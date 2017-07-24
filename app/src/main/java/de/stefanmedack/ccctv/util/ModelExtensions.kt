@@ -6,6 +6,12 @@ import info.metadude.kotlin.library.c3media.models.MimeType
 
 fun Conference.type(): String {
     return this.slug.substringBefore("/")
+//    val split = this.slug.split("/")
+//    return when(split.size) {
+//        0 -> ""
+//        1 -> split[0]
+//        else -> split[1]
+//    }
 }
 
 fun Event.playableVideoUrl(): String? {

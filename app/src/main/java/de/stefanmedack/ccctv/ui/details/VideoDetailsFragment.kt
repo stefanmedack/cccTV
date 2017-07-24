@@ -27,18 +27,17 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.GlideDrawable
 import com.bumptech.glide.request.animation.GlideAnimation
 import com.bumptech.glide.request.target.SimpleTarget
+import de.stefanmedack.ccctv.C3TVApp
 import de.stefanmedack.ccctv.R
 import de.stefanmedack.ccctv.ui.main.MainActivity
 import de.stefanmedack.ccctv.ui.playback.ExoPlayerActivity
 import de.stefanmedack.ccctv.util.EVENT
 import de.stefanmedack.ccctv.util.applySchedulers
-import info.metadude.kotlin.library.c3media.ApiModule
 import info.metadude.kotlin.library.c3media.RxC3MediaService
 import info.metadude.kotlin.library.c3media.models.Event
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.subscribeBy
-import okhttp3.OkHttpClient
-import okhttp3.logging.HttpLoggingInterceptor
+import javax.inject.Inject
 
 /**
  * A wrapper fragment for leanback details screens.
@@ -47,8 +46,10 @@ import okhttp3.logging.HttpLoggingInterceptor
 class VideoDetailsFragment : DetailsFragment() {
 
     private val TAG = "VideoDetailsFragment"
-
     private val ACTION_WATCH = 1L
+
+    @Inject
+    lateinit var c3MediaService: RxC3MediaService
 
     private var mSelectedEvent: Event? = null
 
@@ -62,8 +63,8 @@ class VideoDetailsFragment : DetailsFragment() {
     var mFullEvent: Event? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        Log.d(TAG, "onCreate DetailsFragment")
         super.onCreate(savedInstanceState)
+        C3TVApp.graph.inject(this)
 
         mDetailsBackground = DetailsFragmentBackgroundController(this)
 
@@ -167,7 +168,7 @@ class VideoDetailsFragment : DetailsFragment() {
     // *********************************************
 
     private fun loadEventDetailAsync(eventId: Int) {
-        val loadConferencesSingle = service.getEvent(eventId)
+        val loadConferencesSingle = c3MediaService.getEvent(eventId)
                 .applySchedulers()
 
         mDisposables = CompositeDisposable()
@@ -181,14 +182,5 @@ class VideoDetailsFragment : DetailsFragment() {
 
     private fun setFullEvent(event: Event) {
         mFullEvent = event
-    }
-
-    private val service: RxC3MediaService by lazy {
-        val interceptor = HttpLoggingInterceptor()
-        interceptor.level = HttpLoggingInterceptor.Level.NONE
-        val okHttpClient = OkHttpClient.Builder()
-                .addNetworkInterceptor(interceptor)
-                .build()
-        ApiModule.provideRxC3MediaService("https://api.media.ccc.de", okHttpClient)
     }
 }

@@ -16,6 +16,7 @@
         />
 
     <application
+        android:name=".C3TVApp"
         android:allowBackup="true"
         android:banner="@drawable/app_banner"
         android:icon="@mipmap/ic_launcher"

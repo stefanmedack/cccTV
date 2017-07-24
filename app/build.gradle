@@ -5,7 +5,9 @@ apply plugin: 'kotlin-kapt'
 
 ext {
     assertjVersion = "3.8.0"
+    daggerVersion = "2.4"
     exoplayerVersion = "r2.2.0"
+    glassfishVersion = "10.0-b28"
     glideVersion = "3.8.0"
     junitVersion = "4.12"
     moshiVersion = "1.4.0"
@@ -58,6 +60,11 @@ dependencies {
     implementation "nz.bradcampbell:paperparcel:$paperParcelVersion"
     implementation "nz.bradcampbell:paperparcel-kotlin:$paperParcelVersion" // Optional
     kapt "nz.bradcampbell:paperparcel-compiler:$paperParcelVersion"
+
+    //Dagger 2 dependencies
+    implementation "com.google.dagger:dagger:$daggerVersion"
+    kapt "com.google.dagger:dagger-compiler:$daggerVersion"
+    provided "org.glassfish:javax.annotation:$glassfishVersion"
 
     testCompile "junit:junit:$junitVersion"
     testCompile "org.assertj:assertj-core:$assertjVersion"

@@ -26,19 +26,18 @@ import android.view.Gravity
 import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
+import de.stefanmedack.ccctv.C3TVApp
 import de.stefanmedack.ccctv.R
 import de.stefanmedack.ccctv.ui.BrowseErrorActivity
 import de.stefanmedack.ccctv.ui.details.DetailsActivity
 import de.stefanmedack.ccctv.util.EVENT
 import de.stefanmedack.ccctv.util.applySchedulers
-import info.metadude.kotlin.library.c3media.ApiModule
 import info.metadude.kotlin.library.c3media.RxC3MediaService
 import info.metadude.kotlin.library.c3media.models.Conference
 import info.metadude.kotlin.library.c3media.models.Event
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.subscribeBy
-import okhttp3.OkHttpClient
-import okhttp3.logging.HttpLoggingInterceptor
+import javax.inject.Inject
 
 /**
  * Loads a grid of cards with movies to browse.
@@ -50,15 +49,22 @@ class MainFragment : BrowseFragment() {
     val GRID_ITEM_WIDTH = 200
     val GRID_ITEM_HEIGHT = 200
 
+    @Inject
+    lateinit var c3MediaService: RxC3MediaService
+
     private lateinit var mRowsAdapter: ArrayObjectAdapter
 
     // TODO move into BaseFragment
     lateinit var mDisposables: CompositeDisposable
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        C3TVApp.graph.inject(this)
+    }
+
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         Log.i(TAG, "onCreate")
         super.onActivityCreated(savedInstanceState)
-
         setupUIElements()
         loadConferencesAsync()
         setupEventListeners()
@@ -162,14 +168,14 @@ class MainFragment : BrowseFragment() {
     // *********************************************
 
     private fun loadConferencesAsync() {
-        val loadConferencesSingle = service.getConferences()
+        val loadConferencesSingle = c3MediaService.getConferences()
                 .applySchedulers()
                 .map { it.conferences ?: listOf() }
                 .flattenAsObservable { it }
                 .map { it.url?.substringAfterLast('/')?.toInt() ?: -1 }
                 .filter { it > 0 }
                 .flatMap {
-                    service.getConference(it)
+                    c3MediaService.getConference(it)
                             .applySchedulers()
                             .toObservable()
                 }
@@ -187,14 +193,5 @@ class MainFragment : BrowseFragment() {
                         // TODO proper error handling
                         onError = { it.printStackTrace() }
                 ))
-    }
-
-    private val service: RxC3MediaService by lazy {
-        val interceptor = HttpLoggingInterceptor()
-        interceptor.level = HttpLoggingInterceptor.Level.NONE
-        val okHttpClient = OkHttpClient.Builder()
-                .addNetworkInterceptor(interceptor)
-                .build()
-        ApiModule.provideRxC3MediaService("https://api.media.ccc.de", okHttpClient)
     }
 }
