@@ -6,17 +6,7 @@ An Android TV App for the media API of the CCC written in Kotlin.
 
 * https://api.media.ccc.de
 
-## Setup
-
-This App uses a fork of [c3media-base][c3media-base-orig] as a module -> Credits to [Tobias Preuss][tobias-preuss].
-
-It is important to clone the latest `master` of [this fork][c3media-base-fork] into the same repository. E.g. `~/repo/cccTV/` and `~/repo/c3media-base/`:
-
-```
-cd ~/repo/
-git clone https://github.com/stefanmedack/cccTV
-git clone https://github.com/stefanmedack/c3media-base
-```
+This App uses [c3media-base][c3media-base-orig] by [Tobias Preuss][tobias-preuss].
 
 ## Disclaimer - App icons
 
