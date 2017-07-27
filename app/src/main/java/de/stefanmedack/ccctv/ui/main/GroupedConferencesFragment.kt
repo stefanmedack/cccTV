@@ -15,7 +15,7 @@ import info.metadude.kotlin.library.c3media.models.Conference
 import info.metadude.kotlin.library.c3media.models.Event
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.subscribeBy
-import io.reactivex.rxkotlin.toObservable
+import io.reactivex.rxkotlin.toFlowable
 import javax.inject.Inject
 
 @SuppressLint("ValidFragment")
@@ -24,11 +24,10 @@ class GroupedConferencesFragment(val conferenceStubs: List<Conference>) : RowsFr
     @Inject
     lateinit var c3MediaService: RxC3MediaService
 
-    lateinit var mDisposables: CompositeDisposable
-    private val mRowsAdapter: ArrayObjectAdapter = ArrayObjectAdapter(ListRowPresenter())
+    lateinit var disposables: CompositeDisposable
 
     init {
-        adapter = mRowsAdapter
+        adapter = ArrayObjectAdapter(ListRowPresenter())
         onItemViewClickedListener = ItemViewClickedListener()
     }
 
@@ -36,17 +35,17 @@ class GroupedConferencesFragment(val conferenceStubs: List<Conference>) : RowsFr
         super.onCreate(savedInstanceState)
         C3TVApp.graph.inject(this)
         loadConferencesAsync()
-        mainFragmentAdapter.fragmentHost.notifyDataReady(mainFragmentAdapter)
     }
 
     override fun onDestroy() {
-        mDisposables.clear()
+        disposables.clear()
         super.onDestroy()
     }
 
     private fun renderConferences(conferences: MutableList<Conference>) {
+        mainFragmentAdapter.fragmentHost.notifyDataReady(mainFragmentAdapter)
         for (conference in conferences) {
-            mRowsAdapter.add(createEventRow(conference))
+            (adapter as ArrayObjectAdapter).add(createEventRow(conference))
         }
     }
 
@@ -57,7 +56,7 @@ class GroupedConferencesFragment(val conferenceStubs: List<Conference>) : RowsFr
             adapter.add(event)
         }
 
-        val headerItem = HeaderItem(conference?.title)
+        val headerItem = HeaderItem(conference?.title ?: "")
         return ListRow(headerItem, adapter)
     }
 
@@ -78,18 +77,18 @@ class GroupedConferencesFragment(val conferenceStubs: List<Conference>) : RowsFr
     }
 
     private fun loadConferencesAsync() {
-        val loadConferencesSingle = conferenceStubs.toObservable()
-                .map { it.url?.substringAfterLast('/')?.toInt() ?: -1 }
+        val loadConferencesSingle = conferenceStubs.toFlowable()
+                .map { it.url?.substringAfterLast('/')?.toIntOrNull() ?: -1 }
                 .filter { it > 0 }
                 .flatMap {
                     c3MediaService.getConference(it)
                             .applySchedulers()
-                            .toObservable()
+                            .toFlowable()
                 }
                 .toSortedList(compareByDescending(Conference::title))
 
-        mDisposables = CompositeDisposable()
-        mDisposables.add(loadConferencesSingle
+        disposables = CompositeDisposable()
+        disposables.add(loadConferencesSingle
                 .subscribeBy(// named arguments for lambda Subscribers
                         onSuccess = { renderConferences(it) },
                         // TODO proper error handling

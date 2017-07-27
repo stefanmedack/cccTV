@@ -6,6 +6,8 @@
     <string name="error_fragment">Error Fragment</string>
     <string name="personal_settings">Personal Settings</string>
     <string name="watch_event">Watch</string>
+    <string name="bookmark_event">Bookmark</string>
+    <string name="show_speaker">Show Speaker</string>
     <string name="should_start">shouldStart</string>
 
     <!-- Error messages -->

@@ -17,19 +17,14 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.subscribeBy
 import javax.inject.Inject
 
-/**
- * Sample [BrowseFragment] implementation showcasing the use of [PageRow] and
- * [ListRow].
- */
 class MainGroupedFragment : BrowseFragment() {
 
     @Inject
     lateinit var c3MediaService: RxC3MediaService
 
-    lateinit var mRowsAdapter: ArrayObjectAdapter
-    lateinit var mDisposables: CompositeDisposable
+    lateinit var disposables: CompositeDisposable
 
-    val mLoadedConferencesMap: ArrayList<List<Conference>> = arrayListOf()
+    val loadedConferencesMap: ArrayList<List<Conference>> = arrayListOf()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,7 +34,7 @@ class MainGroupedFragment : BrowseFragment() {
     }
 
     override fun onDestroy() {
-        mDisposables.clear()
+        disposables.clear()
         super.onDestroy()
     }
 
@@ -57,33 +52,31 @@ class MainGroupedFragment : BrowseFragment() {
         prepareEntranceTransition()
     }
 
-    private fun renderConferences(mappedConcerences: MutableMap<String, List<Conference>>) {
-        mRowsAdapter = ArrayObjectAdapter(ListRowPresenter())
-        adapter = mRowsAdapter
-
-        mappedConcerences.forEach {
-            mRowsAdapter.add(PageRow(HeaderItem(mLoadedConferencesMap.size.toLong(), it.key)))
-            mLoadedConferencesMap.add(it.value)
+    private fun renderConferences(mappedConferences: MutableMap<String, List<Conference>>) {
+        adapter = ArrayObjectAdapter(ListRowPresenter())
+        mappedConferences.forEach {
+            (adapter as ArrayObjectAdapter).add(PageRow(HeaderItem(loadedConferencesMap.size.toLong(), it.key)))
+            loadedConferencesMap.add(it.value)
         }
 
         BackgroundManager.getInstance(activity).let {
             it.attach(activity.window)
             mainFragmentRegistry.registerFragment(PageRow::class.java,
-                    PageRowFragmentFactory(mLoadedConferencesMap, it))
+                    PageRowFragmentFactory(loadedConferencesMap, it))
         }
 
         startEntranceTransition()
     }
 
     private class PageRowFragmentFactory internal constructor(
-            private val mLoadedConferencesMap: ArrayList<List<Conference>>,
-            private val mBackgroundManager: BackgroundManager
+            private val loadedConferencesMap: ArrayList<List<Conference>>,
+            private val backgroundManager: BackgroundManager
     ) : BrowseFragment.FragmentFactory<Fragment>() {
 
         override fun createFragment(rowObj: Any): Fragment {
             val row = rowObj as Row
-            mBackgroundManager.drawable = null
-            return GroupedConferencesFragment(mLoadedConferencesMap[row.headerItem.id.toInt()])
+            backgroundManager.drawable = null
+            return GroupedConferencesFragment(loadedConferencesMap[row.headerItem.id.toInt()])
         }
     }
 
@@ -91,14 +84,14 @@ class MainGroupedFragment : BrowseFragment() {
         val loadConferencesSingle = c3MediaService.getConferences()
                 .applySchedulers()
                 .map { it.conferences ?: listOf() }
-                .flattenAsObservable { it }
+                .flattenAsFlowable { it }
                 .groupBy { it.type() }
-                .flatMap { it.toList().toObservable() }
+                .flatMap { it.toList().toFlowable() }
                 .map { it.filterNotNull() }
                 .toMap { it[0].type() }
 
-        mDisposables = CompositeDisposable()
-        mDisposables.add(loadConferencesSingle
+        disposables = CompositeDisposable()
+        disposables.add(loadConferencesSingle
                 .subscribeBy(// named arguments for lambda Subscribers
                         onSuccess = { renderConferences(it) },
                         // TODO proper error handling

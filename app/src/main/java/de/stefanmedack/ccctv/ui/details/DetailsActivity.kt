@@ -19,7 +19,7 @@ import android.os.Bundle
 import de.stefanmedack.ccctv.R
 
 /**
- * Details activity class that loads [VideoDetailsFragment] class.
+ * Details activity class that loads [EventDetailsFragment] class.
  */
 class DetailsActivity : Activity() {
 

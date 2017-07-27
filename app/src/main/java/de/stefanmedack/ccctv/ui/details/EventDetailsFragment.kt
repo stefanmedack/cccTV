@@ -39,44 +39,42 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.subscribeBy
 import javax.inject.Inject
 
-/**
- * A wrapper fragment for leanback details screens.
- * It shows a detailed view of video and its metadata plus related videos.
- */
-class VideoDetailsFragment : DetailsFragment() {
+class EventDetailsFragment : DetailsFragment() {
 
-    private val TAG = "VideoDetailsFragment"
+    private val TAG = "EventDetailsFragment"
     private val ACTION_WATCH = 1L
+    private val ACTION_BOOKMARK = 2L
+    private val ACTION_SPEAKER = 3L
 
     @Inject
     lateinit var c3MediaService: RxC3MediaService
 
-    private var mSelectedEvent: Event? = null
+    private var selectedEvent: Event? = null
+    private var fullEvent: Event? = null
 
-    private lateinit var mDetailsBackground: DetailsFragmentBackgroundController
-    private lateinit var mPresenterSelector: ClassPresenterSelector
-    private lateinit var mAdapter: ArrayObjectAdapter
+    private lateinit var detailsBackground: DetailsFragmentBackgroundController
+    private lateinit var presenterSelector: ClassPresenterSelector
+    private lateinit var arrayObjectAdapter: ArrayObjectAdapter
 
     // TODO move into BaseFragment
-    lateinit var mDisposables: CompositeDisposable
+    lateinit var disposables: CompositeDisposable
 
-    var mFullEvent: Event? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         C3TVApp.graph.inject(this)
 
-        mDetailsBackground = DetailsFragmentBackgroundController(this)
+        detailsBackground = DetailsFragmentBackgroundController(this)
 
-        mSelectedEvent = activity.intent.getParcelableExtra<Event>(EVENT)
-        val selectedId = mSelectedEvent?.url?.substringAfterLast('/')?.toInt()
-        if (mSelectedEvent != null && selectedId != null) {
-            mPresenterSelector = ClassPresenterSelector()
-            mAdapter = ArrayObjectAdapter(mPresenterSelector)
+        selectedEvent = activity.intent.getParcelableExtra<Event>(EVENT)
+        val selectedId = selectedEvent?.url?.substringAfterLast('/')?.toInt()
+        if (selectedEvent != null && selectedId != null) {
+            presenterSelector = ClassPresenterSelector()
+            arrayObjectAdapter = ArrayObjectAdapter(presenterSelector)
             setupDetailsOverviewRow()
             setupDetailsOverviewRowPresenter()
-            adapter = mAdapter
-            initializeBackground(mSelectedEvent)
+            setAdapter(arrayObjectAdapter)
+            initializeBackground(selectedEvent)
 
             loadEventDetailAsync(selectedId)
         } else {
@@ -86,12 +84,12 @@ class VideoDetailsFragment : DetailsFragment() {
     }
 
     override fun onDestroy() {
-        mDisposables.clear()
+        disposables.clear()
         super.onDestroy()
     }
 
     private fun initializeBackground(event: Event?) {
-        mDetailsBackground.enableParallax()
+        detailsBackground.enableParallax()
         Glide.with(activity)
                 .load(event?.posterUrl)
                 .asBitmap()
@@ -100,19 +98,19 @@ class VideoDetailsFragment : DetailsFragment() {
                 .into<SimpleTarget<Bitmap>>(object : SimpleTarget<Bitmap>() {
                     override fun onResourceReady(bitmap: Bitmap,
                                                  glideAnimation: GlideAnimation<in Bitmap>) {
-                        mDetailsBackground.coverBitmap = bitmap
-                        mAdapter.notifyArrayItemRangeChanged(0, mAdapter.size())
+                        detailsBackground.coverBitmap = bitmap
+                        arrayObjectAdapter.notifyArrayItemRangeChanged(0, arrayObjectAdapter.size())
                     }
                 })
     }
 
     private fun setupDetailsOverviewRow() {
-        Log.d(TAG, "doInBackground: " + mSelectedEvent?.toString())
-        val row = DetailsOverviewRow(mSelectedEvent)
+        Log.d(TAG, "doInBackground: " + selectedEvent?.toString())
+        val row = DetailsOverviewRow(selectedEvent)
         row.imageDrawable = ContextCompat.getDrawable(activity, R.drawable.default_background)
 
         Glide.with(activity)
-                .load(mSelectedEvent?.thumbUrl)
+                .load(selectedEvent?.thumbUrl)
                 .centerCrop()
                 .error(R.drawable.default_background)
                 .into<SimpleTarget<GlideDrawable>>(object : SimpleTarget<GlideDrawable>(
@@ -122,19 +120,18 @@ class VideoDetailsFragment : DetailsFragment() {
                                                  glideAnimation: GlideAnimation<in GlideDrawable>) {
                         Log.d(TAG, "details overview card image url ready: " + resource)
                         row.imageDrawable = resource
-                        mAdapter.notifyArrayItemRangeChanged(0, mAdapter.size())
+                        arrayObjectAdapter.notifyArrayItemRangeChanged(0, arrayObjectAdapter.size())
                     }
                 })
 
         val actionAdapter = ArrayObjectAdapter()
+        actionAdapter.add(Action(ACTION_WATCH, resources.getString(R.string.watch_event)))
+        actionAdapter.add(Action(ACTION_BOOKMARK, resources.getString(R.string.bookmark_event)))
+        actionAdapter.add(Action(ACTION_SPEAKER, resources.getString(R.string.show_speaker)))
 
-        actionAdapter.add(
-                Action(
-                        ACTION_WATCH,
-                        resources.getString(R.string.watch_event)))
         row.actionsAdapter = actionAdapter
 
-        mAdapter.add(row)
+        arrayObjectAdapter.add(row)
     }
 
     private fun setupDetailsOverviewRowPresenter() {
@@ -152,15 +149,15 @@ class VideoDetailsFragment : DetailsFragment() {
 
         detailsPresenter.onActionClickedListener = OnActionClickedListener { action ->
             // TODO needs better async loading
-            if (action.id == ACTION_WATCH && mFullEvent != null) {
+            if (action.id == ACTION_WATCH && fullEvent != null) {
                 val intent = Intent(activity, ExoPlayerActivity::class.java)
-                intent.putExtra(EVENT, mFullEvent)
+                intent.putExtra(EVENT, fullEvent)
                 startActivity(intent)
             } else {
                 Toast.makeText(activity, action.toString(), Toast.LENGTH_SHORT).show()
             }
         }
-        mPresenterSelector.addClassPresenter(DetailsOverviewRow::class.java, detailsPresenter)
+        presenterSelector.addClassPresenter(DetailsOverviewRow::class.java, detailsPresenter)
     }
 
     // *********************************************
@@ -171,8 +168,8 @@ class VideoDetailsFragment : DetailsFragment() {
         val loadConferencesSingle = c3MediaService.getEvent(eventId)
                 .applySchedulers()
 
-        mDisposables = CompositeDisposable()
-        mDisposables.add(loadConferencesSingle
+        disposables = CompositeDisposable()
+        disposables.add(loadConferencesSingle
                 .subscribeBy(// named arguments for lambda Subscribers
                         onSuccess = { setFullEvent(it) },
                         // TODO proper error handling
@@ -181,6 +178,6 @@ class VideoDetailsFragment : DetailsFragment() {
     }
 
     private fun setFullEvent(event: Event) {
-        mFullEvent = event
+        fullEvent = event
     }
 }
