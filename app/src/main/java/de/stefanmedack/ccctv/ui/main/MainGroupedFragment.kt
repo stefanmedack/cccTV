@@ -10,6 +10,7 @@ import android.widget.Toast
 import de.stefanmedack.ccctv.C3TVApp
 import de.stefanmedack.ccctv.R
 import de.stefanmedack.ccctv.util.applySchedulers
+import de.stefanmedack.ccctv.util.plusAssign
 import de.stefanmedack.ccctv.util.type
 import info.metadude.kotlin.library.c3media.RxC3MediaService
 import info.metadude.kotlin.library.c3media.models.Conference
@@ -23,8 +24,6 @@ class MainGroupedFragment : BrowseFragment() {
     lateinit var c3MediaService: RxC3MediaService
 
     lateinit var disposables: CompositeDisposable
-
-    val loadedConferencesMap: ArrayList<List<Conference>> = arrayListOf()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -54,31 +53,44 @@ class MainGroupedFragment : BrowseFragment() {
 
     private fun renderConferences(mappedConferences: MutableMap<String, List<Conference>>) {
         adapter = ArrayObjectAdapter(ListRowPresenter())
-        mappedConferences.forEach {
-            (adapter as ArrayObjectAdapter).add(PageRow(HeaderItem(loadedConferencesMap.size.toLong(), it.key)))
-            loadedConferencesMap.add(it.value)
-        }
+        (adapter as ArrayObjectAdapter) += mappedConferences
+                .toSortedMap(Comparator { lhs, rhs -> getIndexForConferenceGroup(lhs) - getIndexForConferenceGroup(rhs) })
+                .map { PageRow(HeaderItem(it.key)) }
 
         BackgroundManager.getInstance(activity).let {
             it.attach(activity.window)
             mainFragmentRegistry.registerFragment(PageRow::class.java,
-                    PageRowFragmentFactory(loadedConferencesMap, it))
+                    PageRowFragmentFactory(mappedConferences, it))
         }
 
         startEntranceTransition()
     }
 
     private class PageRowFragmentFactory internal constructor(
-            private val loadedConferencesMap: ArrayList<List<Conference>>,
+            private val loadedConferencesMap: MutableMap<String, List<Conference>>,
             private val backgroundManager: BackgroundManager
     ) : BrowseFragment.FragmentFactory<Fragment>() {
 
         override fun createFragment(rowObj: Any): Fragment {
             val row = rowObj as Row
             backgroundManager.drawable = null
-            return GroupedConferencesFragment(loadedConferencesMap[row.headerItem.id.toInt()])
+            return GroupedConferencesFragment(loadedConferencesMap[row.headerItem.name] ?: listOf())
         }
     }
+
+    private val SORTING = listOf(
+            "congress",
+            "conferences",
+            "events",
+            "broadcast",
+            "other")
+
+    fun getIndexForConferenceGroup(group: String) =
+            if (SORTING.contains(group))
+                SORTING.indexOf(group)
+            else
+                SORTING.size
+
 
     private fun loadConferencesAsync() {
         val loadConferencesSingle = c3MediaService.getConferences()
