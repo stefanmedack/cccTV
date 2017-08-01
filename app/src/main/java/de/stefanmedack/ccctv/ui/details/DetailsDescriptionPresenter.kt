@@ -15,14 +15,14 @@
 package de.stefanmedack.ccctv.ui.details
 
 import android.support.v17.leanback.widget.AbstractDetailsDescriptionPresenter
-import info.metadude.kotlin.library.c3media.models.Event
+import de.stefanmedack.ccctv.model.MiniEvent
 
 class DetailsDescriptionPresenter : AbstractDetailsDescriptionPresenter() {
 
     override fun onBindDescription(
             viewHolder: AbstractDetailsDescriptionPresenter.ViewHolder,
             item: Any) {
-        val event = item as Event
+        val event = item as MiniEvent
 
         viewHolder.title.text = event.title
         viewHolder.subtitle.text = event.subtitle

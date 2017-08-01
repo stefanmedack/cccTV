@@ -24,51 +24,58 @@ import android.support.v17.leanback.app.VideoFragment
 import android.support.v17.leanback.app.VideoFragmentGlueHost
 import android.support.v17.leanback.media.PlaybackGlue
 import android.util.Log
+import de.stefanmedack.ccctv.C3TVApp
+import de.stefanmedack.ccctv.model.MiniEvent
 import de.stefanmedack.ccctv.util.EVENT
+import de.stefanmedack.ccctv.util.applySchedulers
 import de.stefanmedack.ccctv.util.playableVideoUrl
+import info.metadude.kotlin.library.c3media.RxC3MediaService
 import info.metadude.kotlin.library.c3media.models.Event
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.rxkotlin.subscribeBy
+import javax.inject.Inject
 
 class ExoPlayerFragment : VideoFragment() {
 
-    lateinit var mMediaPlayerGlue: VideoMediaPlayerGlue<ExoPlayerAdapter>
+    @Inject
+    lateinit var c3MediaService: RxC3MediaService
 
-    internal val mHost = VideoFragmentGlueHost(this)
-    internal val mOnAudioFocusChangeListener: AudioManager.OnAudioFocusChangeListener = AudioManager.OnAudioFocusChangeListener { }
+    lateinit var mediaPlayerGlue: VideoMediaPlayerGlue<ExoPlayerAdapter>
+
+    internal val glueHost = VideoFragmentGlueHost(this)
+    internal val onAudioFocusChangeListener: AudioManager.OnAudioFocusChangeListener = AudioManager.OnAudioFocusChangeListener { }
+
+    // TODO move into BaseFragment
+    lateinit var disposables: CompositeDisposable
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        C3TVApp.graph.inject(this)
 
         val playerAdapter = ExoPlayerAdapter(activity)
         playerAdapter.audioStreamType = AudioManager.USE_DEFAULT_STREAM_TYPE
-        mMediaPlayerGlue = VideoMediaPlayerGlue(activity, playerAdapter)
-        mMediaPlayerGlue.host = mHost
+        mediaPlayerGlue = VideoMediaPlayerGlue(activity, playerAdapter)
+        mediaPlayerGlue.host = glueHost
         val audioManager = activity
                 .getSystemService(Context.AUDIO_SERVICE) as AudioManager
-        if (audioManager.requestAudioFocus(mOnAudioFocusChangeListener, AudioManager.STREAM_MUSIC,
+        if (audioManager.requestAudioFocus(onAudioFocusChangeListener, AudioManager.STREAM_MUSIC,
                 AudioManager.AUDIOFOCUS_GAIN) != AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
             Log.w(TAG, "video player cannot obtain audio focus!")
         }
 
-        val event = activity.intent.getParcelableExtra<Event>(EVENT)
-        if (event != null) {
-            mMediaPlayerGlue.title = event.title
-            mMediaPlayerGlue.subtitle = event.subtitle
+        val event = activity.intent.getParcelableExtra<MiniEvent>(EVENT)
+        loadEventDetailAsync(event?.url?.substringAfterLast('/')?.toIntOrNull())
+    }
 
-            val playableVideoUrl = event.playableVideoUrl()
-            Log.wtf(TAG, playableVideoUrl)
-            // TODO handle null urls
-            mMediaPlayerGlue.playerAdapter.setDataSource(
-                    Uri.parse(playableVideoUrl))
-        }
-        //        PlaybackSeekDiskDataProvider.setDemoSeekProvider(mMediaPlayerGlue)
-        mMediaPlayerGlue.isSeekEnabled = true
-        playWhenReady(mMediaPlayerGlue)
-        backgroundType = PlaybackFragment.BG_LIGHT
+
+    override fun onDestroy() {
+        disposables.clear()
+        super.onDestroy()
     }
 
     override fun onPause() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N && activity.isInPictureInPictureMode) {
-            mMediaPlayerGlue.pause()
+            mediaPlayerGlue.pause()
         }
         super.onPause()
     }
@@ -90,6 +97,42 @@ class ExoPlayerFragment : VideoFragment() {
 
     companion object {
         val TAG = "VideoConsumptionFrag"
+    }
+
+    // *********************************************
+    // TODO encapsulate (MVP/MVVM/MVI)
+    // *********************************************
+
+    private fun loadEventDetailAsync(eventId: Int?) {
+        if (eventId == null)
+            return
+        val loadConferencesSingle = c3MediaService.getEvent(eventId)
+                .applySchedulers()
+
+        disposables = CompositeDisposable()
+        disposables.add(loadConferencesSingle
+                .subscribeBy(// named arguments for lambda Subscribers
+                        onSuccess = { playVideo(it) },
+                        // TODO proper error handling
+                        onError = { it.printStackTrace() }
+                ))
+    }
+
+    private fun playVideo(event: Event) {
+        mediaPlayerGlue.title = event.title
+        mediaPlayerGlue.subtitle = event.subtitle
+
+        val playableVideoUrl = event.playableVideoUrl()
+        Log.wtf(TAG, playableVideoUrl)
+        // TODO handle null urls
+        mediaPlayerGlue.playerAdapter.setDataSource(
+                Uri.parse(playableVideoUrl))
+
+        //        PlaybackSeekDiskDataProvider.setDemoSeekProvider(mediaPlayerGlue)
+        mediaPlayerGlue.isSeekEnabled = true
+        playWhenReady(mediaPlayerGlue)
+        backgroundType = PlaybackFragment.BG_LIGHT
+
     }
 
 }

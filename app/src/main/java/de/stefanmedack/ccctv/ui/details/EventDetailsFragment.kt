@@ -29,15 +29,10 @@ import com.bumptech.glide.request.animation.GlideAnimation
 import com.bumptech.glide.request.target.SimpleTarget
 import de.stefanmedack.ccctv.C3TVApp
 import de.stefanmedack.ccctv.R
+import de.stefanmedack.ccctv.model.MiniEvent
 import de.stefanmedack.ccctv.ui.main.MainActivity
 import de.stefanmedack.ccctv.ui.playback.ExoPlayerActivity
 import de.stefanmedack.ccctv.util.EVENT
-import de.stefanmedack.ccctv.util.applySchedulers
-import info.metadude.kotlin.library.c3media.RxC3MediaService
-import info.metadude.kotlin.library.c3media.models.Event
-import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.rxkotlin.subscribeBy
-import javax.inject.Inject
 
 class EventDetailsFragment : DetailsFragment() {
 
@@ -46,19 +41,11 @@ class EventDetailsFragment : DetailsFragment() {
     private val ACTION_BOOKMARK = 2L
     private val ACTION_SPEAKER = 3L
 
-    @Inject
-    lateinit var c3MediaService: RxC3MediaService
-
-    private var selectedEvent: Event? = null
-    private var fullEvent: Event? = null
+    private var selectedEvent: MiniEvent? = null
 
     private lateinit var detailsBackground: DetailsFragmentBackgroundController
     private lateinit var presenterSelector: ClassPresenterSelector
     private lateinit var arrayObjectAdapter: ArrayObjectAdapter
-
-    // TODO move into BaseFragment
-    lateinit var disposables: CompositeDisposable
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -66,29 +53,22 @@ class EventDetailsFragment : DetailsFragment() {
 
         detailsBackground = DetailsFragmentBackgroundController(this)
 
-        selectedEvent = activity.intent.getParcelableExtra<Event>(EVENT)
+        selectedEvent = activity.intent.getParcelableExtra<MiniEvent>(EVENT)
         val selectedId = selectedEvent?.url?.substringAfterLast('/')?.toInt()
         if (selectedEvent != null && selectedId != null) {
             presenterSelector = ClassPresenterSelector()
             arrayObjectAdapter = ArrayObjectAdapter(presenterSelector)
             setupDetailsOverviewRow()
             setupDetailsOverviewRowPresenter()
-            setAdapter(arrayObjectAdapter)
+            adapter = arrayObjectAdapter
             initializeBackground(selectedEvent)
-
-            loadEventDetailAsync(selectedId)
         } else {
             val intent = Intent(activity, MainActivity::class.java)
             startActivity(intent)
         }
     }
 
-    override fun onDestroy() {
-        disposables.clear()
-        super.onDestroy()
-    }
-
-    private fun initializeBackground(event: Event?) {
+    private fun initializeBackground(event: MiniEvent?) {
         detailsBackground.enableParallax()
         Glide.with(activity)
                 .load(event?.posterUrl)
@@ -149,35 +129,14 @@ class EventDetailsFragment : DetailsFragment() {
 
         detailsPresenter.onActionClickedListener = OnActionClickedListener { action ->
             // TODO needs better async loading
-            if (action.id == ACTION_WATCH && fullEvent != null) {
+            if (action.id == ACTION_WATCH) {
                 val intent = Intent(activity, ExoPlayerActivity::class.java)
-                intent.putExtra(EVENT, fullEvent)
+                intent.putExtra(EVENT, selectedEvent)
                 startActivity(intent)
             } else {
                 Toast.makeText(activity, action.toString(), Toast.LENGTH_SHORT).show()
             }
         }
         presenterSelector.addClassPresenter(DetailsOverviewRow::class.java, detailsPresenter)
-    }
-
-    // *********************************************
-    // TODO encapsulate (MVP/MVVM/MVI)
-    // *********************************************
-
-    private fun loadEventDetailAsync(eventId: Int) {
-        val loadConferencesSingle = c3MediaService.getEvent(eventId)
-                .applySchedulers()
-
-        disposables = CompositeDisposable()
-        disposables.add(loadConferencesSingle
-                .subscribeBy(// named arguments for lambda Subscribers
-                        onSuccess = { setFullEvent(it) },
-                        // TODO proper error handling
-                        onError = { it.printStackTrace() }
-                ))
-    }
-
-    private fun setFullEvent(event: Event) {
-        fullEvent = event
     }
 }

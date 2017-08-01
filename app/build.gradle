@@ -10,14 +10,11 @@ ext {
     glassfishVersion = "10.0-b28"
     glideVersion = "3.8.0"
     junitVersion = "4.12"
-    moshiVersion = "1.4.0"
-    okhttpVersion = "3.8.1"
     paperParcelVersion = "2.0.1"
-    retrofitVersion = "2.3.0"
     rxAndroidVersion = "2.0.1"
     rxJavaVersion = "2.1.1"
     rxKotlinVersion = "2.1.0"
-    supportLibVersion = "26.0.0-beta2"
+    supportLibVersion = "26.0.0"
     threetenbpVersion = "1.3.5"
 }
 
@@ -47,17 +44,14 @@ dependencies {
     implementation "com.android.support:appcompat-v7:$supportLibVersion"
     implementation "com.google.android.exoplayer:exoplayer:$exoplayerVersion"
     implementation "com.github.bumptech.glide:glide:$glideVersion"
-    implementation "com.squareup.retrofit2:retrofit:$retrofitVersion"
-    implementation "com.squareup.retrofit2:converter-moshi:$retrofitVersion"
-    implementation "com.squareup.okhttp3:okhttp:$okhttpVersion"
-    implementation "com.squareup.okhttp3:logging-interceptor:$okhttpVersion"
-    implementation "com.squareup.moshi:moshi:$moshiVersion"
     implementation "org.threeten:threetenbp:$threetenbpVersion"
+//    TODO PR to Tobis Repo + replace by original release version
+    implementation "com.github.stefanmedack:c3media-base:c9a508e640"
     implementation "io.reactivex.rxjava2:rxjava:$rxJavaVersion"
     implementation "io.reactivex.rxjava2:rxkotlin:$rxKotlinVersion"
     implementation "io.reactivex.rxjava2:rxandroid:$rxAndroidVersion"
-    implementation "com.squareup.retrofit2:adapter-rxjava2:$retrofitVersion"
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
+
     implementation "nz.bradcampbell:paperparcel:$paperParcelVersion"
     implementation "nz.bradcampbell:paperparcel-kotlin:$paperParcelVersion" // Optional
     kapt "nz.bradcampbell:paperparcel-compiler:$paperParcelVersion"

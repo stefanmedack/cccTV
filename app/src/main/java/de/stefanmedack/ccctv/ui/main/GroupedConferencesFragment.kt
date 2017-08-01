@@ -7,6 +7,7 @@ import android.support.v17.leanback.app.RowsFragment
 import android.support.v17.leanback.widget.*
 import android.support.v4.app.ActivityOptionsCompat
 import de.stefanmedack.ccctv.C3TVApp
+import de.stefanmedack.ccctv.model.MiniEvent
 import de.stefanmedack.ccctv.ui.details.DetailsActivity
 import de.stefanmedack.ccctv.util.EVENT
 import de.stefanmedack.ccctv.util.applySchedulers
@@ -65,7 +66,7 @@ class GroupedConferencesFragment(val conferenceStubs: List<Conference>) : RowsFr
                                    rowViewHolder: RowPresenter.ViewHolder, row: Row) {
             if (item is Event) {
                 val intent = Intent(activity, DetailsActivity::class.java)
-                intent.putExtra(EVENT, item)
+                intent.putExtra(EVENT, MiniEvent.ModelMapper.from(item))
 
                 val bundle = ActivityOptionsCompat.makeSceneTransitionAnimation(
                         activity,

@@ -5,6 +5,7 @@ import de.stefanmedack.ccctv.C3TVApp
 import de.stefanmedack.ccctv.ui.details.EventDetailsFragment
 import de.stefanmedack.ccctv.ui.main.GroupedConferencesFragment
 import de.stefanmedack.ccctv.ui.main.MainGroupedFragment
+import de.stefanmedack.ccctv.ui.playback.ExoPlayerFragment
 import javax.inject.Singleton
 
 @Singleton
@@ -15,4 +16,5 @@ interface ApplicationComponent {
     fun inject(mainGroupedFragment: MainGroupedFragment)
     fun inject(groupedConferencesFragment: GroupedConferencesFragment)
     fun inject(eventDetailsFragment: EventDetailsFragment)
+    fun inject(exoPlayerFragment: ExoPlayerFragment)
 }

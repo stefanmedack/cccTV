@@ -2,6 +2,7 @@ package de.stefanmedack.ccctv.module
 
 import android.app.Application
 import android.content.Context
+import com.squareup.moshi.Moshi
 import dagger.Module
 import dagger.Provides
 import de.stefanmedack.ccctv.util.CACHE_MAX_SIZE_HTTP
