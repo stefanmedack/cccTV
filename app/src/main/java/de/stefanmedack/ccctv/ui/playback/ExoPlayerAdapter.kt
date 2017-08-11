@@ -23,12 +23,7 @@ import de.stefanmedack.ccctv.R
 /**
  * This implementation extends the [PlayerAdapter] with a [SimpleExoPlayer].
  */
-class ExoPlayerAdapter
-/**
- * Constructor.
- */
-(context: Context) : PlayerAdapter(), ExoPlayer.EventListener {
-
+class ExoPlayerAdapter(context: Context) : PlayerAdapter(), Player.EventListener {
     var context: Context
         internal set
     internal val mPlayer: SimpleExoPlayer
@@ -49,7 +44,8 @@ class ExoPlayerAdapter
 
     init {
         this.context = context
-        mPlayer = ExoPlayerFactory.newSimpleInstance(this.context,
+        mPlayer = ExoPlayerFactory.newSimpleInstance(
+                DefaultRenderersFactory(context),
                 DefaultTrackSelector(),
                 DefaultLoadControl())
         mPlayer.addListener(this)
@@ -143,7 +139,7 @@ class ExoPlayerAdapter
         get() = 16
 
     override fun isPlaying(): Boolean {
-        val exoPlayerIsPlaying = mPlayer.playbackState == ExoPlayer.STATE_READY && mPlayer.playWhenReady
+        val exoPlayerIsPlaying = mPlayer.playbackState == Player.STATE_READY && mPlayer.playWhenReady
         return mInitialized && exoPlayerIsPlaying
     }
 
@@ -264,14 +260,14 @@ class ExoPlayerAdapter
 
     override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
         mBufferingStart = false
-        if (playbackState == ExoPlayer.STATE_READY && !mInitialized) {
+        if (playbackState == Player.STATE_READY && !mInitialized) {
             mInitialized = true
             if (mSurfaceHolderGlueHost == null || mHasDisplay) {
                 callback.onPreparedStateChanged(this@ExoPlayerAdapter)
             }
-        } else if (playbackState == ExoPlayer.STATE_BUFFERING) {
+        } else if (playbackState == Player.STATE_BUFFERING) {
             mBufferingStart = true
-        } else if (playbackState == ExoPlayer.STATE_ENDED) {
+        } else if (playbackState == Player.STATE_ENDED) {
             callback.onPlayStateChanged(this@ExoPlayerAdapter)
             callback.onPlayCompleted(this@ExoPlayerAdapter)
         }
@@ -292,4 +288,8 @@ class ExoPlayerAdapter
     override fun onPositionDiscontinuity() {}
 
     override fun onTimelineChanged(timeline: Timeline?, manifest: Any?) {}
+
+    override fun onPlaybackParametersChanged(playbackParameters: PlaybackParameters?) {}
+
+    override fun onRepeatModeChanged(repeatMode: Int) {}
 }

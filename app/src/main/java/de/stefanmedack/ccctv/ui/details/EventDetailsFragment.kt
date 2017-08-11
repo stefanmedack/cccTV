@@ -128,7 +128,6 @@ class EventDetailsFragment : DetailsFragment() {
         detailsPresenter.isParticipatingEntranceTransition = true
 
         detailsPresenter.onActionClickedListener = OnActionClickedListener { action ->
-            // TODO needs better async loading
             if (action.id == ACTION_WATCH) {
                 val intent = Intent(activity, ExoPlayerActivity::class.java)
                 intent.putExtra(EVENT, selectedEvent)

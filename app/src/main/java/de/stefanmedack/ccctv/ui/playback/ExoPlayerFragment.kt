@@ -123,7 +123,7 @@ class ExoPlayerFragment : VideoFragment() {
         mediaPlayerGlue.subtitle = event.subtitle
 
         val playableVideoUrl = event.playableVideoUrl()
-        Log.wtf(TAG, playableVideoUrl)
+        Log.d(TAG, playableVideoUrl)
         // TODO handle null urls
         mediaPlayerGlue.playerAdapter.setDataSource(
                 Uri.parse(playableVideoUrl))
