@@ -1,12 +1,12 @@
-package de.stefanmedack.ccctv.module
+package de.stefanmedack.ccctv
 
-import android.app.Application
 import android.content.Context
-import com.squareup.moshi.Moshi
 import dagger.Module
 import dagger.Provides
+import de.stefanmedack.ccctv.C3TVScopes.ApplicationContext
+import de.stefanmedack.ccctv.C3TVScopes.CacheDir
 import de.stefanmedack.ccctv.util.CACHE_MAX_SIZE_HTTP
-import info.metadude.kotlin.library.c3media.ApiModule
+import info.metadude.kotlin.library.c3media.ApiModule.provideRxC3MediaService
 import info.metadude.kotlin.library.c3media.RxC3MediaService
 import okhttp3.Cache
 import okhttp3.OkHttpClient
@@ -15,19 +15,13 @@ import java.io.File
 import javax.inject.Singleton
 
 @Module
-class AppModule(private val application: Application) {
-    @Provides
-    @Singleton
-    @ForApplication
-    fun provideApplicationContext(): Context {
-        return application
-    }
+class C3MediaModule {
 
     @Provides
     @Singleton
     fun provideC3MediaService(@CacheDir cacheDir: File?): RxC3MediaService {
         val interceptor = HttpLoggingInterceptor()
-        interceptor.level = HttpLoggingInterceptor.Level.NONE
+        interceptor.level = HttpLoggingInterceptor.Level.HEADERS
         val okHttpClient = OkHttpClient.Builder().run {
             addNetworkInterceptor(interceptor)
             if (null != cacheDir) {
@@ -39,12 +33,13 @@ class AppModule(private val application: Application) {
             }
             build()
         }
-        return ApiModule.provideRxC3MediaService("https://api.media.ccc.de", okHttpClient)
+        return provideRxC3MediaService("https://api.media.ccc.de", okHttpClient)
     }
 
     @Provides
     @CacheDir
-    internal fun provideCacheDir(): File {
-        return application.cacheDir
+    @Singleton
+    internal fun provideCacheDir(@ApplicationContext context: Context): File {
+        return context.cacheDir
     }
 }

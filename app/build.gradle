@@ -5,12 +5,11 @@ apply plugin: 'kotlin-kapt'
 
 ext {
     assertjVersion = "3.8.0"
-    daggerVersion = "2.4"
+    daggerVersion = "2.11"
     exoplayerVersion = "r2.2.0"
-    glassfishVersion = "10.0-b28"
     glideVersion = "3.8.0"
     junitVersion = "4.12"
-    paperParcelVersion = "2.0.1"
+    paperParcelVersion = "2.0.2"
     rxAndroidVersion = "2.0.1"
     rxJavaVersion = "2.1.1"
     rxKotlinVersion = "2.1.0"
@@ -20,7 +19,7 @@ ext {
 
 android {
     compileSdkVersion 26
-    buildToolsVersion "26.0.0"
+    buildToolsVersion "26.0.1"
     defaultConfig {
         applicationId "de.stefanmedack.ccctv"
         minSdkVersion 21
@@ -59,7 +58,6 @@ dependencies {
     //Dagger 2 dependencies
     implementation "com.google.dagger:dagger:$daggerVersion"
     kapt "com.google.dagger:dagger-compiler:$daggerVersion"
-    provided "org.glassfish:javax.annotation:$glassfishVersion"
 
     testCompile "junit:junit:$junitVersion"
     testCompile "org.assertj:assertj-core:$assertjVersion"
