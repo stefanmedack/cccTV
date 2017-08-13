@@ -1,15 +1,15 @@
 package de.stefanmedack.ccctv.ui.base
 
-import android.app.Activity
-import android.app.Fragment
 import android.os.Bundle
+import android.support.v4.app.Fragment
+import android.support.v4.app.FragmentActivity
 import dagger.android.AndroidInjection
 import dagger.android.AndroidInjector
 import dagger.android.DispatchingAndroidInjector
-import dagger.android.HasFragmentInjector
+import dagger.android.support.HasSupportFragmentInjector
 import javax.inject.Inject
 
-abstract class BaseInjectibleActivity  : Activity(), HasFragmentInjector {
+abstract class BaseInjectibleActivity : FragmentActivity(), HasSupportFragmentInjector {
 
     @Inject
     lateinit var dispatchingAndroidInjector: DispatchingAndroidInjector<Fragment>
@@ -19,6 +19,6 @@ abstract class BaseInjectibleActivity  : Activity(), HasFragmentInjector {
         super.onCreate(savedInstanceState)
     }
 
-    override fun fragmentInjector(): AndroidInjector<Fragment>
+    override fun supportFragmentInjector(): AndroidInjector<Fragment>
             = dispatchingAndroidInjector
 }

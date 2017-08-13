@@ -20,11 +20,11 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.support.v17.leanback.app.PlaybackFragment
-import android.support.v17.leanback.app.VideoFragment
-import android.support.v17.leanback.app.VideoFragmentGlueHost
+import android.support.v17.leanback.app.VideoSupportFragment
+import android.support.v17.leanback.app.VideoSupportFragmentGlueHost
 import android.support.v17.leanback.media.PlaybackGlue
 import android.util.Log
-import dagger.android.AndroidInjection
+import dagger.android.support.AndroidSupportInjection
 import de.stefanmedack.ccctv.model.MiniEvent
 import de.stefanmedack.ccctv.util.EVENT
 import de.stefanmedack.ccctv.util.applySchedulers
@@ -35,21 +35,20 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.subscribeBy
 import javax.inject.Inject
 
-class ExoPlayerFragment : VideoFragment() {
+class ExoPlayerFragment : VideoSupportFragment() {
 
     @Inject
     lateinit var c3MediaService: RxC3MediaService
 
     lateinit var mediaPlayerGlue: VideoMediaPlayerGlue<ExoPlayerAdapter>
 
-    internal val glueHost = VideoFragmentGlueHost(this)
+    internal val glueHost = VideoSupportFragmentGlueHost(this)
     internal val onAudioFocusChangeListener: AudioManager.OnAudioFocusChangeListener = AudioManager.OnAudioFocusChangeListener { }
 
-    // TODO move into BaseFragment
-    lateinit var disposables: CompositeDisposable
+    val disposable = CompositeDisposable()
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        AndroidInjection.inject(this)
+        AndroidSupportInjection.inject(this)
         super.onCreate(savedInstanceState)
 
         val playerAdapter = ExoPlayerAdapter(activity)
@@ -69,7 +68,7 @@ class ExoPlayerFragment : VideoFragment() {
 
 
     override fun onDestroy() {
-        disposables.clear()
+        disposable.clear()
         super.onDestroy()
     }
 
@@ -109,8 +108,7 @@ class ExoPlayerFragment : VideoFragment() {
         val loadConferencesSingle = c3MediaService.getEvent(eventId)
                 .applySchedulers()
 
-        disposables = CompositeDisposable()
-        disposables.add(loadConferencesSingle
+        disposable.add(loadConferencesSingle
                 .subscribeBy(// named arguments for lambda Subscribers
                         onSuccess = { playVideo(it) },
                         // TODO proper error handling

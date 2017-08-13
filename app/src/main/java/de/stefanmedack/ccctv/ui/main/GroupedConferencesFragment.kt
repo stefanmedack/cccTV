@@ -3,10 +3,10 @@ package de.stefanmedack.ccctv.ui.main
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
-import android.support.v17.leanback.app.RowsFragment
+import android.support.v17.leanback.app.RowsSupportFragment
 import android.support.v17.leanback.widget.*
 import android.support.v4.app.ActivityOptionsCompat
-import dagger.android.AndroidInjection
+import dagger.android.support.AndroidSupportInjection
 import de.stefanmedack.ccctv.model.MiniEvent
 import de.stefanmedack.ccctv.ui.details.DetailsActivity
 import de.stefanmedack.ccctv.util.EVENT
@@ -20,12 +20,12 @@ import io.reactivex.rxkotlin.toFlowable
 import javax.inject.Inject
 
 @SuppressLint("ValidFragment")
-class GroupedConferencesFragment(val conferenceStubs: List<Conference>) : RowsFragment() {
+class GroupedConferencesFragment(val conferenceStubs: List<Conference>) : RowsSupportFragment() {
 
     @Inject
     lateinit var c3MediaService: RxC3MediaService
 
-    lateinit var disposables: CompositeDisposable
+    val disposable = CompositeDisposable()
 
     init {
         adapter = ArrayObjectAdapter(ListRowPresenter())
@@ -33,13 +33,13 @@ class GroupedConferencesFragment(val conferenceStubs: List<Conference>) : RowsFr
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        AndroidInjection.inject(this)
+        AndroidSupportInjection.inject(this)
         super.onCreate(savedInstanceState)
         loadConferencesAsync()
     }
 
     override fun onDestroy() {
-        disposables.clear()
+        disposable.clear()
         super.onDestroy()
     }
 
@@ -88,8 +88,7 @@ class GroupedConferencesFragment(val conferenceStubs: List<Conference>) : RowsFr
                 }
                 .toSortedList(compareByDescending(Conference::title))
 
-        disposables = CompositeDisposable()
-        disposables.add(loadConferencesSingle
+        disposable.add(loadConferencesSingle
                 .subscribeBy(// named arguments for lambda Subscribers
                         onSuccess = { renderConferences(it) },
                         // TODO proper error handling

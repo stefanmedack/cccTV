@@ -1,13 +1,14 @@
 package de.stefanmedack.ccctv.ui.main
 
-import android.app.Fragment
 import android.os.Bundle
 import android.support.v17.leanback.app.BackgroundManager
 import android.support.v17.leanback.app.BrowseFragment
+import android.support.v17.leanback.app.BrowseSupportFragment
 import android.support.v17.leanback.widget.*
+import android.support.v4.app.Fragment
 import android.support.v4.content.ContextCompat
 import android.widget.Toast
-import dagger.android.AndroidInjection
+import dagger.android.support.AndroidSupportInjection
 import de.stefanmedack.ccctv.R
 import de.stefanmedack.ccctv.util.applySchedulers
 import de.stefanmedack.ccctv.util.plusAssign
@@ -18,15 +19,15 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.subscribeBy
 import javax.inject.Inject
 
-class MainFragment : BrowseFragment() {
+class MainFragment : BrowseSupportFragment() {
 
     @Inject
     lateinit var c3MediaService: RxC3MediaService
 
-    private val disposable: CompositeDisposable = CompositeDisposable()
+    private val disposable = CompositeDisposable()
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        AndroidInjection.inject(this)
+        AndroidSupportInjection.inject(this)
         super.onCreate(savedInstanceState)
         setupUi()
         loadConferencesAsync()
@@ -69,7 +70,7 @@ class MainFragment : BrowseFragment() {
     private class PageRowFragmentFactory internal constructor(
             private val loadedConferencesMap: MutableMap<String, List<Conference>>,
             private val backgroundManager: BackgroundManager
-    ) : BrowseFragment.FragmentFactory<Fragment>() {
+    ) : BrowseSupportFragment.FragmentFactory<Fragment>() {
 
         override fun createFragment(rowObj: Any): Fragment {
             val row = rowObj as Row

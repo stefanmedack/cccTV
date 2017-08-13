@@ -31,7 +31,7 @@ class ExoPlayerActivity : BaseInjectibleActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_video_example)
 
-        val ft = fragmentManager.beginTransaction()
+        val ft = supportFragmentManager.beginTransaction()
         ft.add(R.id.videoFragment, ExoPlayerFragment(),
                 ExoPlayerFragment.TAG)
         ft.commit()
