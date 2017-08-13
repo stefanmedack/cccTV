@@ -26,6 +26,6 @@ abstract class MainActivityModule {
     abstract fun contributeMainFragment(): MainFragment
 
     @ContributesAndroidInjector
-    abstract fun contributeGroupedConferencesFragment(): GroupedConferencesFragment
+    abstract fun contributeConferenceGroupDetailFragment(): ConferenceGroupDetailFragment
 
 }

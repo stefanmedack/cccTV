@@ -7,7 +7,7 @@ import dagger.Component
 import dagger.android.AndroidInjector
 import dagger.android.support.AndroidSupportInjectionModule
 import de.stefanmedack.ccctv.C3TVApp
-import de.stefanmedack.ccctv.di.C3TVScopes.ApplicationContext
+import de.stefanmedack.ccctv.di.Scopes.ApplicationContext
 import javax.inject.Singleton
 
 @Singleton

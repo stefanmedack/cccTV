@@ -1,6 +1,7 @@
 package de.stefanmedack.ccctv.ui.main
 
-import android.annotation.SuppressLint
+import android.arch.lifecycle.ViewModelProvider
+import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
 import android.os.Bundle
 import android.support.v17.leanback.app.RowsSupportFragment
@@ -9,33 +10,32 @@ import android.support.v4.app.ActivityOptionsCompat
 import dagger.android.support.AndroidSupportInjection
 import de.stefanmedack.ccctv.model.MiniEvent
 import de.stefanmedack.ccctv.ui.details.DetailsActivity
+import de.stefanmedack.ccctv.util.CONFERENCE_GROUP
 import de.stefanmedack.ccctv.util.EVENT
-import de.stefanmedack.ccctv.util.applySchedulers
-import info.metadude.kotlin.library.c3media.RxC3MediaService
 import info.metadude.kotlin.library.c3media.models.Conference
 import info.metadude.kotlin.library.c3media.models.Event
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.subscribeBy
-import io.reactivex.rxkotlin.toFlowable
 import javax.inject.Inject
 
-@SuppressLint("ValidFragment")
-class GroupedConferencesFragment(val conferenceStubs: List<Conference>) : RowsSupportFragment() {
+class ConferenceGroupDetailFragment : RowsSupportFragment() {
 
     @Inject
-    lateinit var c3MediaService: RxC3MediaService
+    lateinit var viewModelFactory: ViewModelProvider.Factory
 
-    val disposable = CompositeDisposable()
+    private lateinit var viewModel: MainViewModel
 
-    init {
-        adapter = ArrayObjectAdapter(ListRowPresenter())
-        onItemViewClickedListener = ItemViewClickedListener()
-    }
+    private val disposable = CompositeDisposable()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         AndroidSupportInjection.inject(this)
         super.onCreate(savedInstanceState)
-        loadConferencesAsync()
+    }
+
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        viewModel = ViewModelProviders.of(activity, viewModelFactory).get(MainViewModel::class.java)
+        setupUi()
     }
 
     override fun onDestroy() {
@@ -43,21 +43,33 @@ class GroupedConferencesFragment(val conferenceStubs: List<Conference>) : RowsSu
         super.onDestroy()
     }
 
-    private fun renderConferences(conferences: MutableList<Conference>) {
+    private fun setupUi() {
+        adapter = ArrayObjectAdapter(ListRowPresenter())
+        onItemViewClickedListener = ItemViewClickedListener()
+
+        viewModel.getConferencesWithEvents(arguments.getString(CONFERENCE_GROUP, ""))
+                .subscribeBy(// named arguments for lambda Subscribers
+                        onSuccess = { render(it) },
+                        // TODO proper error handling
+                        onError = { it.printStackTrace() }
+                )
+    }
+
+    private fun render(conferences: List<Conference>) {
         mainFragmentAdapter.fragmentHost.notifyDataReady(mainFragmentAdapter)
         for (conference in conferences) {
             (adapter as ArrayObjectAdapter).add(createEventRow(conference))
         }
     }
 
-    private fun createEventRow(conference: Conference?): Row {
+    private fun createEventRow(conference: Conference): Row {
         val presenterSelector = CardPresenter()
         val adapter = ArrayObjectAdapter(presenterSelector)
-        for (event in conference?.events ?: listOf()) {
+        for (event in conference.events ?: listOf()) {
             adapter.add(event)
         }
 
-        val headerItem = HeaderItem(conference?.title ?: "")
+        val headerItem = HeaderItem(conference.title ?: "")
         return ListRow(headerItem, adapter)
     }
 
@@ -77,22 +89,13 @@ class GroupedConferencesFragment(val conferenceStubs: List<Conference>) : RowsSu
         }
     }
 
-    private fun loadConferencesAsync() {
-        val loadConferencesSingle = conferenceStubs.toFlowable()
-                .map { it.url?.substringAfterLast('/')?.toIntOrNull() ?: -1 }
-                .filter { it > 0 }
-                .flatMap {
-                    c3MediaService.getConference(it)
-                            .applySchedulers()
-                            .toFlowable()
-                }
-                .toSortedList(compareByDescending(Conference::title))
-
-        disposable.add(loadConferencesSingle
-                .subscribeBy(// named arguments for lambda Subscribers
-                        onSuccess = { renderConferences(it) },
-                        // TODO proper error handling
-                        onError = { it.printStackTrace() }
-                ))
+    companion object {
+        fun create(conferenceGroup: String): ConferenceGroupDetailFragment {
+            val fragment = ConferenceGroupDetailFragment()
+            val args = Bundle()
+            args.putString(CONFERENCE_GROUP, conferenceGroup)
+            fragment.arguments = args
+            return fragment
+        }
     }
 }
