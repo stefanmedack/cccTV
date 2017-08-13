@@ -14,14 +14,14 @@
 
 package de.stefanmedack.ccctv.ui.details
 
-import android.app.Activity
 import android.os.Bundle
+import android.support.v4.app.FragmentActivity
 import de.stefanmedack.ccctv.R
 
 /**
  * Details activity class that loads [EventDetailsFragment] class.
  */
-class DetailsActivity : Activity() {
+class DetailsActivity : FragmentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

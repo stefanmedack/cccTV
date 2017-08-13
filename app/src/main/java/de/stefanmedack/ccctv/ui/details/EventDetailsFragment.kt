@@ -17,8 +17,8 @@ package de.stefanmedack.ccctv.ui.details
 import android.content.Intent
 import android.graphics.Bitmap
 import android.os.Bundle
-import android.support.v17.leanback.app.DetailsFragment
-import android.support.v17.leanback.app.DetailsFragmentBackgroundController
+import android.support.v17.leanback.app.DetailsSupportFragment
+import android.support.v17.leanback.app.DetailsSupportFragmentBackgroundController
 import android.support.v17.leanback.widget.*
 import android.support.v4.content.ContextCompat
 import android.util.Log
@@ -33,7 +33,7 @@ import de.stefanmedack.ccctv.ui.main.MainActivity
 import de.stefanmedack.ccctv.ui.playback.ExoPlayerActivity
 import de.stefanmedack.ccctv.util.EVENT
 
-class EventDetailsFragment : DetailsFragment() {
+class EventDetailsFragment : DetailsSupportFragment() {
 
     private val TAG = "EventDetailsFragment"
     private val ACTION_WATCH = 1L
@@ -42,14 +42,14 @@ class EventDetailsFragment : DetailsFragment() {
 
     private var selectedEvent: MiniEvent? = null
 
-    private lateinit var detailsBackground: DetailsFragmentBackgroundController
+    private lateinit var detailsBackground: DetailsSupportFragmentBackgroundController
     private lateinit var presenterSelector: ClassPresenterSelector
     private lateinit var arrayObjectAdapter: ArrayObjectAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        detailsBackground = DetailsFragmentBackgroundController(this)
+        detailsBackground = DetailsSupportFragmentBackgroundController(this)
 
         selectedEvent = activity.intent.getParcelableExtra<MiniEvent>(EVENT)
         val selectedId = selectedEvent?.url?.substringAfterLast('/')?.toInt()
