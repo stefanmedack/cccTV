@@ -20,7 +20,7 @@ interface AppComponent : AndroidInjector<C3TVApp> {
 
     @Component.Builder
     interface Builder {
-        fun build(): AppComponent
+        fun build(): AndroidInjector<C3TVApp>
         @BindsInstance fun application(@ApplicationContext context: Context): Builder
     }
 
