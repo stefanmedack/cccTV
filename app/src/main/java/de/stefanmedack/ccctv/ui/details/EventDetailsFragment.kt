@@ -27,7 +27,6 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.GlideDrawable
 import com.bumptech.glide.request.animation.GlideAnimation
 import com.bumptech.glide.request.target.SimpleTarget
-import de.stefanmedack.ccctv.C3TVApp
 import de.stefanmedack.ccctv.R
 import de.stefanmedack.ccctv.model.MiniEvent
 import de.stefanmedack.ccctv.ui.main.MainActivity
@@ -49,7 +48,6 @@ class EventDetailsFragment : DetailsFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        C3TVApp.graph.inject(this)
 
         detailsBackground = DetailsFragmentBackgroundController(this)
 

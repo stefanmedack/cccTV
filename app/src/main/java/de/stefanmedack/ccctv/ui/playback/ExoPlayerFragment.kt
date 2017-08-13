@@ -24,7 +24,7 @@ import android.support.v17.leanback.app.VideoFragment
 import android.support.v17.leanback.app.VideoFragmentGlueHost
 import android.support.v17.leanback.media.PlaybackGlue
 import android.util.Log
-import de.stefanmedack.ccctv.C3TVApp
+import dagger.android.AndroidInjection
 import de.stefanmedack.ccctv.model.MiniEvent
 import de.stefanmedack.ccctv.util.EVENT
 import de.stefanmedack.ccctv.util.applySchedulers
@@ -49,8 +49,8 @@ class ExoPlayerFragment : VideoFragment() {
     lateinit var disposables: CompositeDisposable
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        AndroidInjection.inject(this)
         super.onCreate(savedInstanceState)
-        C3TVApp.graph.inject(this)
 
         val playerAdapter = ExoPlayerAdapter(activity)
         playerAdapter.audioStreamType = AudioManager.USE_DEFAULT_STREAM_TYPE

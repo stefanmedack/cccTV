@@ -6,7 +6,7 @@ import android.os.Bundle
 import android.support.v17.leanback.app.RowsFragment
 import android.support.v17.leanback.widget.*
 import android.support.v4.app.ActivityOptionsCompat
-import de.stefanmedack.ccctv.C3TVApp
+import dagger.android.AndroidInjection
 import de.stefanmedack.ccctv.model.MiniEvent
 import de.stefanmedack.ccctv.ui.details.DetailsActivity
 import de.stefanmedack.ccctv.util.EVENT
@@ -33,8 +33,8 @@ class GroupedConferencesFragment(val conferenceStubs: List<Conference>) : RowsFr
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        AndroidInjection.inject(this)
         super.onCreate(savedInstanceState)
-        C3TVApp.graph.inject(this)
         loadConferencesAsync()
     }
 

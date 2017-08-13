@@ -16,8 +16,9 @@ data class MiniEvent(
     companion object {
         @JvmField val CREATOR = PaperParcelMiniEvent.CREATOR
     }
+
     object ModelMapper {
-        fun  from(from: Event?): MiniEvent = MiniEvent(
+        fun from(from: Event?): MiniEvent = MiniEvent(
                 title = from?.title ?: "",
                 subtitle = from?.subtitle ?: "",
                 description = from?.description ?: "",

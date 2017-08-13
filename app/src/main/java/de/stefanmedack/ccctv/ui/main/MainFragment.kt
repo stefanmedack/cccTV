@@ -7,7 +7,7 @@ import android.support.v17.leanback.app.BrowseFragment
 import android.support.v17.leanback.widget.*
 import android.support.v4.content.ContextCompat
 import android.widget.Toast
-import de.stefanmedack.ccctv.C3TVApp
+import dagger.android.AndroidInjection
 import de.stefanmedack.ccctv.R
 import de.stefanmedack.ccctv.util.applySchedulers
 import de.stefanmedack.ccctv.util.plusAssign
@@ -18,22 +18,22 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.subscribeBy
 import javax.inject.Inject
 
-class MainGroupedFragment : BrowseFragment() {
+class MainFragment : BrowseFragment() {
 
     @Inject
     lateinit var c3MediaService: RxC3MediaService
 
-    lateinit var disposables: CompositeDisposable
+    private val disposable: CompositeDisposable = CompositeDisposable()
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        AndroidInjection.inject(this)
         super.onCreate(savedInstanceState)
-        C3TVApp.graph.inject(this)
         setupUi()
         loadConferencesAsync()
     }
 
     override fun onDestroy() {
-        disposables.clear()
+        disposable.clear()
         super.onDestroy()
     }
 
@@ -102,8 +102,7 @@ class MainGroupedFragment : BrowseFragment() {
                 .map { it.filterNotNull() }
                 .toMap { it[0].type() }
 
-        disposables = CompositeDisposable()
-        disposables.add(loadConferencesSingle
+        disposable.add(loadConferencesSingle
                 .subscribeBy(// named arguments for lambda Subscribers
                         onSuccess = { renderConferences(it) },
                         // TODO proper error handling

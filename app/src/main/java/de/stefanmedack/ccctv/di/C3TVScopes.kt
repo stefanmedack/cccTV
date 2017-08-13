@@ -1,4 +1,4 @@
-package de.stefanmedack.ccctv
+package de.stefanmedack.ccctv.di
 
 import javax.inject.Qualifier
 

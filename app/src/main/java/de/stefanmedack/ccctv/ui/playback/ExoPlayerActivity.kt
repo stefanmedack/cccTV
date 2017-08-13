@@ -14,18 +14,18 @@
 
 package de.stefanmedack.ccctv.ui.playback
 
-import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.support.v4.os.BuildCompat
 import de.stefanmedack.ccctv.R
+import de.stefanmedack.ccctv.ui.base.BaseInjectibleActivity
 
 /**
  * Activity that hosts ExoPlayerFragment.
  */
-class ExoPlayerActivity : Activity() {
+class ExoPlayerActivity : BaseInjectibleActivity() {
 
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
