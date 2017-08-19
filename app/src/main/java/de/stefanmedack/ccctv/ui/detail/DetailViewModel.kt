@@ -1,4 +1,4 @@
-package de.stefanmedack.ccctv.ui.details
+package de.stefanmedack.ccctv.ui.detail
 
 import android.arch.lifecycle.ViewModel
 import de.stefanmedack.ccctv.model.MiniEvent

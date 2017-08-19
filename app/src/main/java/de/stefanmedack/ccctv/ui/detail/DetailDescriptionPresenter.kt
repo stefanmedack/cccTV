@@ -1,4 +1,4 @@
-package de.stefanmedack.ccctv.ui.details
+package de.stefanmedack.ccctv.ui.detail
 
 import android.support.v17.leanback.widget.AbstractDetailsDescriptionPresenter
 import de.stefanmedack.ccctv.model.MiniEvent

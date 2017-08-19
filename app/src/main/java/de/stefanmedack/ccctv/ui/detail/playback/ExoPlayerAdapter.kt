@@ -1,4 +1,4 @@
-package de.stefanmedack.ccctv.ui.playback
+package de.stefanmedack.ccctv.ui.detail.playback
 
 import android.content.Context
 import android.net.Uri
@@ -40,7 +40,8 @@ class ExoPlayerAdapter(context: Context) : PlayerAdapter(), Player.EventListener
     internal var mMediaSourceUri: Uri? = null
     internal var mHasDisplay: Boolean = false
     internal var mBufferingStart: Boolean = false
-    @StreamType var audioStreamType: Int = 0
+    @StreamType
+    var audioStreamType: Int = 0
 
     init {
         this.context = context

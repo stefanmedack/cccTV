@@ -38,16 +38,7 @@
                 <category android:name="android.intent.category.LEANBACK_LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity android:name=".ui.details.DetailsActivity"/>
-        <activity android:name=".ui.details.DetailWithVideoPlaybackActivity"/>
-        <activity android:name=".ui.BrowseErrorActivity"/>
-        <activity
-            android:name=".ui.playback.ExoPlayerActivity"
-            android:exported="true"
-            android:configChanges="screenSize|smallestScreenSize|screenLayout|orientation|layoutDirection"
-            android:launchMode="singleTask"
-            android:resizeableActivity="true"
-            android:supportsPictureInPicture="true"/>
+        <activity android:name=".ui.detail.DetailActivity"/>
 
     </application>
 

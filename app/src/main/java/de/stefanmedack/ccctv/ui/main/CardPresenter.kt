@@ -47,7 +47,6 @@ class CardPresenter : Presenter() {
         }
         mDefaultBackgroundColor = ContextCompat.getColor(parent.context, R.color.default_background)
         mSelectedBackgroundColor = ContextCompat.getColor(parent.context, R.color.selected_background)
-        mDefaultCardImage = ContextCompat.getDrawable(parent.context, R.drawable.movie)
 
         val cardView = object : ImageCardView(parent.context) {
             override fun setSelected(selected: Boolean) {
@@ -73,7 +72,7 @@ class CardPresenter : Presenter() {
         Glide.with(viewHolder.view.context)
                 .load(event.thumbUrl)
                 .centerCrop()
-                .error(mDefaultCardImage)
+                .error(R.drawable.default_background)
                 .into(cardView.mainImageView)
     }
 
