@@ -7,6 +7,6 @@ import dagger.android.ContributesAndroidInjector
 abstract class DetailActivityModule {
 
     @ContributesAndroidInjector
-    abstract fun contributeDetailFragment(): DetailFragmentWithVideoPlayback
+    abstract fun contributeDetailFragment(): DetailWithVideoPlaybackFragment
 
 }

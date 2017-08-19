@@ -9,7 +9,7 @@ import android.support.v17.leanback.widget.*
 import android.support.v4.app.ActivityOptionsCompat
 import dagger.android.support.AndroidSupportInjection
 import de.stefanmedack.ccctv.model.MiniEvent
-import de.stefanmedack.ccctv.ui.details.DetailActivityWithVideoPlayback
+import de.stefanmedack.ccctv.ui.details.DetailWithVideoPlaybackActivity
 import de.stefanmedack.ccctv.util.CONFERENCE_GROUP
 import de.stefanmedack.ccctv.util.EVENT
 import de.stefanmedack.ccctv.util.SHARED_DETAIL_TRANSITION
@@ -78,7 +78,7 @@ class ConferenceGroupDetailFragment : RowsSupportFragment() {
         override fun onItemClicked(itemViewHolder: Presenter.ViewHolder, item: Any,
                                    rowViewHolder: RowPresenter.ViewHolder, row: Row) {
             if (item is Event) {
-                val intent = Intent(activity, DetailActivityWithVideoPlayback::class.java)
+                val intent = Intent(activity, DetailWithVideoPlaybackActivity::class.java)
                 intent.putExtra(EVENT, MiniEvent.ModelMapper.from(item))
 
                 val bundle = ActivityOptionsCompat.makeSceneTransitionAnimation(

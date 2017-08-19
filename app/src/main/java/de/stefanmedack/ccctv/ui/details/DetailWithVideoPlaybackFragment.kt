@@ -29,7 +29,7 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.subscribeBy
 import javax.inject.Inject
 
-class DetailFragmentWithVideoPlayback : DetailsSupportFragment() {
+class DetailWithVideoPlaybackFragment : DetailsSupportFragment() {
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
@@ -38,18 +38,12 @@ class DetailFragmentWithVideoPlayback : DetailsSupportFragment() {
 
     private val disposable = CompositeDisposable()
 
-    private lateinit var actionPlay: Action
-    private lateinit var actionBookmark: Action
-    private lateinit var mActionRelated: Action
     private lateinit var detailsBackground: DetailsSupportFragmentBackgroundController
 
     override fun onCreate(savedInstanceState: Bundle?) {
         AndroidSupportInjection.inject(this)
         super.onCreate(savedInstanceState)
 
-        actionPlay = Action(DETAIL_ACTION_PLAY, getString(R.string.watch_event))
-        actionBookmark = Action(DETAIL_ACTION_BOOKMARK, getString(R.string.bookmark_event))
-        mActionRelated = Action(DETAIL_ACTION_RELATED, getString(R.string.action_related))
         detailsBackground = DetailsSupportFragmentBackgroundController(this)
     }
 
@@ -107,11 +101,12 @@ class DetailFragmentWithVideoPlayback : DetailsSupportFragment() {
         val detailsOverview = DetailsOverviewRow(viewModel.event)
         showPoster(detailsOverview)
 
-        val actionAdapter = ArrayObjectAdapter()
-        actionAdapter.add(actionPlay)
-        actionAdapter.add(actionBookmark)
-        actionAdapter.add(mActionRelated)
-        detailsOverview.actionsAdapter = actionAdapter
+        detailsOverview.actionsAdapter = ArrayObjectAdapter().apply {
+            add(Action(DETAIL_ACTION_PLAY, getString(R.string.watch_event)))
+            add(Action(DETAIL_ACTION_BOOKMARK, getString(R.string.bookmark_event)))
+            add(Action(DETAIL_ACTION_RELATED, getString(R.string.action_related)))
+        }
+
         rowsAdapter.add(detailsOverview)
 
         // Setup related row.
