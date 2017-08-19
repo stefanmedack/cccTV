@@ -11,11 +11,13 @@ import de.stefanmedack.ccctv.di.Scopes.ApplicationContext
 import javax.inject.Singleton
 
 @Singleton
-@Component(modules = arrayOf(
-        AndroidSupportInjectionModule::class,
-        C3MediaModule::class,
-        ActivityBuilderModule::class
-))
+@Component(
+        modules = arrayOf(
+                AndroidSupportInjectionModule::class,
+                C3MediaModule::class,
+                ActivityBuilderModule::class
+        )
+)
 interface AppComponent : AndroidInjector<C3TVApp> {
 
     @Component.Builder

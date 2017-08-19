@@ -28,7 +28,4 @@ class DetailsActivity : FragmentActivity() {
         setContentView(R.layout.activity_details)
     }
 
-    companion object {
-        const val SHARED_ELEMENT_NAME = "hero"
-    }
 }

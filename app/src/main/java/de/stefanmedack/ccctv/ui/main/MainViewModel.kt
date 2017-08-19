@@ -9,7 +9,9 @@ import io.reactivex.Single
 import io.reactivex.rxkotlin.toFlowable
 import javax.inject.Inject
 
-class MainViewModel @Inject constructor(val c3MediaService: RxC3MediaService) : ViewModel() {
+class MainViewModel @Inject constructor(
+        val c3MediaService: RxC3MediaService
+) : ViewModel() {
 
     private val SORTING = listOf(
             "congress",

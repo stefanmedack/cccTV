@@ -2,6 +2,8 @@ package de.stefanmedack.ccctv.di
 
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
+import de.stefanmedack.ccctv.ui.details.DetailActivityModule
+import de.stefanmedack.ccctv.ui.details.DetailActivityWithVideoPlayback
 import de.stefanmedack.ccctv.ui.main.MainActivity
 import de.stefanmedack.ccctv.ui.main.MainActivityModule
 import de.stefanmedack.ccctv.ui.playback.ExoPlayerActivity
@@ -12,6 +14,9 @@ abstract class ActivityBuilderModule {
 
     @ContributesAndroidInjector(modules = arrayOf(MainActivityModule::class))
     abstract fun contributeMainActivity(): MainActivity
+
+    @ContributesAndroidInjector(modules = arrayOf(DetailActivityModule::class))
+    abstract fun contributeDetailActivity(): DetailActivityWithVideoPlayback
 
     @ContributesAndroidInjector(modules = arrayOf(ExoPlayerActivityModule::class))
     abstract fun contributePlayerActivity(): ExoPlayerActivity

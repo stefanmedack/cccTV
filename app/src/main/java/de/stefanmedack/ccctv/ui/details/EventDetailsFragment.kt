@@ -32,6 +32,7 @@ import de.stefanmedack.ccctv.model.MiniEvent
 import de.stefanmedack.ccctv.ui.main.MainActivity
 import de.stefanmedack.ccctv.ui.playback.ExoPlayerActivity
 import de.stefanmedack.ccctv.util.EVENT
+import de.stefanmedack.ccctv.util.SHARED_DETAIL_TRANSITION
 
 class EventDetailsFragment : DetailsSupportFragment() {
 
@@ -114,14 +115,14 @@ class EventDetailsFragment : DetailsSupportFragment() {
 
     private fun setupDetailsOverviewRowPresenter() {
         // Set detail background.
-        val detailsPresenter = FullWidthDetailsOverviewRowPresenter(DetailsDescriptionPresenter())
+        val detailsPresenter = FullWidthDetailsOverviewRowPresenter(DetailDescriptionPresenter())
         detailsPresenter.backgroundColor =
                 ContextCompat.getColor(activity, R.color.selected_background)
 
         // Hook up transition element.
         val sharedElementHelper = FullWidthDetailsOverviewSharedElementHelper()
         sharedElementHelper.setSharedElementEnterTransition(
-                activity, DetailsActivity.SHARED_ELEMENT_NAME)
+                activity, SHARED_DETAIL_TRANSITION)
         detailsPresenter.setListener(sharedElementHelper)
         detailsPresenter.isParticipatingEntranceTransition = true
 

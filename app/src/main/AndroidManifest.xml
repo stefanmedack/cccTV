@@ -39,6 +39,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".ui.details.DetailsActivity"/>
+        <activity android:name=".ui.details.DetailActivityWithVideoPlayback"/>
         <activity android:name=".ui.BrowseErrorActivity"/>
         <activity
             android:name=".ui.playback.ExoPlayerActivity"

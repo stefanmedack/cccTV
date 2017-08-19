@@ -109,7 +109,7 @@ class ExoPlayerFragment : VideoSupportFragment() {
                 .applySchedulers()
 
         disposable.add(loadConferencesSingle
-                .subscribeBy(// named arguments for lambda Subscribers
+                .subscribeBy(
                         onSuccess = { playVideo(it) },
                         // TODO proper error handling
                         onError = { it.printStackTrace() }

@@ -9,6 +9,9 @@
     <string name="bookmark_event">Bookmark</string>
     <string name="show_speaker">Show Speaker</string>
     <string name="should_start">shouldStart</string>
+    <string name="action_related">Related</string>
+    <string name="header_related">Related Items</string>
+    <string name="header_recommended">Recommended</string>
 
     <!-- Error messages -->
     <string name="video_error_media_load_timeout">Media loading timed out</string>

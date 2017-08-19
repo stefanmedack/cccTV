@@ -9,9 +9,10 @@ import android.support.v17.leanback.widget.*
 import android.support.v4.app.ActivityOptionsCompat
 import dagger.android.support.AndroidSupportInjection
 import de.stefanmedack.ccctv.model.MiniEvent
-import de.stefanmedack.ccctv.ui.details.DetailsActivity
+import de.stefanmedack.ccctv.ui.details.DetailActivityWithVideoPlayback
 import de.stefanmedack.ccctv.util.CONFERENCE_GROUP
 import de.stefanmedack.ccctv.util.EVENT
+import de.stefanmedack.ccctv.util.SHARED_DETAIL_TRANSITION
 import info.metadude.kotlin.library.c3media.models.Conference
 import info.metadude.kotlin.library.c3media.models.Event
 import io.reactivex.disposables.CompositeDisposable
@@ -77,13 +78,13 @@ class ConferenceGroupDetailFragment : RowsSupportFragment() {
         override fun onItemClicked(itemViewHolder: Presenter.ViewHolder, item: Any,
                                    rowViewHolder: RowPresenter.ViewHolder, row: Row) {
             if (item is Event) {
-                val intent = Intent(activity, DetailsActivity::class.java)
+                val intent = Intent(activity, DetailActivityWithVideoPlayback::class.java)
                 intent.putExtra(EVENT, MiniEvent.ModelMapper.from(item))
 
                 val bundle = ActivityOptionsCompat.makeSceneTransitionAnimation(
                         activity,
                         (itemViewHolder.view as ImageCardView).mainImageView,
-                        DetailsActivity.SHARED_ELEMENT_NAME).toBundle()
+                        SHARED_DETAIL_TRANSITION).toBundle()
                 activity.startActivity(intent, bundle)
             }
         }
