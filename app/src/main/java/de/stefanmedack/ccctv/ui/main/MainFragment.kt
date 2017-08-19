@@ -30,12 +30,10 @@ class MainFragment : BrowseSupportFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         AndroidSupportInjection.inject(this)
         super.onCreate(savedInstanceState)
-    }
-
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
         viewModel = ViewModelProviders.of(activity, viewModelFactory).get(MainViewModel::class.java)
+
         setupUi()
+        bindViewModel()
     }
 
     override fun onDestroy() {
@@ -44,19 +42,29 @@ class MainFragment : BrowseSupportFragment() {
     }
 
     private fun setupUi() {
+        prepareEntranceTransition()
+
         headersState = BrowseFragment.HEADERS_ENABLED
         isHeadersTransitionOnBackEnabled = true
         brandColor = ContextCompat.getColor(activity, R.color.fastlane_background)
         title = getString(R.string.browse_title)
+
         setOnSearchClickedListener {
             Toast.makeText(
                     activity, "implement Search", Toast.LENGTH_SHORT)
                     .show()
         }
-        prepareEntranceTransition()
 
+        BackgroundManager.getInstance(activity).let {
+            it.attach(activity.window)
+            mainFragmentRegistry.registerFragment(PageRow::class.java,
+                    PageRowFragmentFactory(it))
+        }
+    }
+
+    private fun bindViewModel() {
         disposable.add(viewModel.getConferences()
-                .subscribeBy(// named arguments for lambda Subscribers
+                .subscribeBy(
                         onSuccess = { render(it) },
                         // TODO proper error handling
                         onError = { it.printStackTrace() }
@@ -65,14 +73,7 @@ class MainFragment : BrowseSupportFragment() {
 
     private fun render(mappedConferences: Map<String, List<Conference>>) {
         adapter = ArrayObjectAdapter(ListRowPresenter())
-        (adapter as ArrayObjectAdapter) += mappedConferences
-                .map { PageRow(HeaderItem(it.key)) }
-
-        BackgroundManager.getInstance(activity).let {
-            it.attach(activity.window)
-            mainFragmentRegistry.registerFragment(PageRow::class.java,
-                    PageRowFragmentFactory(it))
-        }
+        (adapter as ArrayObjectAdapter) += mappedConferences.map { PageRow(HeaderItem(it.key)) }
 
         startEntranceTransition()
     }
@@ -82,9 +83,8 @@ class MainFragment : BrowseSupportFragment() {
     ) : BrowseSupportFragment.FragmentFactory<Fragment>() {
 
         override fun createFragment(rowObj: Any): Fragment {
-            val row = rowObj as Row
             backgroundManager.drawable = null
-            return ConferenceGroupDetailFragment.create(row.headerItem.name)
+            return ConferenceGroupDetailFragment.create((rowObj as Row).headerItem.name)
         }
     }
 }

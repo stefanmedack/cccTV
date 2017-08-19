@@ -43,17 +43,13 @@ class DetailWithVideoPlaybackFragment : DetailsSupportFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         AndroidSupportInjection.inject(this)
         super.onCreate(savedInstanceState)
-
-        detailsBackground = DetailsSupportFragmentBackgroundController(this)
-    }
-
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(DetailViewModel::class.java).apply {
             event = activity.intent.getParcelableExtra("Event")
         }
+
         setupUi()
         setupEventListeners()
+        bindViewModel()
     }
 
     override fun onDestroy() {
@@ -62,6 +58,8 @@ class DetailWithVideoPlaybackFragment : DetailsSupportFragment() {
     }
 
     private fun setupUi() {
+        detailsBackground = DetailsSupportFragmentBackgroundController(this)
+
         title = "" // TODO title needed?
 
         val rowPresenter = object : FullWidthDetailsOverviewRowPresenter(DetailDescriptionPresenter()) {
@@ -130,13 +128,6 @@ class DetailWithVideoPlaybackFragment : DetailsSupportFragment() {
         rowsAdapter.add(ListRow(header, listRowAdapter))
 
         adapter = rowsAdapter
-
-        disposable.add(viewModel.loadEventDetailAsync()
-                .subscribeBy(
-                        onSuccess = { initializeFullEvent(it) },
-                        // TODO proper error handling
-                        onError = { it.printStackTrace() }
-                ))
     }
 
     private fun showPoster(detailsOverview: DetailsOverviewRow) {
@@ -157,7 +148,16 @@ class DetailWithVideoPlaybackFragment : DetailsSupportFragment() {
                 })
     }
 
-    private fun initializeFullEvent(event: Event) {
+    private fun bindViewModel() {
+        disposable.add(viewModel.loadEventDetailAsync()
+                .subscribeBy(
+                        onSuccess = { render(it) },
+                        // TODO proper error handling
+                        onError = { it.printStackTrace() }
+                ))
+    }
+
+    private fun render(event: Event) {
         val playerAdapter = ExoPlayerAdapter(activity)
         playerAdapter.audioStreamType = AudioManager.USE_DEFAULT_STREAM_TYPE
         val mediaPlayerGlue = VideoMediaPlayerGlue(activity, playerAdapter)
