@@ -49,8 +49,9 @@ class DetailWithVideoPlaybackFragment : DetailsSupportFragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProviders.of(this, viewModelFactory).get(DetailViewModel::class.java)
-        viewModel.event = activity.intent.getParcelableExtra("Event")
+        viewModel = ViewModelProviders.of(this, viewModelFactory).get(DetailViewModel::class.java).apply {
+            event = activity.intent.getParcelableExtra("Event")
+        }
         setupUi()
         setupEventListeners()
     }
@@ -142,7 +143,7 @@ class DetailWithVideoPlaybackFragment : DetailsSupportFragment() {
         detailsOverview.imageDrawable = ContextCompat.getDrawable(activity, R.drawable.default_background)
 
         Glide.with(activity)
-                .load(viewModel.event?.thumbUrl)
+                .load(viewModel.event.thumbUrl)
                 .centerCrop()
                 .error(R.drawable.default_background)
                 .into<SimpleTarget<GlideDrawable>>(object : SimpleTarget<GlideDrawable>(
