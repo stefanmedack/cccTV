@@ -2,4 +2,8 @@
 <resources>
     <dimen name="card_width">313dp</dimen>
     <dimen name="card_height">176dp</dimen>
+
+    <dimen name="speaker_image_card_width">120dp</dimen>
+    <dimen name="speaker_image_card_height">120dp</dimen>
+
 </resources>

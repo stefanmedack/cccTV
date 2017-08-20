@@ -19,7 +19,8 @@ import com.bumptech.glide.request.animation.GlideAnimation
 import com.bumptech.glide.request.target.SimpleTarget
 import dagger.android.support.AndroidSupportInjection
 import de.stefanmedack.ccctv.R
-import de.stefanmedack.ccctv.ui.main.CardPresenter
+import de.stefanmedack.ccctv.ui.cards.EventCardPresenter
+import de.stefanmedack.ccctv.ui.cards.SpeakerCardPresenter
 import de.stefanmedack.ccctv.ui.detail.playback.ExoPlayerAdapter
 import de.stefanmedack.ccctv.ui.detail.playback.VideoMediaPlayerGlue
 import de.stefanmedack.ccctv.util.*
@@ -59,74 +60,40 @@ class DetailFragment : DetailsSupportFragment() {
     private fun setupUi() {
         detailsBackground = DetailsSupportFragmentBackgroundController(this)
 
-        title = "" // TODO title needed?
-
-        val rowPresenter = object : FullWidthDetailsOverviewRowPresenter(DetailDescriptionPresenter()) {
-
+        // detail overview row
+        val detailOverviewRowPresenter = object : FullWidthDetailsOverviewRowPresenter(DetailDescriptionPresenter()) {
             override fun createRowViewHolder(parent: ViewGroup): RowPresenter.ViewHolder {
-                // Customize Actionbar and Content by using custom colors.
-                val viewHolder = super.createRowViewHolder(parent)
-
-                val actionsView = viewHolder.view.findViewById<View>(R.id.details_overview_actions_background)
-                actionsView.setBackgroundColor(ContextCompat.getColor(activity, R.color.selected_background))
-
-                val detailsView = viewHolder.view.findViewById<View>(R.id.details_frame)
-                detailsView.setBackgroundColor(ContextCompat.getColor(activity, R.color.default_background))
-                return viewHolder
+                return super.createRowViewHolder(parent).apply {
+                    view.findViewById<View>(R.id.details_overview_actions_background)
+                            .setBackgroundColor(ContextCompat.getColor(activity, R.color.selected_background))
+                    view.findViewById<View>(R.id.details_frame)
+                            .setBackgroundColor(ContextCompat.getColor(activity, R.color.default_background))
+                }
             }
         }
-
-        // Hook up transition element.
-        val sharedElementHelper = FullWidthDetailsOverviewSharedElementHelper()
-        sharedElementHelper.setSharedElementEnterTransition(
-                activity, SHARED_DETAIL_TRANSITION)
-        rowPresenter.setListener(sharedElementHelper)
-        rowPresenter.isParticipatingEntranceTransition = true
-
-        val shadowDisabledRowPresenter = ListRowPresenter()
-        shadowDisabledRowPresenter.shadowEnabled = false
-
-        // Setup PresenterSelector to distinguish between the different rows.
-        val rowPresenterSelector = ClassPresenterSelector()
-        rowPresenterSelector.addClassPresenter(DetailsOverviewRow::class.java, rowPresenter)
-
-        // TODO add this?
-        //        rowPresenterSelector.addClassPresenter(CardListRow.class, shadowDisabledRowPresenter);
-        rowPresenterSelector.addClassPresenter(ListRow::class.java, ListRowPresenter())
-        val rowsAdapter = ArrayObjectAdapter(rowPresenterSelector)
+        // init Shared Element Transition
+        detailOverviewRowPresenter.setListener(FullWidthDetailsOverviewSharedElementHelper().apply {
+            setSharedElementEnterTransition(activity, SHARED_DETAIL_TRANSITION)
+        })
+        detailOverviewRowPresenter.isParticipatingEntranceTransition = true
 
         // Setup action and detail row.
         val detailsOverview = DetailsOverviewRow(viewModel.event)
         showPoster(detailsOverview)
 
         detailsOverview.actionsAdapter = ArrayObjectAdapter().apply {
-            add(Action(DETAIL_ACTION_PLAY, getString(R.string.watch_event)))
-            add(Action(DETAIL_ACTION_BOOKMARK, getString(R.string.bookmark_event)))
-            add(Action(DETAIL_ACTION_RELATED, getString(R.string.action_related)))
+            add(Action(DETAIL_ACTION_PLAY, getString(R.string.action_watch)))
+            add(Action(DETAIL_ACTION_BOOKMARK, getString(R.string.action_bookmark)))
+            add(Action(DETAIL_ACTION_SPEAKER, getString(R.string.action_show_speaker)))
+            add(Action(DETAIL_ACTION_RELATED, getString(R.string.action_show_related)))
         }
 
-        rowsAdapter.add(detailsOverview)
+        // Setup PresenterSelector to distinguish between the different rows.
+        val rowPresenterSelector = ClassPresenterSelector()
+        rowPresenterSelector.addClassPresenter(DetailsOverviewRow::class.java, detailOverviewRowPresenter)
+        rowPresenterSelector.addClassPresenter(ListRow::class.java, ListRowPresenter().apply { shadowEnabled = false })
 
-        // Setup related row.
-        var listRowAdapter = ArrayObjectAdapter(CardPresenter())
-        // TODO add speaker
-        //        for (Card characterCard : data.getCharacters()) {
-        //            listRowAdapter.add(characterCard);
-        //        }
-        var header = HeaderItem(0, getString(R.string.header_related))
-
-        rowsAdapter.add(ListRow(header, listRowAdapter))
-
-        // Setup recommended row.
-        listRowAdapter = ArrayObjectAdapter(CardPresenter())
-        // TODO add Recommendations
-        //        for (Card card : data.getRecommended()) {
-        //            listRowAdapter.add(card);
-        //        }
-        header = HeaderItem(1, getString(R.string.header_recommended))
-        rowsAdapter.add(ListRow(header, listRowAdapter))
-
-        adapter = rowsAdapter
+        adapter = ArrayObjectAdapter(rowPresenterSelector).apply { add(detailsOverview) }
     }
 
     private fun showPoster(detailsOverview: DetailsOverviewRow) {
@@ -142,7 +109,6 @@ class DetailFragment : DetailsSupportFragment() {
                     override fun onResourceReady(resource: GlideDrawable,
                                                  glideAnimation: GlideAnimation<in GlideDrawable>) {
                         detailsOverview.imageDrawable = resource
-                        //                        arrayObjectAdapter.notifyArrayItemRangeChanged(0, arrayObjectAdapter.size())
                     }
                 })
     }
@@ -165,27 +131,35 @@ class DetailFragment : DetailsSupportFragment() {
 
         val playableVideoUrl = event.playableVideoUrl()
         Log.d("VIDEO_URL", playableVideoUrl)
-        // TODO handle null urls
         mediaPlayerGlue.playerAdapter.setDataSource(
                 Uri.parse(playableVideoUrl))
-
         mediaPlayerGlue.isSeekEnabled = true
 
         detailsBackground.enableParallax()
         detailsBackground.setupVideoPlayback(mediaPlayerGlue)
-    }
 
-    private fun switchToPlayback() {
-        detailsBackground.switchToVideo()
+        // add speaker
+        var listRowAdapter = ArrayObjectAdapter(SpeakerCardPresenter())
+        listRowAdapter += event.persons?.filterNotNull()
+        (adapter as ArrayObjectAdapter).add(ListRow(HeaderItem(0, getString(R.string.header_speaker)), listRowAdapter))
+
+        // add related
+        listRowAdapter = ArrayObjectAdapter(EventCardPresenter())
+        //        for (Card card : data.getRecommended()) {
+        //            listRowAdapter.add(card);
+        //        }
+        (adapter as ArrayObjectAdapter).add(ListRow(HeaderItem(1, getString(R.string.header_related)), listRowAdapter))
     }
 
     private fun setupEventListeners() {
         onItemViewClickedListener = OnItemViewClickedListener { _, item, _, _ ->
             if (item is Action) {
                 when (item.id) {
-                    DETAIL_ACTION_PLAY -> switchToPlayback()
-                    DETAIL_ACTION_RELATED -> setSelectedPosition(1)
-                    else -> Toast.makeText(activity, "Will be implemented", Toast.LENGTH_LONG).show()
+                    DETAIL_ACTION_PLAY -> detailsBackground.switchToVideo()
+                    DETAIL_ACTION_SPEAKER -> setSelectedPosition(1)
+                    DETAIL_ACTION_RELATED -> setSelectedPosition(2)
+                    else -> Toast.makeText(activity, "Uups, this feature is still missing - check back later", Toast.LENGTH_LONG)
+                            .show()
                 }
             }
         }

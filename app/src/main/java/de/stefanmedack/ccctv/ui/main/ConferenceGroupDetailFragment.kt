@@ -9,6 +9,7 @@ import android.support.v17.leanback.widget.*
 import android.support.v4.app.ActivityOptionsCompat
 import dagger.android.support.AndroidSupportInjection
 import de.stefanmedack.ccctv.model.MiniEvent
+import de.stefanmedack.ccctv.ui.cards.EventCardPresenter
 import de.stefanmedack.ccctv.ui.detail.DetailActivity
 import de.stefanmedack.ccctv.util.CONFERENCE_GROUP
 import de.stefanmedack.ccctv.util.EVENT
@@ -75,9 +76,8 @@ class ConferenceGroupDetailFragment : RowsSupportFragment() {
     }
 
     private fun createEventRow(conference: Conference): Row {
-        val presenterSelector = CardPresenter()
-        val adapter = ArrayObjectAdapter(presenterSelector)
-        adapter.addAll(0, conference.events?.filterNotNull())
+        val adapter = ArrayObjectAdapter(EventCardPresenter())
+        adapter += conference.events?.filterNotNull()
 
         val headerItem = HeaderItem(conference.title ?: "")
         return ListRow(headerItem, adapter)
