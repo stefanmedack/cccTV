@@ -2,18 +2,13 @@ package de.stefanmedack.ccctv.ui.main
 
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
-import android.content.Intent
 import android.os.Bundle
 import android.support.v17.leanback.app.RowsSupportFragment
 import android.support.v17.leanback.widget.*
-import android.support.v4.app.ActivityOptionsCompat
 import dagger.android.support.AndroidSupportInjection
-import de.stefanmedack.ccctv.model.MiniEvent
 import de.stefanmedack.ccctv.ui.cards.EventCardPresenter
 import de.stefanmedack.ccctv.ui.detail.DetailActivity
 import de.stefanmedack.ccctv.util.CONFERENCE_GROUP
-import de.stefanmedack.ccctv.util.EVENT
-import de.stefanmedack.ccctv.util.SHARED_DETAIL_TRANSITION
 import de.stefanmedack.ccctv.util.plusAssign
 import info.metadude.kotlin.library.c3media.models.Conference
 import info.metadude.kotlin.library.c3media.models.Event
@@ -47,14 +42,7 @@ class ConferenceGroupDetailFragment : RowsSupportFragment() {
     private fun setupUi() {
         onItemViewClickedListener = OnItemViewClickedListener { itemViewHolder, item, _, _ ->
             if (item is Event) {
-                val intent = Intent(activity, DetailActivity::class.java)
-                intent.putExtra(EVENT, MiniEvent.ModelMapper.from(item))
-
-                val bundle = ActivityOptionsCompat.makeSceneTransitionAnimation(
-                        activity,
-                        (itemViewHolder.view as ImageCardView).mainImageView,
-                        SHARED_DETAIL_TRANSITION).toBundle()
-                activity.startActivity(intent, bundle)
+                DetailActivity.start(activity, item, (itemViewHolder.view as ImageCardView).mainImageView)
             }
         }
     }

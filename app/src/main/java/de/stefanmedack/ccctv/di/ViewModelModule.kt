@@ -6,7 +6,6 @@ import dagger.Binds
 import dagger.Module
 import dagger.multibindings.IntoMap
 import de.stefanmedack.ccctv.di.Scopes.ViewModelKey
-import de.stefanmedack.ccctv.ui.base.C3ViewModelFactory
 import de.stefanmedack.ccctv.ui.detail.DetailViewModel
 import de.stefanmedack.ccctv.ui.main.MainViewModel
 

@@ -1,4 +1,4 @@
-package de.stefanmedack.ccctv.ui.base
+package de.stefanmedack.ccctv.di
 
 import android.arch.lifecycle.ViewModel
 import android.arch.lifecycle.ViewModelProvider

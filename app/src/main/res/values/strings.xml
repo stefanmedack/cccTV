@@ -7,4 +7,5 @@
     <string name="action_show_related">Related</string>
     <string name="header_speaker">Speaker</string>
     <string name="header_related">Related</string>
+    <string name="implement_me_toast">Uups, this feature is still missing - check back later</string>
 </resources>
