@@ -13,7 +13,7 @@
  *
  */
 
-package de.stefanmedack.ccctv.ui.playback
+package de.stefanmedack.ccctv.ui.detail.playback
 
 import android.app.Activity
 import android.support.v17.leanback.media.PlaybackTransportControlGlue

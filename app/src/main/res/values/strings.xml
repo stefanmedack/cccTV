@@ -1,19 +1,10 @@
 <resources>
     <string name="app_name">cccTV</string>
     <string name="browse_title">CCC TV</string>
-    <string name="related_movies">Related Videos</string>
-    <string name="grid_view">Grid View</string>
-    <string name="error_fragment">Error Fragment</string>
-    <string name="personal_settings">Personal Settings</string>
-    <string name="watch_event">Watch</string>
-    <string name="bookmark_event">Bookmark</string>
-    <string name="show_speaker">Show Speaker</string>
-    <string name="should_start">shouldStart</string>
-
-    <!-- Error messages -->
-    <string name="video_error_media_load_timeout">Media loading timed out</string>
-    <string name="video_error_server_inaccessible">Media server was not reachable</string>
-    <string name="video_error_unknown_error">Failed to load video</string>
-    <string name="error_fragment_message">An error occurred</string>
-    <string name="dismiss_error">Dismiss</string>
+    <string name="action_watch">Watch</string>
+    <string name="action_bookmark">Bookmark</string>
+    <string name="action_show_speaker">Speaker</string>
+    <string name="action_show_related">Related</string>
+    <string name="header_speaker">Speaker</string>
+    <string name="header_related">Related</string>
 </resources>
