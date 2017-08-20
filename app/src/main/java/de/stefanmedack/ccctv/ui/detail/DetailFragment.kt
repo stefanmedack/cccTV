@@ -104,8 +104,8 @@ class DetailFragment : DetailsSupportFragment() {
                 .centerCrop()
                 .error(R.drawable.default_background)
                 .into<SimpleTarget<GlideDrawable>>(object : SimpleTarget<GlideDrawable>(
-                        resources.getDimensionPixelSize(R.dimen.card_width),
-                        resources.getDimensionPixelSize(R.dimen.card_height)) {
+                        resources.getDimensionPixelSize(R.dimen.event_card_width),
+                        resources.getDimensionPixelSize(R.dimen.event_card_height)) {
                     override fun onResourceReady(resource: GlideDrawable,
                                                  glideAnimation: GlideAnimation<in GlideDrawable>) {
                         detailsOverview.imageDrawable = resource

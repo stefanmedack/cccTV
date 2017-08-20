@@ -3,6 +3,7 @@ package de.stefanmedack.ccctv.ui.cards
 import android.support.v17.leanback.widget.ImageCardView
 import android.support.v17.leanback.widget.Presenter
 import android.support.v4.content.ContextCompat
+import android.support.v7.view.ContextThemeWrapper
 import android.view.ViewGroup
 import com.bumptech.glide.Glide
 import de.stefanmedack.ccctv.R
@@ -11,20 +12,14 @@ import kotlin.properties.Delegates
 
 class EventCardPresenter : Presenter() {
 
-    private var cardWidth: Int by Delegates.notNull()
-    private var cardHeight: Int by Delegates.notNull()
     private var selectedBackgroundColor: Int by Delegates.notNull()
     private var defaultBackgroundColor: Int by Delegates.notNull()
 
     override fun onCreateViewHolder(parent: ViewGroup): Presenter.ViewHolder {
-        parent.context.resources.apply {
-            cardWidth = getDimensionPixelSize(R.dimen.card_width)
-            cardHeight = getDimensionPixelSize(R.dimen.card_height)
-        }
         defaultBackgroundColor = ContextCompat.getColor(parent.context, R.color.default_background)
         selectedBackgroundColor = ContextCompat.getColor(parent.context, R.color.selected_background)
 
-        val cardView = object : ImageCardView(parent.context) {
+        val cardView = object : ImageCardView(ContextThemeWrapper(parent.context, R.style.EventCardStyle)) {
             override fun setSelected(selected: Boolean) {
                 updateCardBackgroundColor(this, selected)
                 super.setSelected(selected)
@@ -42,7 +37,6 @@ class EventCardPresenter : Presenter() {
             (viewHolder.view as ImageCardView).let {
                 it.titleText = item.title
                 it.contentText = item.description
-                it.setMainImageDimensions(cardWidth, cardHeight)
                 Glide.with(viewHolder.view.context)
                         .load(item.thumbUrl)
                         .centerCrop()

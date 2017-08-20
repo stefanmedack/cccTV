@@ -3,6 +3,26 @@
 
     <style name="AppTheme" parent="@style/Theme.Leanback"/>
 
+    <style name="TitleOnlyStyle" parent="Widget.Leanback.ImageCardViewStyle">
+        <item name="lbImageCardViewType">Title</item>
+    </style>
+
+    <style name="EventCardImageStyle" parent="Widget.Leanback.ImageCardView.ImageStyle">
+        <item name="android:layout_width">@dimen/event_card_width</item>
+        <item name="android:layout_height">@dimen/event_card_height</item>
+    </style>
+
+    <style name="TwoLineTitleStyle" parent="Widget.Leanback.ImageCardView.TitleStyle">
+        <item name="android:minLines">2</item>
+        <item name="android:maxLines">2</item>
+    </style>
+
+    <style name="EventCardStyle" parent="Theme.Leanback">
+        <item name="imageCardViewStyle">@style/TitleOnlyStyle</item>
+        <item name="imageCardViewImageStyle">@style/EventCardImageStyle</item>
+        <item name="imageCardViewTitleStyle">@style/TwoLineTitleStyle</item>
+    </style>
+
     <style name="SpeakerCardStyle" parent="Widget.Leanback.BaseCardViewStyle">
         <item name="cardBackground">@null</item>
     </style>
