@@ -28,7 +28,7 @@ class ConferenceGroupDetailFragment : RowsSupportFragment() {
 
     private lateinit var viewModel: MainViewModel
 
-    private val disposable = CompositeDisposable()
+    private val disposables = CompositeDisposable()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         AndroidSupportInjection.inject(this)
@@ -40,7 +40,7 @@ class ConferenceGroupDetailFragment : RowsSupportFragment() {
     }
 
     override fun onDestroy() {
-        disposable.clear()
+        disposables.clear()
         super.onDestroy()
     }
 
@@ -60,7 +60,7 @@ class ConferenceGroupDetailFragment : RowsSupportFragment() {
     }
 
     private fun bindViewModel() {
-        disposable.add(viewModel.getConferencesWithEvents(arguments.getString(CONFERENCE_GROUP, ""))
+        disposables.add(viewModel.getConferencesWithEvents(arguments.getString(CONFERENCE_GROUP, ""))
                 .subscribeBy(
                         onSuccess = { render(it) },
                         // TODO proper error handling

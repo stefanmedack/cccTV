@@ -25,7 +25,7 @@ class MainFragment : BrowseSupportFragment() {
 
     private lateinit var viewModel: MainViewModel
 
-    private val disposable = CompositeDisposable()
+    private val disposables = CompositeDisposable()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         AndroidSupportInjection.inject(this)
@@ -37,7 +37,7 @@ class MainFragment : BrowseSupportFragment() {
     }
 
     override fun onDestroy() {
-        disposable.clear()
+        disposables.clear()
         super.onDestroy()
     }
 
@@ -63,7 +63,7 @@ class MainFragment : BrowseSupportFragment() {
     }
 
     private fun bindViewModel() {
-        disposable.add(viewModel.getConferences()
+        disposables.add(viewModel.getConferences()
                 .subscribeBy(
                         onSuccess = { render(it) },
                         // TODO proper error handling

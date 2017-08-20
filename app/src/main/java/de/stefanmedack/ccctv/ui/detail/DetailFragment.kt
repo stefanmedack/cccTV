@@ -36,7 +36,7 @@ class DetailFragment : DetailsSupportFragment() {
 
     private lateinit var viewModel: DetailViewModel
 
-    private val disposable = CompositeDisposable()
+    private val disposables = CompositeDisposable()
 
     private lateinit var detailsBackground: DetailsSupportFragmentBackgroundController
 
@@ -53,7 +53,7 @@ class DetailFragment : DetailsSupportFragment() {
     }
 
     override fun onDestroy() {
-        disposable.clear()
+        disposables.clear()
         super.onDestroy()
     }
 
@@ -114,7 +114,7 @@ class DetailFragment : DetailsSupportFragment() {
     }
 
     private fun bindViewModel() {
-        disposable.add(viewModel.loadEventDetailAsync()
+        disposables.add(viewModel.getEventDetail()
                 .subscribeBy(
                         onSuccess = { render(it) },
                         // TODO proper error handling
@@ -129,7 +129,7 @@ class DetailFragment : DetailsSupportFragment() {
         mediaPlayerGlue.title = event.title
         mediaPlayerGlue.subtitle = event.subtitle
 
-        val playableVideoUrl = event.playableVideoUrl()
+        val playableVideoUrl = event.bestVideoUrl()
         Log.d("VIDEO_URL", playableVideoUrl)
         mediaPlayerGlue.playerAdapter.setDataSource(
                 Uri.parse(playableVideoUrl))

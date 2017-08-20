@@ -2,6 +2,7 @@ package de.stefanmedack.ccctv.ui.main
 
 import android.arch.lifecycle.ViewModel
 import de.stefanmedack.ccctv.util.applySchedulers
+import de.stefanmedack.ccctv.util.id
 import de.stefanmedack.ccctv.util.type
 import info.metadude.kotlin.library.c3media.RxC3MediaService
 import info.metadude.kotlin.library.c3media.models.Conference
@@ -39,8 +40,7 @@ class MainViewModel @Inject constructor(
 
     fun getConferencesWithEvents(conferenceGroup: String): Single<List<Conference>> = (loadedConferences[conferenceGroup] ?: listOf())
             .toFlowable()
-            .map { it.url?.substringAfterLast('/')?.toIntOrNull() ?: -1 }
-            .filter { it > 0 }
+            .map { it.id() }
             .flatMap {
                 c3MediaService.getConference(it)
                         .applySchedulers()
