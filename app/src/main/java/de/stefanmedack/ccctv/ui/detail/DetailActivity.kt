@@ -16,11 +16,11 @@ class DetailActivity : BaseInjectibleActivity() {
 
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_detail)
+        setContentView(R.layout.fragment_activity)
 
         if (savedInstanceState == null) {
             val fragment = DetailFragment()
-            supportFragmentManager.beginTransaction().replace(R.id.details_fragment, fragment).commit()
+            supportFragmentManager.beginTransaction().replace(R.id.fragment, fragment).commit()
         }
     }
 

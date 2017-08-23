@@ -62,7 +62,7 @@ class DetailFragment : DetailsSupportFragment() {
     private fun setupUi() {
         detailsBackground = DetailsSupportFragmentBackgroundController(this)
 
-        // detail overview row
+        // detail overview row - presents the detail, description and actions
         val detailOverviewRowPresenter = object : FullWidthDetailsOverviewRowPresenter(DetailDescriptionPresenter()) {
             override fun createRowViewHolder(parent: ViewGroup): RowPresenter.ViewHolder {
                 return super.createRowViewHolder(parent).apply {
@@ -90,15 +90,19 @@ class DetailFragment : DetailsSupportFragment() {
             add(Action(DETAIL_ACTION_RELATED, getString(R.string.action_show_related)))
         }
 
+        // list row - presents the speaker and the related events
+        val listRowPresenter = ListRowPresenter().apply {
+            shadowEnabled = false
+        }
+
         adapter = ArrayObjectAdapter(
                 // Setup PresenterSelector to distinguish between the different rows.
                 ClassPresenterSelector().apply {
                     addClassPresenter(DetailsOverviewRow::class.java, detailOverviewRowPresenter)
                     // Setup ListRow Presenter without shadows, to hide highlighting boxes for SpeakerCards
-                    addClassPresenter(ListRow::class.java, ListRowPresenter().apply {
-                        shadowEnabled = false
-                    })
-                }).apply {
+                    addClassPresenter(ListRow::class.java, listRowPresenter)
+                }
+        ).apply {
             add(detailsOverview)
         }
     }
