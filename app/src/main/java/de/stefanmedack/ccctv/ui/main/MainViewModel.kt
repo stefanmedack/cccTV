@@ -26,11 +26,10 @@ class MainViewModel @Inject constructor(
     fun getConferences(): Single<Map<String, List<Conference>>> = c3MediaService
             .getConferences()
             .applySchedulers()
-            .map { it.conferences ?: listOf() }
+            .map { it.conferences?.filterNotNull() ?: listOf() }
             .flattenAsFlowable { it }
             .groupBy { it.type() }
             .flatMap { it.toList().toFlowable() }
-            .map { it.filterNotNull() }
             .toMap { it[0].type() }
             .map {
                 it.toSortedMap(Comparator { lhs, rhs -> lhs.conferenceGroupIndex() - rhs.conferenceGroupIndex() }).apply {
@@ -44,6 +43,8 @@ class MainViewModel @Inject constructor(
             .flatMap {
                 c3MediaService.getConference(it)
                         .applySchedulers()
+                        // TODO improve sorting of events (may need different sorting for different categories)
+//                        .map { it.copy(events = it.events?.filterNotNull()?.sortedWith(compareByDescending(Event::updatedAt))) }
                         .toFlowable()
             }
             .toSortedList(compareByDescending(Conference::title))
