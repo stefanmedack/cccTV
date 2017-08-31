@@ -1,6 +1,5 @@
 <resources>
     <string name="app_name">cccTV</string>
-    <string name="browse_title">CCC TV</string>
     <string name="action_watch">Watch</string>
     <string name="action_bookmark">Bookmark</string>
     <string name="action_show_speaker">Speaker</string>

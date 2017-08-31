@@ -46,7 +46,7 @@ class MainFragment : BrowseSupportFragment() {
         headersState = BrowseFragment.HEADERS_ENABLED
         isHeadersTransitionOnBackEnabled = true
         brandColor = ContextCompat.getColor(activity, R.color.fastlane_background)
-        title = getString(R.string.browse_title)
+        badgeDrawable = ContextCompat.getDrawable(activity, R.drawable.voctocat)
 
         // TODO add back search
 //        setOnSearchClickedListener {
