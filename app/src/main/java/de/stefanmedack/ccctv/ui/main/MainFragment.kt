@@ -9,7 +9,6 @@ import android.support.v17.leanback.app.BrowseSupportFragment
 import android.support.v17.leanback.widget.*
 import android.support.v4.app.Fragment
 import android.support.v4.content.ContextCompat
-import android.widget.Toast
 import dagger.android.support.AndroidSupportInjection
 import de.stefanmedack.ccctv.R
 import de.stefanmedack.ccctv.util.plusAssign
@@ -49,11 +48,12 @@ class MainFragment : BrowseSupportFragment() {
         brandColor = ContextCompat.getColor(activity, R.color.fastlane_background)
         title = getString(R.string.browse_title)
 
-        setOnSearchClickedListener {
-            Toast.makeText(
-                    activity, "implement Search", Toast.LENGTH_SHORT)
-                    .show()
-        }
+        // TODO add back search
+//        setOnSearchClickedListener {
+//            Toast.makeText(
+//                    activity, "implement Search", Toast.LENGTH_SHORT)
+//                    .show()
+//        }
 
         BackgroundManager.getInstance(activity).let {
             it.attach(activity.window)

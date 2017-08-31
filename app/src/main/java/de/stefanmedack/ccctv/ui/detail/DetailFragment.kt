@@ -85,7 +85,7 @@ class DetailFragment : DetailsSupportFragment() {
 
         detailsOverview.actionsAdapter = ArrayObjectAdapter().apply {
             add(Action(DETAIL_ACTION_PLAY, getString(R.string.action_watch)))
-            add(Action(DETAIL_ACTION_BOOKMARK, getString(R.string.action_bookmark)))
+//            add(Action(DETAIL_ACTION_BOOKMARK, getString(R.string.action_bookmark))) TODO add back bookmarking when db is added
             add(Action(DETAIL_ACTION_SPEAKER, getString(R.string.action_show_speaker)))
             add(Action(DETAIL_ACTION_RELATED, getString(R.string.action_show_related)))
         }
