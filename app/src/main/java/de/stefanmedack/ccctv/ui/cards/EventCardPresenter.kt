@@ -16,8 +16,8 @@ class EventCardPresenter : Presenter() {
     private var defaultBackgroundColor: Int by Delegates.notNull()
 
     override fun onCreateViewHolder(parent: ViewGroup): Presenter.ViewHolder {
-        defaultBackgroundColor = ContextCompat.getColor(parent.context, R.color.default_background)
-        selectedBackgroundColor = ContextCompat.getColor(parent.context, R.color.selected_background)
+        defaultBackgroundColor = ContextCompat.getColor(parent.context, R.color.teal_900)
+        selectedBackgroundColor = ContextCompat.getColor(parent.context, R.color.amber_800)
 
         val cardView = object : ImageCardView(ContextThemeWrapper(parent.context, R.style.EventCardStyle)) {
             override fun setSelected(selected: Boolean) {
@@ -40,7 +40,7 @@ class EventCardPresenter : Presenter() {
                 Glide.with(viewHolder.view.context)
                         .load(item.thumbUrl)
                         .centerCrop()
-                        .error(R.drawable.default_background)
+                        .error(R.drawable.voctocat)
                         .into(it.mainImageView)
             }
         }

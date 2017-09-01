@@ -1,10 +1,15 @@
 <resources>
-    <color name="background_gradient_start">#000000</color>
-    <color name="background_gradient_end">#DDDDDD</color>
-    <color name="fastlane_background">#0096a6</color>
-    <color name="search_opaque">#ffaa3f</color>
-    <color name="selected_background">#ffaa3f</color>
-    <color name="default_background">#3d3d3d</color>
+
+    <!-- primary colors -->
+    <color name="teal_600">#00897B</color>
+    <color name="teal_900">#004D40</color>
+    <color name="teal_accent_400">#1DE9B6</color>
+
+    <!-- secondary colors -->
+    <color name="amber_800">#FF8F00</color>
+
+    <!-- speaker logo colors-->
     <color name="unfocused_speaker">#CCCCCC</color>
     <color name="focused_speaker">#FFFFFF</color>
+
 </resources>

@@ -9,6 +9,7 @@ import android.support.v17.leanback.app.BrowseSupportFragment
 import android.support.v17.leanback.widget.*
 import android.support.v4.app.Fragment
 import android.support.v4.content.ContextCompat
+import android.widget.Toast
 import dagger.android.support.AndroidSupportInjection
 import de.stefanmedack.ccctv.R
 import de.stefanmedack.ccctv.util.plusAssign
@@ -45,7 +46,6 @@ class MainFragment : BrowseSupportFragment() {
 
         headersState = BrowseFragment.HEADERS_ENABLED
         isHeadersTransitionOnBackEnabled = true
-        brandColor = ContextCompat.getColor(activity, R.color.fastlane_background)
         badgeDrawable = ContextCompat.getDrawable(activity, R.drawable.voctocat)
 
         // TODO add back search

@@ -10,8 +10,6 @@ import android.support.v17.leanback.app.DetailsSupportFragmentBackgroundControll
 import android.support.v17.leanback.widget.*
 import android.support.v4.content.ContextCompat
 import android.util.Log
-import android.view.View
-import android.view.ViewGroup
 import android.widget.Toast
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.GlideDrawable
@@ -63,16 +61,9 @@ class DetailFragment : DetailsSupportFragment() {
         detailsBackground = DetailsSupportFragmentBackgroundController(this)
 
         // detail overview row - presents the detail, description and actions
-        val detailOverviewRowPresenter = object : FullWidthDetailsOverviewRowPresenter(DetailDescriptionPresenter()) {
-            override fun createRowViewHolder(parent: ViewGroup): RowPresenter.ViewHolder {
-                return super.createRowViewHolder(parent).apply {
-                    view.findViewById<View>(R.id.details_overview_actions_background)
-                            .setBackgroundColor(ContextCompat.getColor(activity, R.color.selected_background))
-                    view.findViewById<View>(R.id.details_frame)
-                            .setBackgroundColor(ContextCompat.getColor(activity, R.color.default_background))
-                }
-            }
-        }
+        val detailOverviewRowPresenter = FullWidthDetailsOverviewRowPresenter(DetailDescriptionPresenter())
+        detailOverviewRowPresenter.actionsBackgroundColor = ContextCompat.getColor(activity, R.color.amber_800)
+
         // init Shared Element Transition
         detailOverviewRowPresenter.setListener(FullWidthDetailsOverviewSharedElementHelper().apply {
             setSharedElementEnterTransition(activity, SHARED_DETAIL_TRANSITION)
@@ -108,12 +99,12 @@ class DetailFragment : DetailsSupportFragment() {
     }
 
     private fun showPoster(detailsOverview: DetailsOverviewRow) {
-        detailsOverview.imageDrawable = ContextCompat.getDrawable(activity, R.drawable.default_background)
+        detailsOverview.imageDrawable = ContextCompat.getDrawable(activity, R.drawable.voctocat)
 
         Glide.with(activity)
                 .load(viewModel.event.thumbUrl)
                 .centerCrop()
-                .error(R.drawable.default_background)
+                .error(R.drawable.voctocat)
                 .into<SimpleTarget<GlideDrawable>>(object : SimpleTarget<GlideDrawable>(
                         resources.getDimensionPixelSize(R.dimen.event_card_width),
                         resources.getDimensionPixelSize(R.dimen.event_card_height)) {

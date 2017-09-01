@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="AppTheme" parent="@style/Theme.Leanback"/>
+    <style name="CCCTheme.Leanback" parent="@style/Theme.Leanback">
+        <item name="android:colorPrimary">@color/teal_600</item>
+        <item name="android:colorAccent">@color/teal_accent_400</item>
+        <item name="defaultSearchColor">@color/amber_800</item>
+    </style>
 
     <style name="TitleOnlyStyle" parent="Widget.Leanback.ImageCardViewStyle">
         <item name="lbImageCardViewType">Title</item>
@@ -25,6 +29,7 @@
 
     <style name="SpeakerCardStyle" parent="Widget.Leanback.BaseCardViewStyle">
         <item name="cardBackground">@null</item>
+        <item name="cardForeground">@null</item>
     </style>
 
 </resources>
