@@ -8,10 +8,6 @@ An Android TV App for the media API of the CCC written in Kotlin.
 
 This App uses [c3media-base][c3media-base-orig] by [Tobias Preuss][tobias-preuss].
 
-## Disclaimer - App icons
-
-The app icons have been created from [this svg][chaos-logo]
-
 ## License
 
     Copyright 2017 Stefan Medack
