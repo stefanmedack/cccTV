@@ -11,31 +11,31 @@ import io.reactivex.rxkotlin.toFlowable
 import javax.inject.Inject
 
 class MainViewModel @Inject constructor(
-        val c3MediaService: RxC3MediaService
+        private val c3MediaService: RxC3MediaService
 ) : ViewModel() {
 
     private val SORTING = listOf(
-            "congress",
-            "conferences",
-            "events",
-            "broadcast",
-            "other")
+            "Congress",
+            "Conferences",
+            "Events",
+            "Broadcast",
+            "Other")
 
     private var loadedConferences = mapOf<String, List<Conference>>()
 
     fun getConferences(): Single<Map<String, List<Conference>>> = c3MediaService
             .getConferences()
             .applySchedulers()
-            .map { it.conferences?.filterNotNull() ?: listOf() }
-            .flattenAsFlowable { it }
-            .groupBy { it.type() }
-            .flatMap { it.toList().toFlowable() }
-            .toMap { it[0].type() }
-            .map {
-                it.toSortedMap(Comparator { lhs, rhs -> lhs.conferenceGroupIndex() - rhs.conferenceGroupIndex() }).apply {
-                    loadedConferences = it
-                }
-            }
+            .map { groupConferences(it.conferences) }
+
+    private fun groupConferences(list: List<Conference?>?): Map<String, List<Conference>> {
+        loadedConferences = list
+                ?.filterNotNull()
+                ?.groupBy { it.type() }
+                ?.toSortedMap(Comparator { lhs, rhs -> lhs.conferenceGroupIndex() - rhs.conferenceGroupIndex() })
+                ?: mapOf()
+        return loadedConferences
+    }
 
     fun getConferencesWithEvents(conferenceGroup: String): Single<List<Conference>> = (loadedConferences[conferenceGroup] ?: listOf())
             .toFlowable()
@@ -44,7 +44,7 @@ class MainViewModel @Inject constructor(
                 c3MediaService.getConference(it)
                         .applySchedulers()
                         // TODO improve sorting of events (may need different sorting for different categories)
-//                        .map { it.copy(events = it.events?.filterNotNull()?.sortedWith(compareByDescending(Event::updatedAt))) }
+                        //                        .map { it.copy(events = it.events?.filterNotNull()?.sortedWith(compareByDescending(Event::updatedAt))) }
                         .toFlowable()
             }
             .toSortedList(compareByDescending(Conference::title))

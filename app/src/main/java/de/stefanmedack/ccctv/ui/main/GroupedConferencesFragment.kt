@@ -16,7 +16,7 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.subscribeBy
 import javax.inject.Inject
 
-class ConferenceGroupDetailFragment : RowsSupportFragment() {
+class GroupedConferencesFragment : RowsSupportFragment() {
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
@@ -72,8 +72,8 @@ class ConferenceGroupDetailFragment : RowsSupportFragment() {
     }
 
     companion object {
-        fun create(conferenceGroup: String): ConferenceGroupDetailFragment {
-            val fragment = ConferenceGroupDetailFragment()
+        fun create(conferenceGroup: String): GroupedConferencesFragment {
+            val fragment = GroupedConferencesFragment()
             val args = Bundle()
             args.putString(CONFERENCE_GROUP, conferenceGroup)
             fragment.arguments = args

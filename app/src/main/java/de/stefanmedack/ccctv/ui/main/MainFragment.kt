@@ -9,7 +9,6 @@ import android.support.v17.leanback.app.BrowseSupportFragment
 import android.support.v17.leanback.widget.*
 import android.support.v4.app.Fragment
 import android.support.v4.content.ContextCompat
-import android.widget.Toast
 import dagger.android.support.AndroidSupportInjection
 import de.stefanmedack.ccctv.R
 import de.stefanmedack.ccctv.util.plusAssign
@@ -49,11 +48,11 @@ class MainFragment : BrowseSupportFragment() {
         badgeDrawable = ContextCompat.getDrawable(activity, R.drawable.voctocat)
 
         // TODO add back search
-//        setOnSearchClickedListener {
-//            Toast.makeText(
-//                    activity, "implement Search", Toast.LENGTH_SHORT)
-//                    .show()
-//        }
+        //        setOnSearchClickedListener {
+        //            Toast.makeText(
+        //                    activity, "implement Search", Toast.LENGTH_SHORT)
+        //                    .show()
+        //        }
 
         BackgroundManager.getInstance(activity).let {
             it.attach(activity.window)
@@ -73,7 +72,12 @@ class MainFragment : BrowseSupportFragment() {
 
     private fun render(mappedConferences: Map<String, List<Conference>>) {
         adapter = ArrayObjectAdapter(ListRowPresenter())
-        (adapter as ArrayObjectAdapter) += mappedConferences.map { PageRow(HeaderItem(it.key)) }
+        (adapter as ArrayObjectAdapter).let {
+            it += mappedConferences.map { PageRow(HeaderItem(it.key)) }
+            it += DividerRow()
+            it += SectionRow(HeaderItem("More"))
+            it += PageRow(HeaderItem("About"))
+        }
 
         startEntranceTransition()
     }
@@ -84,7 +88,7 @@ class MainFragment : BrowseSupportFragment() {
 
         override fun createFragment(rowObj: Any): Fragment {
             backgroundManager.drawable = null
-            return ConferenceGroupDetailFragment.create((rowObj as Row).headerItem.name)
+            return GroupedConferencesFragment.create((rowObj as Row).headerItem.name)
         }
     }
 }
