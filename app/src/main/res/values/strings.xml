@@ -1,10 +1,15 @@
 <resources>
     <string name="app_name">cccTV</string>
+    <string name="main_videos_header">Videos</string>
+    <string name="main_more_header">More</string>
+    <string name="main_about_app">About</string>
     <string name="action_watch">Watch</string>
     <string name="action_bookmark">Bookmark</string>
     <string name="action_show_speaker">Speaker</string>
     <string name="action_show_related">Related</string>
     <string name="header_speaker">Speaker</string>
     <string name="header_related">Related</string>
+    <string name="about_subtitle">This App is developed by Stefan Medack</string>
+    <string name="about_description">Here is going to be some more text...</string>
     <string name="implement_me_toast">Uups, this feature is still missing - check back later</string>
 </resources>

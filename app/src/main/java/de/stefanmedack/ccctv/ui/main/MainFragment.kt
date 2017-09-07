@@ -3,7 +3,6 @@ package de.stefanmedack.ccctv.ui.main
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
-import android.support.v17.leanback.app.BackgroundManager
 import android.support.v17.leanback.app.BrowseFragment
 import android.support.v17.leanback.app.BrowseSupportFragment
 import android.support.v17.leanback.widget.*
@@ -11,6 +10,7 @@ import android.support.v4.app.Fragment
 import android.support.v4.content.ContextCompat
 import dagger.android.support.AndroidSupportInjection
 import de.stefanmedack.ccctv.R
+import de.stefanmedack.ccctv.ui.about.AboutFragment
 import de.stefanmedack.ccctv.util.plusAssign
 import info.metadude.kotlin.library.c3media.models.Conference
 import io.reactivex.disposables.CompositeDisposable
@@ -54,11 +54,7 @@ class MainFragment : BrowseSupportFragment() {
         //                    .show()
         //        }
 
-        BackgroundManager.getInstance(activity).let {
-            it.attach(activity.window)
-            mainFragmentRegistry.registerFragment(PageRow::class.java,
-                    PageRowFragmentFactory(it))
-        }
+        mainFragmentRegistry.registerFragment(PageRow::class.java, PageRowFragmentFactory())
     }
 
     private fun bindViewModel() {
@@ -73,22 +69,22 @@ class MainFragment : BrowseSupportFragment() {
     private fun render(mappedConferences: Map<String, List<Conference>>) {
         adapter = ArrayObjectAdapter(ListRowPresenter())
         (adapter as ArrayObjectAdapter).let {
-            it += mappedConferences.map { PageRow(HeaderItem(it.key)) }
+            it += SectionRow(HeaderItem(1L, getString(R.string.main_videos_header)))
+            it += mappedConferences.map { PageRow(HeaderItem(2L, it.key)) }
             it += DividerRow()
-            it += SectionRow(HeaderItem("More"))
-            it += PageRow(HeaderItem("About"))
+            it += SectionRow(HeaderItem(3L, getString(R.string.main_more_header)))
+            it += PageRow(HeaderItem(4L, getString(R.string.main_about_app)))
         }
 
         startEntranceTransition()
     }
 
-    private class PageRowFragmentFactory internal constructor(
-            private val backgroundManager: BackgroundManager
-    ) : BrowseSupportFragment.FragmentFactory<Fragment>() {
-
+    private class PageRowFragmentFactory internal constructor() : BrowseSupportFragment.FragmentFactory<Fragment>() {
         override fun createFragment(rowObj: Any): Fragment {
-            backgroundManager.drawable = null
-            return GroupedConferencesFragment.create((rowObj as Row).headerItem.name)
+            return when ((rowObj as Row).headerItem.id) {
+                4L -> AboutFragment()
+                else -> GroupedConferencesFragment.create(rowObj.headerItem.name)
+            }
         }
     }
 }
