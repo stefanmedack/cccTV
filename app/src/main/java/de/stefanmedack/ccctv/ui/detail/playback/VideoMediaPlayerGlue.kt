@@ -32,9 +32,10 @@ class VideoMediaPlayerGlue<T : PlayerAdapter>(context: Activity, impl: T) : Play
 
     override fun onCreatePrimaryActions(adapter: ArrayObjectAdapter?) {
         super.onCreatePrimaryActions(adapter)
-        if (android.os.Build.VERSION.SDK_INT > 23) {
-            adapter?.add(mPipAction)
-        }
+        // TODO add back PIP
+        //        if (android.os.Build.VERSION.SDK_INT > 23) {
+        //            adapter?.add(mPipAction)
+        //        }
     }
 
     override fun onActionClicked(action: Action) {
