@@ -41,7 +41,6 @@ class AboutFragment : DetailsSupportFragment(), BrowseSupportFragment.MainFragme
         val detailsOverview = DetailsOverviewRow(
                 AboutDescription(
                         title = getString(R.string.app_name),
-                        subtitle = getString(R.string.about_subtitle),
                         description = getString(R.string.about_description)
                 )
         )

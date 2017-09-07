@@ -5,6 +5,11 @@
         <item name="android:colorPrimary">@color/teal_600</item>
         <item name="android:colorAccent">@color/teal_accent_400</item>
         <item name="defaultSearchColor">@color/amber_800</item>
+        <item name="detailsDescriptionSubtitleStyle">@style/CCCDescriptionSubtitleStyle</item>
+    </style>
+
+    <style name="CCCDescriptionSubtitleStyle" parent="Widget.Leanback.DetailsDescriptionSubtitleStyle">
+        <item name="android:maxLines">42</item>
     </style>
 
     <style name="TitleOnlyStyle" parent="Widget.Leanback.ImageCardViewStyle">

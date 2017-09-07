@@ -9,14 +9,12 @@ class AboutDescriptionPresenter : AbstractDetailsDescriptionPresenter() {
             item: Any) {
         (item as AboutDescription).let {
             viewHolder.title.text = it.title
-            viewHolder.subtitle.text = it.subtitle
-            viewHolder.body.text = it.description
+            viewHolder.subtitle.text = it.description
         }
     }
 
     data class AboutDescription(
             val title: String,
-            val subtitle: String,
             val description: String
     )
 }

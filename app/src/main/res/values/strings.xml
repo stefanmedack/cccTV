@@ -9,7 +9,15 @@
     <string name="action_show_related">Related</string>
     <string name="header_speaker">Speaker</string>
     <string name="header_related">Related</string>
-    <string name="about_subtitle">This App is developed by Stefan Medack</string>
-    <string name="about_description">Here is going to be some more text...</string>
+    <string name="about_description">\ncccTV is an Open Source project developed by Stefan Medack.
+        All sources are available under the Apache License 2.0 on https://github.com/stefanmedack/cccTV.
+        \n\nThe video material is kindly provided by media.ccc.de
+        \n\nSpecial thanks to Chaos Computer Club e.V. (CCC) for hosting the content and
+        everybody involved in its production,
+        as well as to everybody participating in the videos and sharing their knowledge.
+        \n\nIf you like this App, rate it on Google Play (scan the QR-Code or visit https://goo.gl/Dradno).
+        In case you are missing some features or found a Bug, let me know.
+        To improve the content of the Videos, contact or join the Chaos Computer Club.
+    </string>
     <string name="implement_me_toast">Uups, this feature is still missing - check back later</string>
 </resources>
