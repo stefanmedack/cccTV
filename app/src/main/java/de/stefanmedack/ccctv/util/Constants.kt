@@ -1,6 +1,10 @@
 package de.stefanmedack.ccctv.util
 
+import info.metadude.kotlin.library.c3media.models.MimeType
+
 const val CACHE_MAX_SIZE_HTTP = (20 * 1024 * 1024).toLong()
+
+val supportedVideoMimeTypes = listOf(MimeType.WEBM, MimeType.MP4)
 
 const val EVENT = "Event"
 const val CONFERENCE_GROUP = "CGroup"

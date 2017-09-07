@@ -14,8 +14,10 @@ fun Event.id(): Int? = this.url?.substringAfterLast('/')?.toIntOrNull()
 fun MiniEvent.id(): Int = this.url.substringAfterLast('/').toIntOrNull() ?: -1
 
 fun Event.bestVideoUrl(): String? {
-    // this sorting will prioritize video over audio, webm over mp4 and highQuality over lowQuality
-    // -> ideally we will get a high quality webm video stream
-    val sortedWith = this.recordings?.sortedWith(compareBy(Recording::mimeType, Recording::highQuality))
+    val sortedWith = this.recordings
+            ?.filter { it.mimeType in supportedVideoMimeTypes }
+            // this sorting will prioritize webm over mp4 and highQuality over lowQuality
+            // -> ideally, we will get a high quality webm video stream
+            ?.sortedWith(compareBy(Recording::mimeType, Recording::highQuality))
     return sortedWith?.last()?.recordingUrl
 }
