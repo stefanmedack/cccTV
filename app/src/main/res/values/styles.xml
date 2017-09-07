@@ -9,7 +9,7 @@
     </style>
 
     <style name="CCCDescriptionSubtitleStyle" parent="Widget.Leanback.DetailsDescriptionSubtitleStyle">
-        <item name="android:maxLines">42</item>
+        <item name="android:maxLines">20</item>
     </style>
 
     <style name="TitleOnlyStyle" parent="Widget.Leanback.ImageCardViewStyle">
