@@ -8,6 +8,7 @@ import android.support.v17.leanback.app.BrowseSupportFragment
 import android.support.v17.leanback.widget.*
 import android.support.v4.app.Fragment
 import android.support.v4.content.ContextCompat
+import android.view.KeyEvent
 import dagger.android.support.AndroidSupportInjection
 import de.stefanmedack.ccctv.R
 import de.stefanmedack.ccctv.ui.about.AboutFragment
@@ -77,6 +78,18 @@ class MainFragment : BrowseSupportFragment() {
         }
 
         startEntranceTransition()
+    }
+
+    fun onKeyDown(keyCode: Int): Boolean {
+        // enable the main menu animation when clicking DPAD_LEFT on the about page
+        if (selectedPosition == adapter.size() - 1 && !isShowingHeaders) {
+            // TODO for an even better user flow, DPAD_UP should also animate back the headers, if the about page is scrolled to top
+            if (keyCode == KeyEvent.KEYCODE_DPAD_LEFT) {
+                startHeadersTransition(true)
+                return true
+            }
+        }
+        return false
     }
 
     private class PageRowFragmentFactory internal constructor() : BrowseSupportFragment.FragmentFactory<Fragment>() {
