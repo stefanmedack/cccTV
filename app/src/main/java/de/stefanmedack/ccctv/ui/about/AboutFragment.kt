@@ -8,6 +8,7 @@ import android.support.v17.leanback.app.DetailsSupportFragment
 import android.support.v17.leanback.app.DetailsSupportFragmentBackgroundController
 import android.support.v17.leanback.widget.*
 import android.support.v4.content.ContextCompat
+import android.widget.Toast
 import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
 import de.stefanmedack.ccctv.R
 import de.stefanmedack.ccctv.ui.about.AboutDescriptionPresenter.AboutDescription
@@ -66,6 +67,7 @@ class AboutFragment : DetailsSupportFragment(), BrowseSupportFragment.MainFragme
             // add Licenses screen
             val listRowAdapter = ArrayObjectAdapter(SpeakerCardPresenter())
             listRowAdapter.add(SpeakerUiModel(getString(R.string.libraries)))
+            listRowAdapter.add(SpeakerUiModel(getString(R.string.voctocat)))
             add(ListRow(listRowAdapter))
 
         }
@@ -73,8 +75,9 @@ class AboutFragment : DetailsSupportFragment(), BrowseSupportFragment.MainFragme
 
     private fun setupEventListeners() {
         onItemViewClickedListener = OnItemViewClickedListener { _, item, _, _ ->
-            if (item is SpeakerUiModel) {
-                showLicenses()
+            when ((item as SpeakerUiModel).name) {
+                getString(R.string.libraries) -> showLicenses()
+                getString(R.string.voctocat) -> Toast.makeText(activity, R.string.voctocat_toast, Toast.LENGTH_LONG).show()
             }
         }
     }

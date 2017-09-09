@@ -19,9 +19,12 @@
         https://goo.gl/Dradno).
         Solltest Du noch gute Ideen für Features haben oder Bugs finden, lass es mich wissen!
         Für Fragen oder Verbesserungsvorschläge an den Videos selbst, kontaktiere den Chaos Computer Club e.V.
-        \n\nDie Open Source Bibliotheken, die in dieser App benutzt werden, findest Du weiter unten.
+        \n\nDie Open Source Bibliotheken und Lizenzen für diese App findest Du weiter unten.
     </string>
     <string name="libraries">Bibliotheken</string>
+    <string name="voctocat">Voctocat</string>
+    <string name="voctocat_toast">Dieses kleine Kerlchen ist von Sebastian Morr entworfen worden
+        und verfügbar unter der CC BY-NC-SA 4.0 Lizenz (https://morr.cc/voctocat/)</string>
 
     <string name="implement_me_toast">Uups, under construction. Beim nächsten Mal ist hier aber bestimmt etwas.</string>
 </resources>

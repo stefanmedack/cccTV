@@ -18,9 +18,12 @@
         \n\nIf you like this App, rate it on Google Play (scan the QR-Code or visit https://goo.gl/Dradno).
         In case you are missing some features or found a Bug, let me know.
         To improve the content of the Videos, contact or join the Chaos Computer Club e.V.
-        \n\n For the list of Libraries, please see below.
+        \n\nFor the list of Open Source Libraries and Licenses, please have a look below.
     </string>
     <string name="libraries">Libraries</string>
+    <string name="voctocat">Voctocat</string>
+    <string name="voctocat_toast">This little fella is designed by Sebastian Morr and distributed under CC BY-NC-SA 4.0 License
+        (https://morr.cc/voctocat/)</string>
 
     <string name="implement_me_toast">Uups, this feature is still missing - check back later</string>
 </resources>
