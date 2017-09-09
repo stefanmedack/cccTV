@@ -2,7 +2,6 @@ package de.stefanmedack.ccctv.ui.detail
 
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
-import android.media.AudioManager
 import android.net.Uri
 import android.os.Bundle
 import android.support.v17.leanback.app.DetailsSupportFragment
@@ -10,6 +9,8 @@ import android.support.v17.leanback.app.DetailsSupportFragmentBackgroundControll
 import android.support.v17.leanback.widget.*
 import android.support.v4.content.ContextCompat
 import android.util.Log
+import android.view.KeyEvent
+import android.view.View
 import android.widget.Toast
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.GlideDrawable
@@ -123,7 +124,6 @@ class DetailFragment : DetailsSupportFragment() {
 
     private fun render(result: DetailUiModel) {
         val playerAdapter = ExoPlayerAdapter(activity)
-        playerAdapter.audioStreamType = AudioManager.USE_DEFAULT_STREAM_TYPE
         val mediaPlayerGlue = VideoMediaPlayerGlue(activity, playerAdapter)
         mediaPlayerGlue.title = result.event.title
         mediaPlayerGlue.subtitle = result.event.subtitle
@@ -162,6 +162,7 @@ class DetailFragment : DetailsSupportFragment() {
                     else -> Toast.makeText(activity, R.string.implement_me_toast, Toast.LENGTH_LONG).show()
                 }
                 is SpeakerUiModel -> {
+                    val view = detailsBackground.findOrCreateVideoSupportFragment().view?.findViewById<View>(R.id.playback_progress)
                     Toast.makeText(activity, R.string.implement_me_toast, Toast.LENGTH_LONG).show()
                 }
                 is Event -> {
@@ -170,4 +171,19 @@ class DetailFragment : DetailsSupportFragment() {
             }
         }
     }
+
+    fun onKeyDown(keyCode: Int): Boolean =
+            (keyCode == KeyEvent.KEYCODE_DPAD_DOWN && shouldShowDetailsOnKeyDownEvent())
+                    .also {
+                        if (it) detailsBackground.switchToRows()
+                    }
+
+    // Note: this is a workaround to find the current focus on the video playback screen
+    // -> we use this information to switch back to information on KEYCODE_DPAD_DOWN press
+    private fun shouldShowDetailsOnKeyDownEvent(): Boolean {
+        val playbackFragmentView = detailsBackground.findOrCreateVideoSupportFragment().view
+        val progressBarView = playbackFragmentView?.findViewById<View>(R.id.playback_progress)
+        return (playbackFragmentView?.hasFocus() == true && progressBarView?.hasFocus() == true)
+    }
+
 }

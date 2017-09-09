@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.ActivityOptionsCompat
+import android.view.KeyEvent
 import android.widget.ImageView
 import de.stefanmedack.ccctv.R
 import de.stefanmedack.ccctv.model.MiniEvent
@@ -14,14 +15,24 @@ import info.metadude.kotlin.library.c3media.models.Event
 
 class DetailActivity : BaseInjectibleActivity() {
 
+    private val DETAIL_TAG = "DETAIL_TAG"
+
+    var fragment: DetailFragment? = null
+
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.fragment_activity)
 
         if (savedInstanceState == null) {
-            val fragment = DetailFragment()
-            supportFragmentManager.beginTransaction().replace(R.id.fragment, fragment).commit()
+            fragment = DetailFragment()
+            supportFragmentManager.beginTransaction().replace(R.id.fragment, fragment, DETAIL_TAG).commit()
+        } else {
+            fragment = supportFragmentManager.findFragmentByTag(DETAIL_TAG) as DetailFragment
         }
+    }
+
+    override fun onKeyDown(keyCode: Int, event: KeyEvent): Boolean {
+        return (fragment?.onKeyDown(keyCode) == true) || super.onKeyDown(keyCode, event)
     }
 
     companion object {

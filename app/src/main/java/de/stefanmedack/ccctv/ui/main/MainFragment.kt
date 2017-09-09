@@ -80,17 +80,18 @@ class MainFragment : BrowseSupportFragment() {
         startEntranceTransition()
     }
 
-    fun onKeyDown(keyCode: Int): Boolean {
-        // enable the main menu animation when clicking DPAD_LEFT on the about page
-        if (selectedPosition == adapter.size() - 1 && !isShowingHeaders) {
-            if (keyCode == KeyEvent.KEYCODE_DPAD_LEFT
-                    || (keyCode == KeyEvent.KEYCODE_DPAD_UP && (mainFragment as AboutFragment).shouldKeyUpEventTriggerBackAnimation)) {
-                startHeadersTransition(true)
-                return true
-            }
-        }
-        return false
-    }
+    fun onKeyDown(keyCode: Int): Boolean =
+            // enable the main menu animation when clicking KEYCODE_DPAD_LEFT or KEYCODE_DPAD_UP(when scroll position is top) on the about page
+            (selectedPosition == adapter.size() - 1 // is last main menu item selected (AboutFragment)
+                    && !isShowingHeaders // is left side bar not shown?
+                    // case 1) LEFT is pressed
+                    && (keyCode == KeyEvent.KEYCODE_DPAD_LEFT
+                    // case 2) UP is pressed and the scroll position of AboutFragment is the initial one
+                    || (keyCode == KeyEvent.KEYCODE_DPAD_UP
+                    && (mainFragment as AboutFragment).shouldKeyUpEventTriggerBackAnimation)))
+                    .also {
+                        if (it) startHeadersTransition(true)
+                    }
 
     private class PageRowFragmentFactory internal constructor() : BrowseSupportFragment.FragmentFactory<Fragment>() {
         override fun createFragment(rowObj: Any): Fragment {

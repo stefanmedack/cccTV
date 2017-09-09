@@ -8,7 +8,6 @@ import android.support.v17.leanback.media.PlayerAdapter
 import android.support.v17.leanback.media.SurfaceHolderGlueHost
 import android.view.SurfaceHolder
 import com.google.android.exoplayer2.*
-import com.google.android.exoplayer2.C.StreamType
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory
 import com.google.android.exoplayer2.source.ExtractorMediaSource
 import com.google.android.exoplayer2.source.MediaSource
@@ -23,39 +22,35 @@ import de.stefanmedack.ccctv.R
 /**
  * This implementation extends the [PlayerAdapter] with a [SimpleExoPlayer].
  */
-class ExoPlayerAdapter(context: Context) : PlayerAdapter(), Player.EventListener {
-    var context: Context
-        internal set
-    internal val mPlayer: SimpleExoPlayer
-    internal var mSurfaceHolderGlueHost: SurfaceHolderGlueHost? = null
-    internal val mRunnable: Runnable = object : Runnable {
+class ExoPlayerAdapter(private val context: Context) : PlayerAdapter(), Player.EventListener {
+
+    val updatePeriod = 16L
+
+    private val player: SimpleExoPlayer = ExoPlayerFactory.newSimpleInstance(
+            DefaultRenderersFactory(context),
+            DefaultTrackSelector(),
+            DefaultLoadControl())
+            .also {
+                it.addListener(this)
+            }
+    private var surfaceHolderGlueHost: SurfaceHolderGlueHost? = null
+    private val runnable: Runnable = object : Runnable {
         override fun run() {
             callback.onCurrentPositionChanged(this@ExoPlayerAdapter)
             callback.onBufferedPositionChanged(this@ExoPlayerAdapter)
-            mHandler.postDelayed(this, updatePeriod.toLong())
+            handler.postDelayed(this, updatePeriod)
         }
     }
-    internal val mHandler = Handler()
-    internal var mInitialized = false
-    internal var mMediaSourceUri: Uri? = null
-    internal var mHasDisplay: Boolean = false
-    internal var mBufferingStart: Boolean = false
-    @StreamType
-    var audioStreamType: Int = 0
-
-    init {
-        this.context = context
-        mPlayer = ExoPlayerFactory.newSimpleInstance(
-                DefaultRenderersFactory(context),
-                DefaultTrackSelector(),
-                DefaultLoadControl())
-        mPlayer.addListener(this)
-    }
+    private val handler = Handler()
+    private var initialized = false
+    private var mediaSourceUri: Uri? = null
+    private var hasDisplay: Boolean = false
+    private var bufferingStart: Boolean = false
 
     override fun onAttachedToHost(host: PlaybackGlueHost?) {
         if (host is SurfaceHolderGlueHost) {
-            mSurfaceHolderGlueHost = host
-            mSurfaceHolderGlueHost?.setSurfaceHolderCallback(VideoPlayerSurfaceHolderCallback())
+            surfaceHolderGlueHost = host
+            surfaceHolderGlueHost?.setSurfaceHolderCallback(VideoPlayerSurfaceHolderCallback())
         }
     }
 
@@ -64,16 +59,16 @@ class ExoPlayerAdapter(context: Context) : PlayerAdapter(), Player.EventListener
      * not required to call this method before playing the first file. However you have to call it
      * before playing a second one.
      */
-    fun reset() {
+    private fun reset() {
         changeToUninitialized()
-        mPlayer.stop()
+        player.stop()
     }
 
-    internal fun changeToUninitialized() {
-        if (mInitialized) {
-            mInitialized = false
+    private fun changeToUninitialized() {
+        if (initialized) {
+            initialized = false
             notifyBufferingStartEnd()
-            if (mHasDisplay) {
+            if (hasDisplay) {
                 callback.onPreparedStateChanged(this@ExoPlayerAdapter)
             }
         }
@@ -83,24 +78,24 @@ class ExoPlayerAdapter(context: Context) : PlayerAdapter(), Player.EventListener
      * Notify the state of buffering. For example, an app may enable/disable a loading figure
      * according to the state of buffering.
      */
-    internal fun notifyBufferingStartEnd() {
+    private fun notifyBufferingStartEnd() {
         callback.onBufferingStateChanged(this@ExoPlayerAdapter,
-                mBufferingStart || !mInitialized)
+                bufferingStart || !initialized)
     }
 
     /**
      * Release internal [SimpleExoPlayer]. Should not use the object after call release().
      */
-    fun release() {
+    private fun release() {
         changeToUninitialized()
-        mHasDisplay = false
-        mPlayer.release()
+        hasDisplay = false
+        player.release()
     }
 
     override fun onDetachedFromHost() {
-        if (mSurfaceHolderGlueHost != null) {
-            mSurfaceHolderGlueHost!!.setSurfaceHolderCallback(null)
-            mSurfaceHolderGlueHost = null
+        if (surfaceHolderGlueHost != null) {
+            surfaceHolderGlueHost?.setSurfaceHolderCallback(null)
+            surfaceHolderGlueHost = null
         }
         reset()
         release()
@@ -110,75 +105,72 @@ class ExoPlayerAdapter(context: Context) : PlayerAdapter(), Player.EventListener
      * @see SimpleExoPlayer.setVideoSurfaceHolder
      */
     internal fun setDisplay(surfaceHolder: SurfaceHolder?) {
-        val hadDisplay = mHasDisplay
-        mHasDisplay = surfaceHolder != null
-        if (hadDisplay == mHasDisplay) {
+        val hadDisplay = hasDisplay
+        hasDisplay = surfaceHolder != null
+        if (hadDisplay == hasDisplay) {
             return
         }
 
-        mPlayer.setVideoSurfaceHolder(surfaceHolder)
-        if (mHasDisplay) {
-            if (mInitialized) {
+        player.setVideoSurfaceHolder(surfaceHolder)
+        if (hasDisplay) {
+            if (initialized) {
                 callback.onPreparedStateChanged(this@ExoPlayerAdapter)
             }
         } else {
-            if (mInitialized) {
+            if (initialized) {
                 callback.onPreparedStateChanged(this@ExoPlayerAdapter)
             }
         }
     }
 
     override fun setProgressUpdatingEnabled(enabled: Boolean) {
-        mHandler.removeCallbacks(mRunnable)
+        handler.removeCallbacks(runnable)
         if (!enabled) {
             return
         }
-        mHandler.postDelayed(mRunnable, updatePeriod.toLong())
+        handler.postDelayed(runnable, updatePeriod)
     }
 
-    internal val updatePeriod: Int
-        get() = 16
-
     override fun isPlaying(): Boolean {
-        val exoPlayerIsPlaying = mPlayer.playbackState == Player.STATE_READY && mPlayer.playWhenReady
-        return mInitialized && exoPlayerIsPlaying
+        val exoPlayerIsPlaying = player.playbackState == Player.STATE_READY && player.playWhenReady
+        return initialized && exoPlayerIsPlaying
     }
 
     override fun getDuration(): Long {
-        return if (mInitialized) mPlayer.duration else -1
+        return if (initialized) player.duration else -1
     }
 
     override fun getCurrentPosition(): Long {
-        return if (mInitialized) mPlayer.currentPosition else -1
+        return if (initialized) player.currentPosition else -1
     }
 
 
     override fun play() {
-        if (!mInitialized || isPlaying) {
+        if (!initialized || isPlaying) {
             return
         }
 
-        mPlayer.playWhenReady = true
+        player.playWhenReady = true
         callback.onPlayStateChanged(this@ExoPlayerAdapter)
         callback.onCurrentPositionChanged(this@ExoPlayerAdapter)
     }
 
     override fun pause() {
         if (isPlaying) {
-            mPlayer.playWhenReady = false
+            player.playWhenReady = false
             callback.onPlayStateChanged(this@ExoPlayerAdapter)
         }
     }
 
     override fun seekTo(newPosition: Long) {
-        if (!mInitialized) {
+        if (!initialized) {
             return
         }
-        mPlayer.seekTo(newPosition)
+        player.seekTo(newPosition)
     }
 
     override fun getBufferedPosition(): Long {
-        return mPlayer.bufferedPosition
+        return player.bufferedPosition
     }
 
     /**
@@ -190,10 +182,10 @@ class ExoPlayerAdapter(context: Context) : PlayerAdapter(), Player.EventListener
      * @see ExoPlayer.prepare
      */
     fun setDataSource(uri: Uri?): Boolean {
-        if (if (mMediaSourceUri != null) mMediaSourceUri == uri else uri == null) {
+        if (if (mediaSourceUri != null) mediaSourceUri == uri else uri == null) {
             return false
         }
-        mMediaSourceUri = uri
+        mediaSourceUri = uri
         prepareMediaForPlaying()
         return true
     }
@@ -205,7 +197,7 @@ class ExoPlayerAdapter(context: Context) : PlayerAdapter(), Player.EventListener
      * *
      * @return MediaSource for the player
      */
-    fun onCreateMediaSource(uri: Uri): MediaSource {
+    private fun onCreateMediaSource(uri: Uri): MediaSource {
         val userAgent = Util.getUserAgent(context, "ExoPlayerAdapter")
         return ExtractorMediaSource(uri,
                 DefaultHttpDataSourceFactory(userAgent, null, DefaultHttpDataSource.DEFAULT_CONNECT_TIMEOUT_MILLIS,
@@ -216,12 +208,11 @@ class ExoPlayerAdapter(context: Context) : PlayerAdapter(), Player.EventListener
     private fun prepareMediaForPlaying() {
         reset()
 
-        mMediaSourceUri?.let {
-            mPlayer.prepare(onCreateMediaSource(it))
+        mediaSourceUri?.let {
+            player.prepare(onCreateMediaSource(it))
         }
 
-        mPlayer.audioStreamType = audioStreamType
-        mPlayer.setVideoListener(object : SimpleExoPlayer.VideoListener {
+        player.setVideoListener(object : SimpleExoPlayer.VideoListener {
             override fun onVideoSizeChanged(width: Int, height: Int, unappliedRotationDegrees: Int,
                                             pixelWidthHeightRatio: Float) {
                 callback.onVideoSizeChanged(this@ExoPlayerAdapter, width, height)
@@ -238,7 +229,7 @@ class ExoPlayerAdapter(context: Context) : PlayerAdapter(), Player.EventListener
      * * [PlaybackGlueHost] provides SurfaceHolder.
      */
     override fun isPrepared(): Boolean {
-        return mInitialized && (mSurfaceHolderGlueHost == null || mHasDisplay)
+        return initialized && (surfaceHolderGlueHost == null || hasDisplay)
     }
 
     /**
@@ -260,14 +251,14 @@ class ExoPlayerAdapter(context: Context) : PlayerAdapter(), Player.EventListener
     // ExoPlayer Event Listeners
 
     override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
-        mBufferingStart = false
-        if (playbackState == Player.STATE_READY && !mInitialized) {
-            mInitialized = true
-            if (mSurfaceHolderGlueHost == null || mHasDisplay) {
+        bufferingStart = false
+        if (playbackState == Player.STATE_READY && !initialized) {
+            initialized = true
+            if (surfaceHolderGlueHost == null || hasDisplay) {
                 callback.onPreparedStateChanged(this@ExoPlayerAdapter)
             }
         } else if (playbackState == Player.STATE_BUFFERING) {
-            mBufferingStart = true
+            bufferingStart = true
         } else if (playbackState == Player.STATE_ENDED) {
             callback.onPlayStateChanged(this@ExoPlayerAdapter)
             callback.onPlayCompleted(this@ExoPlayerAdapter)

@@ -28,13 +28,13 @@ import android.support.v17.leanback.widget.PlaybackControlsRow
 </T> */
 class VideoMediaPlayerGlue<T : PlayerAdapter>(context: Activity, impl: T) : PlaybackTransportControlGlue<T>(context, impl) {
 
-    private val mPipAction: PlaybackControlsRow.PictureInPictureAction = PlaybackControlsRow.PictureInPictureAction(context)
+    private val pipAction: PlaybackControlsRow.PictureInPictureAction = PlaybackControlsRow.PictureInPictureAction(context)
 
     override fun onCreatePrimaryActions(adapter: ArrayObjectAdapter?) {
         super.onCreatePrimaryActions(adapter)
         // TODO add back PIP
         //        if (android.os.Build.VERSION.SDK_INT > 23) {
-        //            adapter?.add(mPipAction)
+        //            adapter?.add(pipAction)
         //        }
     }
 
@@ -47,11 +47,11 @@ class VideoMediaPlayerGlue<T : PlayerAdapter>(context: Activity, impl: T) : Play
     }
 
     private fun shouldDispatchAction(action: Action): Boolean {
-        return action === mPipAction
+        return action === pipAction
     }
 
     private fun dispatchAction(action: Action) {
-        if (action === mPipAction && android.os.Build.VERSION.SDK_INT > 23) {
+        if (action === pipAction && android.os.Build.VERSION.SDK_INT > 23) {
             (context as Activity).enterPictureInPictureMode()
         }
     }
