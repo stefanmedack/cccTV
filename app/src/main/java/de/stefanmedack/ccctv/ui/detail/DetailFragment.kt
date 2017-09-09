@@ -76,14 +76,9 @@ class DetailFragment : DetailsSupportFragment() {
 
         detailsOverview.actionsAdapter = ArrayObjectAdapter().apply {
             add(Action(DETAIL_ACTION_PLAY, getString(R.string.action_watch)))
-//            add(Action(DETAIL_ACTION_BOOKMARK, getString(R.string.action_bookmark))) TODO add back bookmarking when db is added
+            //            add(Action(DETAIL_ACTION_BOOKMARK, getString(R.string.action_bookmark))) TODO add back bookmarking when db is added
             add(Action(DETAIL_ACTION_SPEAKER, getString(R.string.action_show_speaker)))
             add(Action(DETAIL_ACTION_RELATED, getString(R.string.action_show_related)))
-        }
-
-        // list row - presents the speaker and the related events
-        val listRowPresenter = ListRowPresenter().apply {
-            shadowEnabled = false
         }
 
         adapter = ArrayObjectAdapter(
@@ -91,7 +86,9 @@ class DetailFragment : DetailsSupportFragment() {
                 ClassPresenterSelector().apply {
                     addClassPresenter(DetailsOverviewRow::class.java, detailOverviewRowPresenter)
                     // Setup ListRow Presenter without shadows, to hide highlighting boxes for SpeakerCards
-                    addClassPresenter(ListRow::class.java, listRowPresenter)
+                    addClassPresenter(ListRow::class.java, ListRowPresenter().apply {
+                        shadowEnabled = false
+                    })
                 }
         ).apply {
             add(detailsOverview)

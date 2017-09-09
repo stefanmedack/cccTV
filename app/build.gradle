@@ -3,6 +3,7 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'com.github.ben-manes.versions'
+apply plugin: 'com.google.gms.oss.licenses.plugin'
 
 ext {
     archComponentsVersion = "1.0.0-alpha9"
@@ -12,6 +13,7 @@ ext {
     glideVersion = "3.8.0"
     junitVersion = "4.12"
     paperParcelVersion = "2.0.2"
+    playServicesVersion = "11.2.2"
     rxAndroidVersion = "2.0.1"
     rxJavaVersion = "2.1.3"
     rxKotlinVersion = "2.1.0"
@@ -76,6 +78,9 @@ dependencies {
     implementation "nz.bradcampbell:paperparcel:$paperParcelVersion"
     implementation "nz.bradcampbell:paperparcel-kotlin:$paperParcelVersion" // Optional
     kapt "nz.bradcampbell:paperparcel-compiler:$paperParcelVersion"
+
+    // Licenses Screen
+    implementation "com.google.android.gms:play-services-oss-licenses:$playServicesVersion"
 
     // Test dependencies
     testCompile "junit:junit:$junitVersion"
