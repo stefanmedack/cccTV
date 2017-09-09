@@ -40,6 +40,7 @@ class DetailFragment : DetailsSupportFragment() {
     private val disposables = CompositeDisposable()
 
     private lateinit var detailsBackground: DetailsSupportFragmentBackgroundController
+    private lateinit var detailsOverview: DetailsOverviewRow
 
     override fun onCreate(savedInstanceState: Bundle?) {
         AndroidSupportInjection.inject(this)
@@ -72,14 +73,12 @@ class DetailFragment : DetailsSupportFragment() {
         detailOverviewRowPresenter.isParticipatingEntranceTransition = true
 
         // Setup action and detail row.
-        val detailsOverview = DetailsOverviewRow(viewModel.event)
+        detailsOverview = DetailsOverviewRow(viewModel.event)
         showPoster(detailsOverview)
 
         detailsOverview.actionsAdapter = ArrayObjectAdapter().apply {
             add(Action(DETAIL_ACTION_PLAY, getString(R.string.action_watch)))
             //            add(Action(DETAIL_ACTION_BOOKMARK, getString(R.string.action_bookmark))) TODO add back bookmarking when db is added
-            add(Action(DETAIL_ACTION_SPEAKER, getString(R.string.action_show_speaker)))
-            add(Action(DETAIL_ACTION_RELATED, getString(R.string.action_show_related)))
         }
 
         adapter = ArrayObjectAdapter(
@@ -142,12 +141,19 @@ class DetailFragment : DetailsSupportFragment() {
                 val listRowAdapter = ArrayObjectAdapter(SpeakerCardPresenter())
                 listRowAdapter += result.speaker
                 add(ListRow(HeaderItem(0, getString(R.string.header_speaker)), listRowAdapter))
+
+                // add go-to-speaker-section-button to DetailOverviewRow on the very top
+                (detailsOverview.actionsAdapter as ArrayObjectAdapter).add(Action(DETAIL_ACTION_SPEAKER, getString(R.string.action_show_speaker)))
+
             }
             // add related
             if (!result.related.isEmpty()) {
                 val listRowAdapter = ArrayObjectAdapter(EventCardPresenter())
                 listRowAdapter += result.related
                 add(ListRow(HeaderItem(1, getString(R.string.header_related)), listRowAdapter))
+
+                // add go-to-related-section-button to DetailOverviewRow on the very top
+                (detailsOverview.actionsAdapter as ArrayObjectAdapter).add(Action(DETAIL_ACTION_RELATED, getString(R.string.action_show_related)))
             }
         }
     }
@@ -162,7 +168,6 @@ class DetailFragment : DetailsSupportFragment() {
                     else -> Toast.makeText(activity, R.string.implement_me_toast, Toast.LENGTH_LONG).show()
                 }
                 is SpeakerUiModel -> {
-                    val view = detailsBackground.findOrCreateVideoSupportFragment().view?.findViewById<View>(R.id.playback_progress)
                     Toast.makeText(activity, R.string.implement_me_toast, Toast.LENGTH_LONG).show()
                 }
                 is Event -> {
