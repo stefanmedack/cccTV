@@ -17,6 +17,8 @@ import de.stefanmedack.ccctv.ui.detail.uiModels.SpeakerUiModel
 
 class AboutFragment : DetailsSupportFragment(), BrowseSupportFragment.MainFragmentAdapterProvider {
 
+    var shouldKeyUpEventTriggerBackAnimation = false
+
     private val mMainFragmentAdapter = BrowseSupportFragment.MainFragmentAdapter(this)
 
     override fun getMainFragmentAdapter(): BrowseSupportFragment.MainFragmentAdapter<*> {
@@ -40,7 +42,7 @@ class AboutFragment : DetailsSupportFragment(), BrowseSupportFragment.MainFragme
         val detailOverviewRowPresenter = FullWidthDetailsOverviewRowPresenter(AboutDescriptionPresenter())
         detailOverviewRowPresenter.actionsBackgroundColor = ContextCompat.getColor(activity, R.color.teal_900)
         detailOverviewRowPresenter.backgroundColor = ContextCompat.getColor(activity, R.color.teal_900)
-        // Setup action and detail row.
+
         val detailsOverview = DetailsOverviewRow(
                 AboutDescription(
                         title = getString(R.string.app_name),
@@ -83,4 +85,10 @@ class AboutFragment : DetailsSupportFragment(), BrowseSupportFragment.MainFragme
         startActivity(intent)
     }
 
+    override fun onSetDetailsOverviewRowStatus(presenter: FullWidthDetailsOverviewRowPresenter?, viewHolder: FullWidthDetailsOverviewRowPresenter.ViewHolder?, adapterPosition: Int, selectedPosition: Int, selectedSubPosition: Int) {
+        // NOTE: this complicated handling is needed to find out, which state (STATE_HALF/STATE_FULL) the DetailsSupportFragment is in
+        // -> any better way of figuring out the current state is very much welcome
+        shouldKeyUpEventTriggerBackAnimation = adapterPosition == 0 && selectedPosition == 0 && selectedSubPosition == 0
+        super.onSetDetailsOverviewRowStatus(presenter, viewHolder, adapterPosition, selectedPosition, selectedSubPosition)
+    }
 }

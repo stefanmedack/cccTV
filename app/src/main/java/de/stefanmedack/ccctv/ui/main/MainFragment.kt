@@ -83,8 +83,8 @@ class MainFragment : BrowseSupportFragment() {
     fun onKeyDown(keyCode: Int): Boolean {
         // enable the main menu animation when clicking DPAD_LEFT on the about page
         if (selectedPosition == adapter.size() - 1 && !isShowingHeaders) {
-            // TODO for an even better user flow, DPAD_UP should also animate back the headers, if the about page is scrolled to top
-            if (keyCode == KeyEvent.KEYCODE_DPAD_LEFT) {
+            if (keyCode == KeyEvent.KEYCODE_DPAD_LEFT
+                    || (keyCode == KeyEvent.KEYCODE_DPAD_UP && (mainFragment as AboutFragment).shouldKeyUpEventTriggerBackAnimation)) {
                 startHeadersTransition(true)
                 return true
             }
