@@ -2,13 +2,13 @@
     <string name="app_name">cccTV</string>
     <string name="main_videos_header">Videos</string>
     <string name="main_more_header">More</string>
-    <string name="main_about_app">About</string>
+    <string name="main_about_app">About cccTV</string>
     <string name="action_watch">Watch</string>
     <string name="action_bookmark">Bookmark</string>
     <string name="action_show_speaker">Speaker</string>
     <string name="action_show_related">Related</string>
     <string name="header_speaker">Speaker</string>
-    <string name="header_related">Related</string>
+    <string name="header_related">Related Videos</string>
     <string name="about_description">\ncccTV is an Open Source project developed by Stefan Medack.
         All sources are available under the Apache License 2.0 on https://github.com/stefanmedack/cccTV.
         \n\nThe video material is kindly provided by media.ccc.de
@@ -17,7 +17,7 @@
         as well as to everybody participating in the videos and sharing their knowledge.
         \n\nIf you like this App, rate it on Google Play (scan the QR-Code or visit https://goo.gl/Dradno).
         In case you are missing some features or found a Bug, let me know.
-        To improve the content of the Videos, contact or join the Chaos Computer Club.
+        To improve the content of the Videos, contact or join the Chaos Computer Club e.V.
         \n\n For the list of Libraries, please see below.
     </string>
     <string name="libraries">Libraries</string>
