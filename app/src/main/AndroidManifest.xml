@@ -51,6 +51,11 @@
             android:theme="@style/Theme.AppCompat"
             />
 
+        <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="2661981927f4d4deaa30951bef2f35d92f832716"
+            />
+
     </application>
 
 </manifest>

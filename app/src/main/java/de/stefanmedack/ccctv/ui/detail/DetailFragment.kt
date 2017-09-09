@@ -8,7 +8,6 @@ import android.support.v17.leanback.app.DetailsSupportFragment
 import android.support.v17.leanback.app.DetailsSupportFragmentBackgroundController
 import android.support.v17.leanback.widget.*
 import android.support.v4.content.ContextCompat
-import android.util.Log
 import android.view.KeyEvent
 import android.view.View
 import android.widget.Toast
@@ -28,6 +27,7 @@ import de.stefanmedack.ccctv.util.*
 import info.metadude.kotlin.library.c3media.models.Event
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.subscribeBy
+import timber.log.Timber
 import javax.inject.Inject
 
 class DetailFragment : DetailsSupportFragment() {
@@ -124,13 +124,13 @@ class DetailFragment : DetailsSupportFragment() {
     private fun render(result: DetailUiModel) {
         val playerAdapter = ExoPlayerAdapter(activity)
         val mediaPlayerGlue = VideoMediaPlayerGlue(activity, playerAdapter)
+        mediaPlayerGlue.isSeekEnabled = true
         mediaPlayerGlue.title = result.event.title
         mediaPlayerGlue.subtitle = result.event.subtitle
-        val playableVideoUrl = result.event.bestVideoUrl()
-        Log.d("VIDEO_URL", playableVideoUrl)
-        mediaPlayerGlue.playerAdapter.setDataSource(
-                Uri.parse(playableVideoUrl))
-        mediaPlayerGlue.isSeekEnabled = true
+        result.event.bestVideoUrl().let {
+            Timber.d("PLAYABLE_VIDEO_URL=$it")
+            mediaPlayerGlue.playerAdapter.setDataSource(Uri.parse(it))
+        }
 
         detailsBackground.enableParallax()
         detailsBackground.setupVideoPlayback(mediaPlayerGlue)

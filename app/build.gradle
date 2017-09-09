@@ -1,24 +1,28 @@
+import java.text.SimpleDateFormat
+
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'com.github.ben-manes.versions'
+apply plugin: 'io.fabric'
 apply plugin: 'com.google.gms.oss.licenses.plugin'
 
 ext {
     archComponentsVersion = "1.0.0-alpha9"
     assertjVersion = "3.8.0"
+    crashlyticsVersion = "2.6.8"
     daggerVersion = "2.11"
     exoplayerVersion = "r2.5.1"
     glideVersion = "3.8.0"
     junitVersion = "4.12"
-    paperParcelVersion = "2.0.2"
+    paperParcelVersion = "2.0.4"
     playServicesVersion = "11.2.2"
     rxAndroidVersion = "2.0.1"
     rxJavaVersion = "2.1.3"
     rxKotlinVersion = "2.1.0"
     supportLibVersion = "26.0.2"
-    threetenbpVersion = "1.3.5"
+    timberVersion = "4.5.1"
 }
 
 android {
@@ -32,8 +36,15 @@ android {
         versionName "1.0.0"
     }
     buildTypes {
+        debug {
+            applicationIdSuffix '.debug'
+            versionNameSuffix "-TV-D-${getFormattedDate()}"
+            debuggable true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
         release {
             versionNameSuffix '-TV'
+            zipAlignEnabled true
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
@@ -74,6 +85,14 @@ dependencies {
     implementation "io.reactivex.rxjava2:rxkotlin:$rxKotlinVersion"
     implementation "io.reactivex.rxjava2:rxandroid:$rxAndroidVersion"
 
+    // timber - better logging
+    implementation "com.jakewharton.timber:timber:$timberVersion"
+
+    // Crashlytics
+    compile("com.crashlytics.sdk.android:crashlytics:$crashlyticsVersion@aar") {
+        transitive = true
+    }
+
     // Paper Parcel
     implementation "nz.bradcampbell:paperparcel:$paperParcelVersion"
     implementation "nz.bradcampbell:paperparcel-kotlin:$paperParcelVersion" // Optional
@@ -85,4 +104,10 @@ dependencies {
     // Test dependencies
     testCompile "junit:junit:$junitVersion"
     testCompile "org.assertj:assertj-core:$assertjVersion"
+}
+
+static def getFormattedDate() {
+    def df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'GMT+2'")
+    df.setTimeZone(TimeZone.getTimeZone("GMT+2")) // Berlin Timezone
+    return df.format(new Date())
 }
