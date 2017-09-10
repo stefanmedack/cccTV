@@ -27,13 +27,12 @@ class C3TVApp : DaggerApplication() {
     }
 
     private class CrashlyticsTree : Timber.Tree() {
-        override fun log(priority: Int, tag: String, message: String, t: Throwable?) {
+        override fun log(priority: Int, tag: String?, message: String?, t: Throwable?) {
             if (priority < Log.WARN) {
                 return
             }
 
-            Crashlytics.log(priority, tag, message)
-
+            Crashlytics.log(message)
             if (t != null) {
                 Crashlytics.logException(t)
             }
