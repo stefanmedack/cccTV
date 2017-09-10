@@ -26,6 +26,7 @@ ext {
 }
 
 android {
+
     compileSdkVersion 26
     buildToolsVersion "26.0.1"
     defaultConfig {
@@ -35,7 +36,18 @@ android {
         versionCode 1
         versionName "1.0.0"
         resConfigs "en", "de"
+        multiDexEnabled true
     }
+
+    signingConfigs {
+        release {
+            storeFile file(cccTvKeyStore)
+            storePassword cccTvStorePassword
+            keyAlias cccTvKeyAlias
+            keyPassword cccTvKeyPassword
+        }
+    }
+
     buildTypes {
         debug {
             applicationIdSuffix '.debug'
@@ -45,9 +57,12 @@ android {
         }
         release {
             versionNameSuffix '-TV'
+            // TODO proguard is your friend
+//            minifyEnabled true
+//            shrinkResources true
             zipAlignEnabled true
-            minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
         }
     }
 }

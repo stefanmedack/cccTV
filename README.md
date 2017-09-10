@@ -6,7 +6,18 @@ An Android TV App for the media API of the CCC written in Kotlin.
 
 * https://api.media.ccc.de
 
-This App uses [c3media-base][c3media-base-orig] by [Tobias Preuss][tobias-preuss].
+This App uses [a fork][c3media-base-fork] of [c3media-base][c3media-base-orig] by [Tobias Preuss][tobias-preuss].
+
+The Logo ["Voctocat"][voctocat] is kindly provided by [Blinry][blinry] under CC BY-NC-SA 4.0 License.
+
+## Setup
+
+In the root project you can find `gradle.properties` defining the signing configuration for the `release`-Build.
+If you want to build a `release` version, it is important to replace the placeholders defined there by correct signing credentials.
+
+## Author
+
+* [Stefan Medack][stefan]
 
 ## License
 
@@ -27,4 +38,6 @@ This App uses [c3media-base][c3media-base-orig] by [Tobias Preuss][tobias-preuss
 [c3media-base-orig]: https://github.com/johnjohndoe/c3media-base
 [c3media-base-fork]: https://github.com/stefanmedack/c3media-base
 [tobias-preuss]: https://github.com/johnjohndoe
-[chaos-logo]: https://icons8.com/icon/38620/chaos-computer-club
+[blinry]: https://github.com/blinry
+[stefan]: https://github.com/stefanmedack
+[voctocat]: https://morr.cc/voctocat/
