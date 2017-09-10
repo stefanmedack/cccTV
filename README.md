@@ -1,3 +1,4 @@
+[![Get it on Google Play](https://upload.wikimedia.org/wikipedia/commons/c/cd/Get_it_on_Google_play.svg)](https://play.google.com/store/apps/details?id=de.stefanmedack.ccctv)
 [![Apache License](http://img.shields.io/badge/license-Apache%20License%202.0-blue.svg)](http://choosealicense.com/licenses/apache-2.0/)
 
 # cccTV
