@@ -20,7 +20,7 @@
     <application
         android:name=".C3TVApp"
         android:allowBackup="true"
-        android:banner="@drawable/voctocat"
+        android:banner="@mipmap/app_banner"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:logo="@mipmap/ic_launcher"
