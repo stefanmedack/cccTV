@@ -19,9 +19,6 @@ import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory
 import com.google.android.exoplayer2.util.Util
 import de.stefanmedack.ccctv.R
 
-/**
- * This implementation extends the [PlayerAdapter] with a [SimpleExoPlayer].
- */
 class ExoPlayerAdapter(private val context: Context) : PlayerAdapter(), Player.EventListener {
 
     val updatePeriod = 16L
@@ -44,6 +41,8 @@ class ExoPlayerAdapter(private val context: Context) : PlayerAdapter(), Player.E
     private val handler = Handler()
     private var initialized = false
     private var mediaSourceUri: Uri? = null
+    private var videoWidth: Int? = null
+    private var videoHeight: Int? = null
     private var hasDisplay: Boolean = false
     private var bufferingStart: Boolean = false
 
@@ -173,18 +172,12 @@ class ExoPlayerAdapter(private val context: Context) : PlayerAdapter(), Player.E
         return player.bufferedPosition
     }
 
-    /**
-     * Sets the media source of the player with a given URI.
-
-     * @return Returns `true` if uri represents a new media; `false`
-     * * otherwise.
-     * *
-     * @see ExoPlayer.prepare
-     */
-    fun setDataSource(uri: Uri?): Boolean {
+    fun setDataSource(uri: Uri?, width: Int? = null, height: Int? = null): Boolean {
         if (if (mediaSourceUri != null) mediaSourceUri == uri else uri == null) {
             return false
         }
+        videoWidth = width
+        videoHeight = height
         mediaSourceUri = uri
         prepareMediaForPlaying()
         return true
@@ -215,7 +208,7 @@ class ExoPlayerAdapter(private val context: Context) : PlayerAdapter(), Player.E
         player.setVideoListener(object : SimpleExoPlayer.VideoListener {
             override fun onVideoSizeChanged(width: Int, height: Int, unappliedRotationDegrees: Int,
                                             pixelWidthHeightRatio: Float) {
-                callback.onVideoSizeChanged(this@ExoPlayerAdapter, width, height)
+                callback.onVideoSizeChanged(this@ExoPlayerAdapter, videoWidth ?: width, videoHeight ?: height)
             }
 
             override fun onRenderedFirstFrame() {}
