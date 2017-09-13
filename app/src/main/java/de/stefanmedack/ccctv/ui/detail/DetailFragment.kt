@@ -127,9 +127,10 @@ class DetailFragment : DetailsSupportFragment() {
         mediaPlayerGlue.isSeekEnabled = true
         mediaPlayerGlue.title = result.event.title
         mediaPlayerGlue.subtitle = result.event.subtitle
-        result.event.bestVideoUrl()?.let {
+        result.event.bestRecording()?.let {
             Timber.d("PLAYABLE_VIDEO_URL=$it")
-            mediaPlayerGlue.playerAdapter.setDataSource(Uri.parse(it))
+            // TODO show ErrorFragment if url is null
+            mediaPlayerGlue.playerAdapter.setDataSource(Uri.parse(it.recordingUrl), it.width, it.height)
         }
 
         detailsBackground.enableParallax()

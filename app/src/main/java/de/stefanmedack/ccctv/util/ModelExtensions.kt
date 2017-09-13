@@ -21,3 +21,12 @@ fun Event.bestVideoUrl(): String? {
             ?.sortedWith(compareBy(Recording::mimeType, Recording::highQuality))
     return sortedWith?.last()?.recordingUrl
 }
+
+fun Event.bestRecording(): Recording? {
+    val sortedWith = this.recordings
+            ?.filter { it.mimeType in supportedVideoMimeTypes }
+            // this sorting will prioritize webm over mp4 and highQuality over lowQuality
+            // -> ideally, we will get a high quality webm video stream
+            ?.sortedWith(compareBy(Recording::mimeType, Recording::highQuality))
+    return sortedWith?.last()
+}
