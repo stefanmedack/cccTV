@@ -41,8 +41,8 @@ class ExoPlayerAdapter(private val context: Context) : PlayerAdapter(), Player.E
     private val handler = Handler()
     private var initialized = false
     private var mediaSourceUri: Uri? = null
-    private var videoWidth: Int? = null
-    private var videoHeight: Int? = null
+    private var videoMetaDataWidth: Int? = null
+    private var videoMetaDataHeight: Int? = null
     private var hasDisplay: Boolean = false
     private var bufferingStart: Boolean = false
 
@@ -172,12 +172,12 @@ class ExoPlayerAdapter(private val context: Context) : PlayerAdapter(), Player.E
         return player.bufferedPosition
     }
 
-    fun setDataSource(uri: Uri?, width: Int? = null, height: Int? = null): Boolean {
+    fun setDataSource(uri: Uri?, metaDataWidth: Int? = null, metaDataHeight: Int? = null): Boolean {
         if (if (mediaSourceUri != null) mediaSourceUri == uri else uri == null) {
             return false
         }
-        videoWidth = width
-        videoHeight = height
+        videoMetaDataWidth = metaDataWidth
+        videoMetaDataHeight = metaDataHeight
         mediaSourceUri = uri
         prepareMediaForPlaying()
         return true
@@ -206,9 +206,8 @@ class ExoPlayerAdapter(private val context: Context) : PlayerAdapter(), Player.E
         }
 
         player.setVideoListener(object : SimpleExoPlayer.VideoListener {
-            override fun onVideoSizeChanged(width: Int, height: Int, unappliedRotationDegrees: Int,
-                                            pixelWidthHeightRatio: Float) {
-                callback.onVideoSizeChanged(this@ExoPlayerAdapter, videoWidth ?: width, videoHeight ?: height)
+            override fun onVideoSizeChanged(width: Int, height: Int, unappliedRotationDegrees: Int, pixelWidthHeightRatio: Float) {
+                callback.onVideoSizeChanged(this@ExoPlayerAdapter, videoMetaDataWidth ?: width, videoMetaDataHeight ?: height)
             }
 
             override fun onRenderedFirstFrame() {}
