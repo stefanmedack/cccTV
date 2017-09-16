@@ -81,21 +81,24 @@ class MainFragment : BrowseSupportFragment() {
     }
 
     fun onKeyDown(keyCode: Int): Boolean =
-            // enable the main menu animation when clicking KEYCODE_DPAD_LEFT or KEYCODE_DPAD_UP(when scroll position is top) on the about page
-            shouldShowHeadersForKeyCode(keyCode)
-                    .also {
-                        if (it) startHeadersTransition(true)
-                    }
+            // enable the main menu animation when clicking KEYCODE_DPAD_LEFT or KEYCODE_DPAD_UP on the about page
+            shouldScrollToHeadersOnKeyDown(keyCode).also {
+                if (it) startHeadersTransition(true)
+            }
 
-    private fun shouldShowHeadersForKeyCode(keyCode: Int): Boolean {
+    private fun shouldScrollToHeadersOnKeyDown(keyCode: Int): Boolean {
         return selectedPosition == adapter.size() - 1 // is last main menu item selected (AboutFragment)
                 && !isShowingHeaders // is left side bar not shown?
-                // case 1) LEFT is pressed
-                && (keyCode == KeyEvent.KEYCODE_DPAD_LEFT
-                // case 2) UP is pressed and the scroll position of AboutFragment is the initial one
-                || (keyCode == KeyEvent.KEYCODE_DPAD_UP
-                && (mainFragment as AboutFragment).shouldKeyUpEventTriggerBackAnimation))
+                && (checkLeftKey(keyCode) || checkUpKey(keyCode))
     }
+
+    // case 1) LEFT is pressed and no adapter inside AboutFragment needs to scroll left
+    private fun checkLeftKey(keyCode: Int) =
+            keyCode == KeyEvent.KEYCODE_DPAD_LEFT && (mainFragment as AboutFragment).shouldKeyLeftEventTriggerBackAnimation
+
+    // case 2) UP is pressed and the scroll position of AboutFragment is the initial one
+    private fun checkUpKey(keyCode: Int) =
+            keyCode == KeyEvent.KEYCODE_DPAD_UP && (mainFragment as AboutFragment).shouldKeyUpEventTriggerBackAnimation
 
     private class PageRowFragmentFactory internal constructor() : BrowseSupportFragment.FragmentFactory<Fragment>() {
         override fun createFragment(rowObj: Any): Fragment {
