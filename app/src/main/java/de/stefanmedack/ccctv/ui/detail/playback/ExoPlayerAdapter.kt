@@ -20,7 +20,9 @@ import com.google.android.exoplayer2.util.Util
 import de.stefanmedack.ccctv.R
 import de.stefanmedack.ccctv.util.bestRecording
 import info.metadude.kotlin.library.c3media.models.Event
+import info.metadude.kotlin.library.c3media.models.Language
 import info.metadude.kotlin.library.c3media.models.Recording
+import java.util.*
 
 class ExoPlayerAdapter(private val context: Context) : PlayerAdapter(), Player.EventListener {
 
@@ -44,6 +46,7 @@ class ExoPlayerAdapter(private val context: Context) : PlayerAdapter(), Player.E
     private val handler = Handler()
     private var initialized = false
     private var event: Event? = null
+    private var shouldUseHighQuality = true
     private var bestRecording: Recording? = null
     private var mediaSourceUri: Uri? = null
     private var hasDisplay: Boolean = false
@@ -177,9 +180,29 @@ class ExoPlayerAdapter(private val context: Context) : PlayerAdapter(), Player.E
 
     fun setEvent(ev: Event) {
         event = ev
-        bestRecording = ev.bestRecording(ev.originalLanguage.first())
-        mediaSourceUri = Uri.parse(bestRecording?.recordingUrl)
+        extractBestRecording(ev)
         prepareMediaForPlaying()
+    }
+
+    fun changeQuality(isHigh: Boolean) {
+        shouldUseHighQuality = isHigh
+        extractBestRecording(event!!)
+        mediaSourceUri?.let {
+            val currPos = player.currentPosition
+            player.prepare(onCreateMediaSource(it))
+            player.seekTo(currPos)
+        }
+    }
+
+    private fun extractBestRecording(ev: Event) {
+        bestRecording = ev.bestRecording(
+                if (ev.originalLanguage.isEmpty())
+                    Language.toLanguage(Locale.getDefault().isO3Country)
+                else
+                    ev.originalLanguage.first(),
+                shouldUseHighQuality
+        )
+        mediaSourceUri = Uri.parse(bestRecording?.recordingUrl)
     }
 
     /**

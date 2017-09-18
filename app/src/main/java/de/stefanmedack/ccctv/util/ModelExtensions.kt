@@ -17,20 +17,23 @@ fun Event.id(): Int? = this.url?.substringAfterLast('/')?.toIntOrNull()
 
 fun MiniEvent.id(): Int = this.url.substringAfterLast('/').toIntOrNull() ?: -1
 
-fun Event.bestRecording(favoriteLanguage: Language): Recording? {
+fun Event.bestRecording(favoriteLanguage: Language, isFavoriteQualityHigh: Boolean = true): Recording? {
     val sortedRecordings = this.recordings
             ?.filter { it.mimeType in SUPPORTED_MIME_TYPE_SORTING }
             ?.sortedWith(Comparator { lhs, rhs ->
                 when {
+                    lhs.highQuality != rhs.highQuality -> when (isFavoriteQualityHigh) {
+                        true -> if (lhs.highQuality) -1 else 1
+                        false -> if (lhs.highQuality) 1 else -1
+                    }
                     lhs.language != rhs.language -> lhs.languageIndex(favoriteLanguage) - rhs.languageIndex(favoriteLanguage)
                     lhs.sortingIndex() != rhs.sortingIndex() -> lhs.sortingIndex() - rhs.sortingIndex()
-                    else -> if (lhs.highQuality) -1 else if (rhs.highQuality) 1 else 0
-
+                    else -> 0
                 }
             })
     if (DEBUG) {
         sortedRecordings?.forEach {
-            Timber.d("${this.id()}:mime=${it.mimeType}; hq=${it.highQuality}; res=${it.height}/${it.width};lang=${it.language}")
+            Timber.d("EventId:${this.id()}:mime=${it.mimeType}; hq=${it.highQuality}; res=${it.height}/${it.width};lang=${it.language}")
         }
     }
 
