@@ -18,6 +18,9 @@ import com.google.android.exoplayer2.upstream.DefaultHttpDataSource
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory
 import com.google.android.exoplayer2.util.Util
 import de.stefanmedack.ccctv.R
+import de.stefanmedack.ccctv.util.bestRecording
+import info.metadude.kotlin.library.c3media.models.Event
+import info.metadude.kotlin.library.c3media.models.Recording
 
 class ExoPlayerAdapter(private val context: Context) : PlayerAdapter(), Player.EventListener {
 
@@ -40,9 +43,9 @@ class ExoPlayerAdapter(private val context: Context) : PlayerAdapter(), Player.E
     }
     private val handler = Handler()
     private var initialized = false
+    private var event: Event? = null
+    private var bestRecording: Recording? = null
     private var mediaSourceUri: Uri? = null
-    private var videoMetaDataWidth: Int? = null
-    private var videoMetaDataHeight: Int? = null
     private var hasDisplay: Boolean = false
     private var bufferingStart: Boolean = false
 
@@ -172,15 +175,11 @@ class ExoPlayerAdapter(private val context: Context) : PlayerAdapter(), Player.E
         return player.bufferedPosition
     }
 
-    fun setDataSource(uri: Uri?, metaDataWidth: Int? = null, metaDataHeight: Int? = null): Boolean {
-        if (if (mediaSourceUri != null) mediaSourceUri == uri else uri == null) {
-            return false
-        }
-        videoMetaDataWidth = metaDataWidth
-        videoMetaDataHeight = metaDataHeight
-        mediaSourceUri = uri
+    fun setEvent(ev: Event) {
+        event = ev
+        bestRecording = ev.bestRecording(ev.originalLanguage.first())
+        mediaSourceUri = Uri.parse(bestRecording?.recordingUrl)
         prepareMediaForPlaying()
-        return true
     }
 
     /**
@@ -207,7 +206,11 @@ class ExoPlayerAdapter(private val context: Context) : PlayerAdapter(), Player.E
 
         player.setVideoListener(object : SimpleExoPlayer.VideoListener {
             override fun onVideoSizeChanged(width: Int, height: Int, unappliedRotationDegrees: Int, pixelWidthHeightRatio: Float) {
-                callback.onVideoSizeChanged(this@ExoPlayerAdapter, videoMetaDataWidth ?: width, videoMetaDataHeight ?: height)
+                callback.onVideoSizeChanged(
+                        this@ExoPlayerAdapter,
+                        bestRecording?.width ?: width,
+                        bestRecording?.height ?: height
+                )
             }
 
             override fun onRenderedFirstFrame() {}

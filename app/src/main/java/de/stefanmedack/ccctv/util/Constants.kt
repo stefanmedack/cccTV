@@ -4,7 +4,18 @@ import info.metadude.kotlin.library.c3media.models.MimeType
 
 const val CACHE_MAX_SIZE_HTTP = (20 * 1024 * 1024).toLong()
 
-val supportedVideoMimeTypes = listOf(MimeType.WEBM, MimeType.MP4)
+val CONFERENCE_GROUP_SORTING = listOf(
+        "Congress",
+        "Conferences",
+        "Events",
+        "Broadcast",
+        "Other")
+
+val SUPPORTED_MIME_TYPE_SORTING = listOf(
+        MimeType.MP4,
+        MimeType.WEBM)
+
+typealias ConferenceGroup = String
 
 const val EVENT = "Event"
 const val CONFERENCE_GROUP = "CGroup"
