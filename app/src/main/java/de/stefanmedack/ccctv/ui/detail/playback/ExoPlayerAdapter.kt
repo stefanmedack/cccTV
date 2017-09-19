@@ -19,6 +19,7 @@ import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory
 import com.google.android.exoplayer2.util.Util
 import de.stefanmedack.ccctv.R
 import de.stefanmedack.ccctv.util.bestRecording
+import de.stefanmedack.ccctv.util.switchAspectRatio
 import info.metadude.kotlin.library.c3media.models.Event
 import info.metadude.kotlin.library.c3media.models.Language
 import info.metadude.kotlin.library.c3media.models.Recording
@@ -27,9 +28,6 @@ import java.util.*
 class ExoPlayerAdapter(private val context: Context) : PlayerAdapter(), Player.EventListener {
 
     val updatePeriod = 16L
-
-    val SIXTEEN_BY_NINE_RATIO = 16 / 9F
-    val FOUR_BY_THREE_RATIO = 4 / 3F
 
     private val player: SimpleExoPlayer = ExoPlayerFactory.newSimpleInstance(
             DefaultRenderersFactory(context),
@@ -207,15 +205,6 @@ class ExoPlayerAdapter(private val context: Context) : PlayerAdapter(), Player.E
                     currentRecordingWidth!!,
                     currentRecordingHeight!!)
         }
-    }
-
-    private fun switchAspectRatio(width: Int, height: Int): Int {
-        return (height *
-                if (Math.abs(width / height.toFloat() - SIXTEEN_BY_NINE_RATIO) > 0.01)
-                    SIXTEEN_BY_NINE_RATIO
-                else
-                    FOUR_BY_THREE_RATIO
-                ).toInt()
     }
 
     private fun extractBestRecording(ev: Event) {
