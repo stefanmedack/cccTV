@@ -2,7 +2,6 @@ package de.stefanmedack.ccctv.ui.detail
 
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
-import android.net.Uri
 import android.os.Bundle
 import android.support.v17.leanback.app.DetailsSupportFragment
 import android.support.v17.leanback.app.DetailsSupportFragmentBackgroundController
@@ -27,7 +26,6 @@ import de.stefanmedack.ccctv.util.*
 import info.metadude.kotlin.library.c3media.models.Event
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.subscribeBy
-import timber.log.Timber
 import javax.inject.Inject
 
 class DetailFragment : DetailsSupportFragment() {
@@ -127,11 +125,7 @@ class DetailFragment : DetailsSupportFragment() {
         mediaPlayerGlue.isSeekEnabled = true
         mediaPlayerGlue.title = result.event.title
         mediaPlayerGlue.subtitle = result.event.subtitle
-        result.event.bestRecording()?.let {
-            Timber.d("PLAYABLE_VIDEO_URL=$it")
-            // TODO show ErrorFragment if url is null
-            mediaPlayerGlue.playerAdapter.setDataSource(Uri.parse(it.recordingUrl), it.width, it.height)
-        }
+        mediaPlayerGlue.playerAdapter.setEvent(result.event)
 
         detailsBackground.enableParallax()
         detailsBackground.setupVideoPlayback(mediaPlayerGlue)
