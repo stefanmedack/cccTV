@@ -26,8 +26,8 @@ fun Event.bestRecording(favoriteLanguage: Language, isFavoriteQualityHigh: Boole
                         true -> if (lhs.highQuality) -1 else 1
                         false -> if (lhs.highQuality) 1 else -1
                     }
-                    lhs.language != rhs.language -> lhs.languageIndex(favoriteLanguage) - rhs.languageIndex(favoriteLanguage)
-                    lhs.sortingIndex() != rhs.sortingIndex() -> lhs.sortingIndex() - rhs.sortingIndex()
+                    lhs.language != rhs.language -> lhs.languageSortingIndex(favoriteLanguage) - rhs.languageSortingIndex(favoriteLanguage)
+                    lhs.videoSortingIndex() != rhs.videoSortingIndex() -> lhs.videoSortingIndex() - rhs.videoSortingIndex()
                     else -> 0
                 }
             })
@@ -40,13 +40,13 @@ fun Event.bestRecording(favoriteLanguage: Language, isFavoriteQualityHigh: Boole
     return sortedRecordings?.first()
 }
 
-fun Recording.sortingIndex(): Int =
+fun Recording.videoSortingIndex(): Int =
         if (SUPPORTED_VIDEO_MIME_TYPE_SORTING.contains(this.mimeType))
             SUPPORTED_VIDEO_MIME_TYPE_SORTING.indexOf(this.mimeType)
         else
             CONFERENCE_GROUP_SORTING.size
 
-fun Recording.languageIndex(favoriteLanguage: Language): Int {
+fun Recording.languageSortingIndex(favoriteLanguage: Language): Int {
     if (this.language?.contains(favoriteLanguage) == true) return this.language?.size ?: 1
     return 42
 }
