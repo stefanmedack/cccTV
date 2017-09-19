@@ -19,7 +19,7 @@ fun MiniEvent.id(): Int = this.url.substringAfterLast('/').toIntOrNull() ?: -1
 
 fun Event.bestRecording(favoriteLanguage: Language, isFavoriteQualityHigh: Boolean = true): Recording? {
     val sortedRecordings = this.recordings
-            ?.filter { it.mimeType in SUPPORTED_MIME_TYPE_SORTING }
+            ?.filter { it.mimeType in SUPPORTED_VIDEO_MIME_TYPE_SORTING }
             ?.sortedWith(Comparator { lhs, rhs ->
                 when {
                     lhs.highQuality != rhs.highQuality -> when (isFavoriteQualityHigh) {
@@ -41,8 +41,8 @@ fun Event.bestRecording(favoriteLanguage: Language, isFavoriteQualityHigh: Boole
 }
 
 fun Recording.sortingIndex(): Int =
-        if (SUPPORTED_MIME_TYPE_SORTING.contains(this.mimeType))
-            SUPPORTED_MIME_TYPE_SORTING.indexOf(this.mimeType)
+        if (SUPPORTED_VIDEO_MIME_TYPE_SORTING.contains(this.mimeType))
+            SUPPORTED_VIDEO_MIME_TYPE_SORTING.indexOf(this.mimeType)
         else
             CONFERENCE_GROUP_SORTING.size
 

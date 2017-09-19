@@ -11,7 +11,7 @@ val CONFERENCE_GROUP_SORTING = listOf(
         "Broadcast",
         "Other")
 
-val SUPPORTED_MIME_TYPE_SORTING = listOf(
+val SUPPORTED_VIDEO_MIME_TYPE_SORTING = listOf(
         MimeType.MP4,
         MimeType.WEBM)
 
