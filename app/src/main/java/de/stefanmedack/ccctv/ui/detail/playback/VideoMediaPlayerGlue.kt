@@ -8,12 +8,13 @@ import android.support.v17.leanback.widget.ArrayObjectAdapter
 import android.support.v17.leanback.widget.PlaybackControlsRow
 import android.support.v17.leanback.widget.PlaybackControlsRow.HighQualityAction.INDEX_OFF
 import android.support.v17.leanback.widget.PlaybackControlsRow.HighQualityAction.INDEX_ON
-import timber.log.Timber
+import de.stefanmedack.ccctv.ui.detail.playback.actions.AspectRatioAction
 
-class VideoMediaPlayerGlue<T : PlayerAdapter>(context: Activity, impl: T) : PlaybackTransportControlGlue<T>(context, impl) {
+class VideoMediaPlayerGlue<T : PlayerAdapter>(activity: Activity, impl: T) : PlaybackTransportControlGlue<T>(activity, impl) {
 
-    private val pipAction = PlaybackControlsRow.PictureInPictureAction(context)
-    private val highQualityAction = PlaybackControlsRow.HighQualityAction(context).apply { index = INDEX_ON }
+    private val pipAction = PlaybackControlsRow.PictureInPictureAction(activity)
+    private val highQualityAction = PlaybackControlsRow.HighQualityAction(activity).apply { index = INDEX_ON }
+    private val aspectRatioAction = AspectRatioAction(activity)
 
     override fun onCreatePrimaryActions(adapter: ArrayObjectAdapter?) {
         super.onCreatePrimaryActions(adapter)
@@ -22,6 +23,7 @@ class VideoMediaPlayerGlue<T : PlayerAdapter>(context: Activity, impl: T) : Play
         //            adapter?.add(pipAction)
         //        }
         adapter?.add(highQualityAction)
+        adapter?.add(aspectRatioAction)
     }
 
     override fun onActionClicked(action: Action) {
@@ -35,6 +37,7 @@ class VideoMediaPlayerGlue<T : PlayerAdapter>(context: Activity, impl: T) : Play
     private fun shouldDispatchAction(action: Action): Boolean {
         return action == pipAction
                 || action == highQualityAction
+                || action == aspectRatioAction
     }
 
     private fun dispatchAction(action: Action) {
@@ -50,6 +53,7 @@ class VideoMediaPlayerGlue<T : PlayerAdapter>(context: Activity, impl: T) : Play
                 }
                 notifyActionChanged(highQualityAction, controlsRow.primaryActionsAdapter as ArrayObjectAdapter)
             }
+            aspectRatioAction -> (playerAdapter as ExoPlayerAdapter).toggleAspectRatio()
         }
     }
 

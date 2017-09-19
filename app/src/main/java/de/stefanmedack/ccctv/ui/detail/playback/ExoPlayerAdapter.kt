@@ -28,6 +28,9 @@ class ExoPlayerAdapter(private val context: Context) : PlayerAdapter(), Player.E
 
     val updatePeriod = 16L
 
+    val SIXTEEN_BY_NINE_RATIO = 16 / 9F
+    val FOUR_BY_THREE_RATIO = 4 / 3F
+
     private val player: SimpleExoPlayer = ExoPlayerFactory.newSimpleInstance(
             DefaultRenderersFactory(context),
             DefaultTrackSelector(),
@@ -45,12 +48,15 @@ class ExoPlayerAdapter(private val context: Context) : PlayerAdapter(), Player.E
     }
     private val handler = Handler()
     private var initialized = false
+    private var hasDisplay: Boolean = false
+    private var bufferingStart: Boolean = false
+
     private var event: Event? = null
     private var shouldUseHighQuality = true
     private var bestRecording: Recording? = null
+    private var currentRecordingWidth: Int? = null
+    private var currentRecordingHeight: Int? = null
     private var mediaSourceUri: Uri? = null
-    private var hasDisplay: Boolean = false
-    private var bufferingStart: Boolean = false
 
     override fun onAttachedToHost(host: PlaybackGlueHost?) {
         if (host is SurfaceHolderGlueHost) {
@@ -194,6 +200,24 @@ class ExoPlayerAdapter(private val context: Context) : PlayerAdapter(), Player.E
         }
     }
 
+    fun toggleAspectRatio() {
+        if (currentRecordingWidth != null && currentRecordingHeight != null) {
+            currentRecordingWidth = switchAspectRatio(currentRecordingWidth!!, currentRecordingHeight!!)
+            callback.onVideoSizeChanged(this@ExoPlayerAdapter,
+                    currentRecordingWidth!!,
+                    currentRecordingHeight!!)
+        }
+    }
+
+    private fun switchAspectRatio(width: Int, height: Int): Int {
+        return (height *
+                if (Math.abs(width / height.toFloat() - SIXTEEN_BY_NINE_RATIO) > 0.01)
+                    SIXTEEN_BY_NINE_RATIO
+                else
+                    FOUR_BY_THREE_RATIO
+                ).toInt()
+    }
+
     private fun extractBestRecording(ev: Event) {
         bestRecording = ev.bestRecording(
                 if (ev.originalLanguage.isEmpty())
@@ -202,6 +226,8 @@ class ExoPlayerAdapter(private val context: Context) : PlayerAdapter(), Player.E
                     ev.originalLanguage.first(),
                 shouldUseHighQuality
         )
+        currentRecordingHeight = bestRecording?.height
+        currentRecordingWidth = bestRecording?.width
         mediaSourceUri = Uri.parse(bestRecording?.recordingUrl)
     }
 
@@ -229,10 +255,12 @@ class ExoPlayerAdapter(private val context: Context) : PlayerAdapter(), Player.E
 
         player.setVideoListener(object : SimpleExoPlayer.VideoListener {
             override fun onVideoSizeChanged(width: Int, height: Int, unappliedRotationDegrees: Int, pixelWidthHeightRatio: Float) {
+                currentRecordingWidth = currentRecordingWidth ?: width
+                currentRecordingHeight = currentRecordingHeight ?: height
                 callback.onVideoSizeChanged(
                         this@ExoPlayerAdapter,
-                        bestRecording?.width ?: width,
-                        bestRecording?.height ?: height
+                        currentRecordingWidth!!,
+                        currentRecordingHeight!!
                 )
             }
 
