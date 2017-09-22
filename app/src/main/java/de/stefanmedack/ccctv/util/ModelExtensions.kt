@@ -37,7 +37,7 @@ fun Event.bestRecording(favoriteLanguage: Language, isFavoriteQualityHigh: Boole
         }
     }
 
-    return sortedRecordings?.first()
+    return sortedRecordings?.firstOrNull()
 }
 
 fun Recording.videoSortingIndex(): Int =

@@ -15,7 +15,6 @@ ext {
     daggerVersion = "2.11"
     exoplayerVersion = "r2.5.1"
     glideVersion = "3.8.0"
-    junitVersion = "4.12"
     paperParcelVersion = "2.0.4"
     playServicesVersion = "11.2.2"
     rxAndroidVersion = "2.0.1"
@@ -23,6 +22,10 @@ ext {
     rxKotlinVersion = "2.1.0"
     supportLibVersion = "26.0.2"
     timberVersion = "4.5.1"
+
+    // Test dependencies
+    kluentVersion = "1.26"
+    junitVersion = "4.12"
 }
 
 android {
@@ -82,8 +85,8 @@ dependencies {
 
     //Dagger 2 dependencies
     implementation "com.google.dagger:dagger:$daggerVersion"
-    compile "com.google.dagger:dagger-android:$daggerVersion"
-    compile "com.google.dagger:dagger-android-support:$daggerVersion"
+    implementation "com.google.dagger:dagger-android:$daggerVersion"
+    implementation "com.google.dagger:dagger-android-support:$daggerVersion"
     kapt "com.google.dagger:dagger-android-processor:$daggerVersion"
     kapt "com.google.dagger:dagger-compiler:$daggerVersion"
 
@@ -105,7 +108,7 @@ dependencies {
     implementation "com.jakewharton.timber:timber:$timberVersion"
 
     // Crashlytics
-    compile("com.crashlytics.sdk.android:crashlytics:$crashlyticsVersion@aar") {
+    implementation("com.crashlytics.sdk.android:crashlytics:$crashlyticsVersion@aar") {
         transitive = true
     }
 
@@ -118,8 +121,8 @@ dependencies {
     implementation "com.google.android.gms:play-services-oss-licenses:$playServicesVersion"
 
     // Test dependencies
-    testCompile "junit:junit:$junitVersion"
-    testCompile "org.assertj:assertj-core:$assertjVersion"
+    testImplementation "junit:junit:$junitVersion"
+    testImplementation "org.amshove.kluent:kluent:$kluentVersion"
 }
 
 static def getFormattedDate() {
