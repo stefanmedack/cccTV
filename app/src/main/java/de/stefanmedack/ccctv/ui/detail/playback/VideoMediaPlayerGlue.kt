@@ -1,18 +1,3 @@
-/*
- * Copyright (C) 2016 The Android Open Source Project
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
- * in compliance with the License. You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software distributed under the License
- * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
- * or implied. See the License for the specific language governing permissions and limitations under
- * the License.
- *
- */
-
 package de.stefanmedack.ccctv.ui.detail.playback
 
 import android.app.Activity
@@ -21,14 +6,15 @@ import android.support.v17.leanback.media.PlayerAdapter
 import android.support.v17.leanback.widget.Action
 import android.support.v17.leanback.widget.ArrayObjectAdapter
 import android.support.v17.leanback.widget.PlaybackControlsRow
+import android.support.v17.leanback.widget.PlaybackControlsRow.HighQualityAction.INDEX_OFF
+import android.support.v17.leanback.widget.PlaybackControlsRow.HighQualityAction.INDEX_ON
+import de.stefanmedack.ccctv.ui.detail.playback.actions.AspectRatioAction
 
-/**
- * PlayerGlue for video playback
- * @param <T>
-</T> */
-class VideoMediaPlayerGlue<T : PlayerAdapter>(context: Activity, impl: T) : PlaybackTransportControlGlue<T>(context, impl) {
+class VideoMediaPlayerGlue<T : PlayerAdapter>(activity: Activity, impl: T) : PlaybackTransportControlGlue<T>(activity, impl) {
 
-    private val pipAction: PlaybackControlsRow.PictureInPictureAction = PlaybackControlsRow.PictureInPictureAction(context)
+    private val pipAction = PlaybackControlsRow.PictureInPictureAction(activity)
+    private val highQualityAction = PlaybackControlsRow.HighQualityAction(activity).apply { index = INDEX_ON }
+    private val aspectRatioAction = AspectRatioAction(activity)
 
     override fun onCreatePrimaryActions(adapter: ArrayObjectAdapter?) {
         super.onCreatePrimaryActions(adapter)
@@ -36,6 +22,8 @@ class VideoMediaPlayerGlue<T : PlayerAdapter>(context: Activity, impl: T) : Play
         //        if (android.os.Build.VERSION.SDK_INT > 23) {
         //            adapter?.add(pipAction)
         //        }
+        adapter?.add(highQualityAction)
+        adapter?.add(aspectRatioAction)
     }
 
     override fun onActionClicked(action: Action) {
@@ -47,12 +35,35 @@ class VideoMediaPlayerGlue<T : PlayerAdapter>(context: Activity, impl: T) : Play
     }
 
     private fun shouldDispatchAction(action: Action): Boolean {
-        return action === pipAction
+        return action == pipAction
+                || action == highQualityAction
+                || action == aspectRatioAction
     }
 
     private fun dispatchAction(action: Action) {
-        if (action === pipAction && android.os.Build.VERSION.SDK_INT > 23) {
-            (context as Activity).enterPictureInPictureMode()
+        when (action) {
+            pipAction -> if (android.os.Build.VERSION.SDK_INT > 23) (context as Activity).enterPictureInPictureMode()
+            highQualityAction -> {
+                if (highQualityAction.index == INDEX_ON) {
+                    highQualityAction.index = INDEX_OFF
+                    (playerAdapter as ExoPlayerAdapter).changeQuality(false)
+                } else {
+                    highQualityAction.index = INDEX_ON
+                    (playerAdapter as ExoPlayerAdapter).changeQuality(true)
+                }
+                notifyActionChanged(highQualityAction, controlsRow.primaryActionsAdapter as ArrayObjectAdapter)
+            }
+            aspectRatioAction -> (playerAdapter as ExoPlayerAdapter).toggleAspectRatio()
         }
     }
+
+    private fun notifyActionChanged(action: PlaybackControlsRow.MultiAction, adapter: ArrayObjectAdapter?) {
+        if (adapter != null) {
+            val index = adapter.indexOf(action)
+            if (index >= 0) {
+                adapter.notifyArrayItemRangeChanged(index, 1)
+            }
+        }
+    }
+
 }

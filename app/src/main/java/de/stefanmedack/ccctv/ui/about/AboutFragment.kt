@@ -18,6 +18,7 @@ import de.stefanmedack.ccctv.ui.detail.uiModels.SpeakerUiModel
 
 class AboutFragment : DetailsSupportFragment(), BrowseSupportFragment.MainFragmentAdapterProvider {
 
+    var shouldKeyLeftEventTriggerBackAnimation = true
     var shouldKeyUpEventTriggerBackAnimation = false
 
     private val mMainFragmentAdapter = BrowseSupportFragment.MainFragmentAdapter(this)
@@ -64,12 +65,11 @@ class AboutFragment : DetailsSupportFragment(), BrowseSupportFragment.MainFragme
         ).apply {
             add(detailsOverview)
 
-            // add Licenses screen
+            // add Licenses
             val listRowAdapter = ArrayObjectAdapter(SpeakerCardPresenter())
-            listRowAdapter.add(SpeakerUiModel(getString(R.string.libraries)))
-            listRowAdapter.add(SpeakerUiModel(getString(R.string.voctocat)))
+            listRowAdapter.add(0, SpeakerUiModel(getString(R.string.libraries)))
+            listRowAdapter.add(1, SpeakerUiModel(getString(R.string.voctocat)))
             add(ListRow(listRowAdapter))
-
         }
     }
 
@@ -78,6 +78,12 @@ class AboutFragment : DetailsSupportFragment(), BrowseSupportFragment.MainFragme
             when ((item as SpeakerUiModel).name) {
                 getString(R.string.libraries) -> showLicenses()
                 getString(R.string.voctocat) -> Toast.makeText(activity, R.string.voctocat_toast, Toast.LENGTH_LONG).show()
+            }
+        }
+
+        setOnItemViewSelectedListener { _, _, rowViewHolder, _ ->
+            if (rowViewHolder is ListRowPresenter.ViewHolder) {
+                shouldKeyLeftEventTriggerBackAnimation = rowViewHolder.selectedPosition == 0
             }
         }
     }

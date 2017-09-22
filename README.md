@@ -1,15 +1,26 @@
-[![Get it on Google Play](https://upload.wikimedia.org/wikipedia/commons/c/cd/Get_it_on_Google_play.svg)](https://play.google.com/store/apps/details?id=de.stefanmedack.ccctv)
 [![Apache License](http://img.shields.io/badge/license-Apache%20License%202.0-blue.svg)](http://choosealicense.com/licenses/apache-2.0/)
+
+[<img src="https://upload.wikimedia.org/wikipedia/commons/c/cd/Get_it_on_Google_play.svg" alt="Get it on Google Play" width="230">][play] &nbsp;&nbsp;&nbsp; **OR** [get an APK][releases]
 
 # cccTV
 
-An Android TV App for the media API of the CCC written in Kotlin.
+An Android TV App for the media API of the Chaos Computer Club e.V. (CCC) written in Kotlin.
 
-* https://api.media.ccc.de
+* https://media.ccc.de
 
 This App uses [a fork][c3media-base-fork] of [c3media-base][c3media-base-orig] by [Tobias Preuss][tobias-preuss].
 
 The Logo ["Voctocat"][voctocat] is kindly provided by [Blinry][blinry] under CC BY-NC-SA 4.0 License.
+
+## Screenshots
+
+<img src="https://lh3.googleusercontent.com/VWveX4oHmYityFLHKI3Dsogmt4bEbSYthDWv-8sbgSWZDB452HhEmfni1Sczey-33w=h900-rw" alt="Screenshot #1"
+width="45%"> <img src="https://lh3.googleusercontent.com/onhizPzjofBqFLTlVLX65kTWfJXK-hZMIbnLBcD70P_Rk4InQkdFpjXKU6JK6ms8BCs=h900-rw" 
+alt="Screenshot #2" width="45%">
+
+<img src="https://lh3.googleusercontent.com/NFzZtTw73dvGmq54zgTtfNEziEj-c2JAneLjgEh1rQRWeloErCe0gJPunAb5mLFhxw=h900-rw" alt="Screenshot #3" 
+width="45%"> <img src="https://lh3.googleusercontent.com/3HPO32nkCoSLMHfKRhDoshhpTOpafTnl40SYSysqD3ouSku9eao2C8pQFslvkDrKgA=h900-rw" 
+alt="Screenshot #4" width="45%">
 
 ## Setup
 
@@ -40,5 +51,8 @@ If you want to build a `release` version, it is important to replace the placeho
 [c3media-base-fork]: https://github.com/stefanmedack/c3media-base
 [tobias-preuss]: https://github.com/johnjohndoe
 [blinry]: https://github.com/blinry
-[stefan]: https://github.com/stefanmedack
+[stefan]: https://twitter.com/Zonic03
 [voctocat]: https://morr.cc/voctocat/
+
+[play]: https://play.google.com/store/apps/details?id=de.stefanmedack.ccctv
+[releases]: https://github.com/stefanmedack/cccTV/releases
