@@ -25,6 +25,7 @@
     <string name="voctocat">Voctocat</string>
     <string name="voctocat_toast">Dieses kleine Kerlchen ist von Sebastian Morr entworfen worden
         und verfügbar unter der CC BY-NC-SA 4.0 Lizenz (https://morr.cc/voctocat/)</string>
+    <string name="search_result_header">%1$s videos gefunden für \"%2$s\"</string>
 
     <string name="implement_me_toast">Uups, under construction. Beim nächsten Mal ist hier aber bestimmt etwas.</string>
 </resources>

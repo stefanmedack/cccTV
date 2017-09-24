@@ -2,6 +2,7 @@ package de.stefanmedack.ccctv.ui.main
 
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
+import android.content.Intent
 import android.os.Bundle
 import android.support.v17.leanback.app.BrowseFragment
 import android.support.v17.leanback.app.BrowseSupportFragment
@@ -12,6 +13,7 @@ import android.view.KeyEvent
 import dagger.android.support.AndroidSupportInjection
 import de.stefanmedack.ccctv.R
 import de.stefanmedack.ccctv.ui.about.AboutFragment
+import de.stefanmedack.ccctv.ui.search.SearchActivity
 import de.stefanmedack.ccctv.util.plusAssign
 import info.metadude.kotlin.library.c3media.models.Conference
 import io.reactivex.disposables.CompositeDisposable
@@ -48,12 +50,9 @@ class MainFragment : BrowseSupportFragment() {
         isHeadersTransitionOnBackEnabled = true
         badgeDrawable = ContextCompat.getDrawable(activity, R.drawable.voctocat)
 
-        // TODO add back search
-        //        setOnSearchClickedListener {
-        //            Toast.makeText(
-        //                    activity, "implement Search", Toast.LENGTH_SHORT)
-        //                    .show()
-        //        }
+        setOnSearchClickedListener {
+            activity.startActivity(Intent(activity, SearchActivity::class.java))
+        }
 
         mainFragmentRegistry.registerFragment(PageRow::class.java, PageRowFragmentFactory())
     }
