@@ -2,6 +2,10 @@
 
 ## 1.2.0
 
+### Added
+
+- adds search, uses new media.ccc.de API for search
+
 ### Fixed
 
 - Fixes Bug with initially wrong used Aspect Ratios
