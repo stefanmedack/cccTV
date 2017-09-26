@@ -1,48 +1,49 @@
 package de.stefanmedack.ccctv.ui.search
 
 import android.Manifest
-import android.app.Activity
+import android.app.Activity.RESULT_OK
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import android.content.ActivityNotFoundException
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.os.Bundle
+import android.support.v17.leanback.R.id.lb_search_bar
 import android.support.v17.leanback.app.SearchSupportFragment
-import android.support.v17.leanback.app.SearchSupportFragment.SearchResultProvider
 import android.support.v17.leanback.widget.*
+import android.view.View
+import com.jakewharton.rxbinding2.support.v17.leanback.widget.searchQueryChanges
 import dagger.android.support.AndroidSupportInjection
-import de.stefanmedack.ccctv.BuildConfig
 import de.stefanmedack.ccctv.R
 import de.stefanmedack.ccctv.ui.cards.EventCardPresenter
 import de.stefanmedack.ccctv.ui.detail.DetailActivity
+import de.stefanmedack.ccctv.ui.search.uiModels.SearchResultUiModel
+import de.stefanmedack.ccctv.util.hasPermission
+import de.stefanmedack.ccctv.util.plusAssign
 import info.metadude.kotlin.library.c3media.models.Event
-import info.metadude.kotlin.library.c3media.models.EventsResponse
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.subscribeBy
 import timber.log.Timber
 import javax.inject.Inject
 
-class SearchFragment : SearchSupportFragment(), SearchResultProvider {
+class SearchFragment : SearchSupportFragment() {
 
-    val REQUEST_SPEECH = 0x00000010
+    private val REQUEST_SPEECH = 0x00000010
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
-
     private lateinit var viewModel: SearchViewModel
 
     private val disposables = CompositeDisposable()
 
     private val rowsAdapter: ArrayObjectAdapter = ArrayObjectAdapter(ListRowPresenter())
 
-    override fun onCreate(savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         AndroidSupportInjection.inject(this)
-        super.onCreate(savedInstanceState)
+        super.onViewCreated(view, savedInstanceState)
         viewModel = ViewModelProviders.of(activity, viewModelFactory).get(SearchViewModel::class.java)
 
         setupUi()
-        bindViewModel()
+        bindViewModel(view)
     }
 
     override fun onDestroy() {
@@ -51,27 +52,26 @@ class SearchFragment : SearchSupportFragment(), SearchResultProvider {
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (requestCode == REQUEST_SPEECH && resultCode == Activity.RESULT_OK) {
-            setSearchQuery(data!!, true)
+        if (requestCode == REQUEST_SPEECH && resultCode == RESULT_OK && data != null) {
+            setSearchQuery(data, true)
         }
     }
 
-    override fun getResultsAdapter(): ObjectAdapter? {
-        return rowsAdapter
-    }
 
     private fun setupUi() {
-        setSearchResultProvider(this)
+        setSearchResultProvider(object : SearchResultProvider {
+            override fun getResultsAdapter(): ObjectAdapter? = rowsAdapter
+            override fun onQueryTextChange(newQuery: String): Boolean = true
+            override fun onQueryTextSubmit(query: String): Boolean = true
+        })
+
         setOnItemViewClickedListener { _, item, _, _ ->
-            if (item is Event) {
-                DetailActivity.start(activity, item)
-            }
+            if (item is Event) DetailActivity.start(activity, item)
         }
 
-        if (!hasPermission(Manifest.permission.RECORD_AUDIO)) {
-            // SpeechRecognitionCallback is not required and if not provided recognition will be
-            // handled using internal speech recognizer, in which case you must have RECORD_AUDIO
-            // permission
+        if (!activity.hasPermission(Manifest.permission.RECORD_AUDIO)) {
+            // SpeechRecognitionCallback is not required and if not provided recognition will be handled using internal speech
+            // recognizer, in which case you must have RECORD_AUDIO permission
             setSpeechRecognitionCallback {
                 try {
                     if (activity != null) {
@@ -85,54 +85,26 @@ class SearchFragment : SearchSupportFragment(), SearchResultProvider {
         }
     }
 
-    private fun bindViewModel() {
-        disposables.add(viewModel.searchStuff()
-                .subscribeBy(
-                        onSuccess = { render(it) },
-                        // TODO proper error handling
-                        onError = { it.printStackTrace() }
-                ))
+    private fun bindViewModel(view: View?) {
+        view?.findViewById<SearchBar>(lb_search_bar)?.let { searchBar ->
+            disposables.add(viewModel.bindSearch(searchBar.searchQueryChanges())
+                    .subscribeBy(
+                            onNext = { render(it) },
+                            // TODO proper error handling
+                            onError = { it.printStackTrace() }
+                    )
+            )
+        }
     }
 
-    private fun render(it: EventsResponse) {
+    private fun render(result: SearchResultUiModel) {
         rowsAdapter.clear()
-        val listRowAdapter = ArrayObjectAdapter(EventCardPresenter())
 
-        for (item in it.events) {
-            listRowAdapter.add(item)
-        }
-
-        val header = HeaderItem(0,
-                // TODO
-                getString(R.string.search_result_header, 42.toString(), "stuff"))
-        rowsAdapter.add(ListRow(header, listRowAdapter))
+        rowsAdapter.add(ListRow(
+                HeaderItem(0, getString(R.string.search_result_header, result.events.size.toString(), result.searchTerm)),
+                ArrayObjectAdapter(EventCardPresenter()).also { it += result.events }
+        ))
     }
 
-    override fun onQueryTextChange(newQuery: String): Boolean {
-        if (BuildConfig.DEBUG) {
-            Timber.i("Search text changed: %s", newQuery)
-        }
-        // TODO
-        //        viewModel.onSearchTextChanged(newQuery)
-        return true
-    }
-
-    override fun onQueryTextSubmit(query: String): Boolean {
-        if (BuildConfig.DEBUG) {
-            Timber.i("Search text submitted: %s", query)
-        }
-        // TODO
-        //        viewModel.onSearchTextChanged(query)
-        return true
-    }
-
-    fun hasResults(): Boolean {
-        return rowsAdapter.size() > 0
-    }
-
-    private fun hasPermission(permission: String): Boolean {
-        val context = activity
-        return PackageManager.PERMISSION_GRANTED == context.packageManager.checkPermission(permission, context.packageName)
-    }
-
+    fun hasResults(): Boolean = rowsAdapter.size() > 0
 }
