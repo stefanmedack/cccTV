@@ -13,9 +13,13 @@ class SearchViewModel @Inject constructor(
 ) : ViewModel() {
 
     fun bindSearch(searchQueryChanges: Observable<String>): Observable<SearchResultUiModel> = searchQueryChanges
-            .filter { it.length > 2 }
-            .debounce(300, TimeUnit.MILLISECONDS)
-            .flatMap(this::loadSearchResult)
+            .debounce(333, TimeUnit.MILLISECONDS)
+            .flatMap {
+                if (it.length > 1)
+                    this.loadSearchResult(it)
+                else
+                    Observable.just(SearchResultUiModel(showResults = false))
+            }
 
     private fun loadSearchResult(searchTerm: String): Observable<SearchResultUiModel>? {
         return c3MediaService

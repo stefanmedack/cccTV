@@ -99,11 +99,11 @@ class SearchFragment : SearchSupportFragment() {
 
     private fun render(result: SearchResultUiModel) {
         rowsAdapter.clear()
-
-        rowsAdapter.add(ListRow(
-                HeaderItem(0, getString(R.string.search_result_header, result.events.size.toString(), result.searchTerm)),
-                ArrayObjectAdapter(EventCardPresenter()).also { it += result.events }
-        ))
+        if (result.showResults)
+            rowsAdapter.add(ListRow(
+                    HeaderItem(0, getString(R.string.search_result_header, result.events.size.toString(), result.searchTerm)),
+                    ArrayObjectAdapter(EventCardPresenter()).also { it += result.events }
+            ))
     }
 
     fun hasResults(): Boolean = rowsAdapter.size() > 0
