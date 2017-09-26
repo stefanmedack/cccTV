@@ -244,8 +244,8 @@ class ExoPlayerAdapter(private val context: Context) : PlayerAdapter(), Player.E
 
         player.setVideoListener(object : SimpleExoPlayer.VideoListener {
             override fun onVideoSizeChanged(width: Int, height: Int, unappliedRotationDegrees: Int, pixelWidthHeightRatio: Float) {
-                currentRecordingWidth = currentRecordingWidth ?: width
-                currentRecordingHeight = currentRecordingHeight ?: height
+                currentRecordingWidth = (width * pixelWidthHeightRatio).toInt()
+                currentRecordingHeight = height
                 callback.onVideoSizeChanged(
                         this@ExoPlayerAdapter,
                         currentRecordingWidth!!,
