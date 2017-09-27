@@ -80,10 +80,8 @@ dependencies {
     implementation "com.android.support:appcompat-v7:$supportLibVersion"
     implementation "com.android.support:leanback-v17:$supportLibVersion"
 
-    // Architecture Components
-    implementation "android.arch.lifecycle:runtime:$archComponentsVersion"
+    // Architecture Components - View Model (+ Lifecycles, LiveData)
     implementation "android.arch.lifecycle:extensions:$archComponentsVersion"
-    kapt "android.arch.lifecycle:compiler:$archComponentsVersion"
 
     //Dagger 2 dependencies
     implementation "com.google.dagger:dagger:$daggerVersion"
