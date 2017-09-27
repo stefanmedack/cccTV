@@ -8,6 +8,7 @@ import dagger.multibindings.IntoMap
 import de.stefanmedack.ccctv.di.Scopes.ViewModelKey
 import de.stefanmedack.ccctv.ui.detail.DetailViewModel
 import de.stefanmedack.ccctv.ui.main.MainViewModel
+import de.stefanmedack.ccctv.ui.search.SearchViewModel
 
 @Module
 abstract class ViewModelModule {
@@ -21,6 +22,11 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(DetailViewModel::class)
     abstract fun bindDetailViewModel(viewModel: DetailViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(SearchViewModel::class)
+    abstract fun bindSearchViewModel(viewModel: SearchViewModel): ViewModel
 
     @Binds
     abstract fun bindViewModelFactory(factory: C3ViewModelFactory): ViewModelProvider.Factory

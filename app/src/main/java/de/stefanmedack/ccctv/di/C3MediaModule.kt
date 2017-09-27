@@ -6,7 +6,7 @@ import dagger.Provides
 import de.stefanmedack.ccctv.di.Scopes.ApplicationContext
 import de.stefanmedack.ccctv.di.Scopes.CacheDir
 import de.stefanmedack.ccctv.util.CACHE_MAX_SIZE_HTTP
-import info.metadude.kotlin.library.c3media.ApiModule.provideRxC3MediaService
+import info.metadude.kotlin.library.c3media.RxApiModule.provideRxC3MediaService
 import info.metadude.kotlin.library.c3media.RxC3MediaService
 import okhttp3.Cache
 import okhttp3.OkHttpClient

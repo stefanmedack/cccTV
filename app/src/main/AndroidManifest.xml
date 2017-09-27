@@ -41,6 +41,7 @@
         </activity>
 
         <activity android:name=".ui.detail.DetailActivity"/>
+        <activity android:name=".ui.search.SearchActivity"/>
 
         <activity
             android:name="com.google.android.gms.oss.licenses.OssLicensesMenuActivity"
