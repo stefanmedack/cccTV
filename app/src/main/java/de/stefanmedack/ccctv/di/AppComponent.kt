@@ -15,6 +15,7 @@ import javax.inject.Singleton
         modules = arrayOf(
                 AndroidSupportInjectionModule::class,
                 C3MediaModule::class,
+                DatabaseModule::class,
                 ActivityBuilderModule::class
         )
 )

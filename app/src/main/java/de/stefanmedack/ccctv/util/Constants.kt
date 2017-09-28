@@ -3,6 +3,7 @@ package de.stefanmedack.ccctv.util
 import info.metadude.kotlin.library.c3media.models.MimeType
 
 const val CACHE_MAX_SIZE_HTTP = (20 * 1024 * 1024).toLong()
+const val EMPTY_STRING = ""
 
 val CONFERENCE_GROUP_SORTING = listOf(
         "Congress",

@@ -10,12 +10,14 @@ import android.support.v17.leanback.widget.*
 import android.support.v4.app.Fragment
 import android.support.v4.content.ContextCompat
 import android.view.KeyEvent
+import android.widget.Toast
 import dagger.android.support.AndroidSupportInjection
 import de.stefanmedack.ccctv.R
+import de.stefanmedack.ccctv.model.Resource
 import de.stefanmedack.ccctv.ui.about.AboutFragment
 import de.stefanmedack.ccctv.ui.search.SearchActivity
+import de.stefanmedack.ccctv.util.ConferenceGroup
 import de.stefanmedack.ccctv.util.plusAssign
-import info.metadude.kotlin.library.c3media.models.Conference
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.subscribeBy
 import javax.inject.Inject
@@ -58,22 +60,27 @@ class MainFragment : BrowseSupportFragment() {
     }
 
     private fun bindViewModel() {
-        disposables.add(viewModel.getConferences()
+        disposables.add(viewModel.conferences
                 .subscribeBy(
-                        onSuccess = { render(it) },
-                        // TODO proper error handling
+                        onNext = { render(it) },
                         onError = { it.printStackTrace() }
                 ))
     }
 
-    private fun render(mappedConferences: Map<String, List<Conference>>) {
-        adapter = ArrayObjectAdapter(ListRowPresenter())
-        (adapter as ArrayObjectAdapter).let {
-            it += SectionRow(HeaderItem(1L, getString(R.string.main_videos_header)))
-            it += mappedConferences.map { PageRow(HeaderItem(2L, it.key)) }
-            it += DividerRow()
-            it += SectionRow(HeaderItem(3L, getString(R.string.main_more_header)))
-            it += PageRow(HeaderItem(4L, getString(R.string.main_about_app)))
+    private fun render(resource: Resource<List<ConferenceGroup>>) {
+        when (resource) {
+            is Resource.Success -> {
+                adapter = ArrayObjectAdapter(ListRowPresenter())
+                (adapter as ArrayObjectAdapter).let {
+                    it += SectionRow(HeaderItem(1L, getString(R.string.main_videos_header)))
+                    it += resource.data.map { PageRow(HeaderItem(2L, it)) }
+                    it += DividerRow()
+                    it += SectionRow(HeaderItem(3L, getString(R.string.main_more_header)))
+                    it += PageRow(HeaderItem(4L, getString(R.string.main_about_app)))
+                }
+            }
+//            is Resource.Loading -> adapter = null
+            is Resource.Error -> Toast.makeText(activity, resource.msg, Toast.LENGTH_LONG).show()
         }
 
         startEntranceTransition()

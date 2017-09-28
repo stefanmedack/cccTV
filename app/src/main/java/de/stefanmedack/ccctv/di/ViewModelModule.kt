@@ -7,6 +7,7 @@ import dagger.Module
 import dagger.multibindings.IntoMap
 import de.stefanmedack.ccctv.di.Scopes.ViewModelKey
 import de.stefanmedack.ccctv.ui.detail.DetailViewModel
+import de.stefanmedack.ccctv.ui.main.GroupedConferencesViewModel
 import de.stefanmedack.ccctv.ui.main.MainViewModel
 import de.stefanmedack.ccctv.ui.search.SearchViewModel
 
@@ -17,6 +18,11 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(MainViewModel::class)
     abstract fun bindMainViewModel(viewModel: MainViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(GroupedConferencesViewModel::class)
+    abstract fun bindGroupedConferencesViewModel(viewModel: GroupedConferencesViewModel): ViewModel
 
     @Binds
     @IntoMap

@@ -242,7 +242,7 @@ class ExoPlayerAdapter(private val context: Context) : PlayerAdapter(), Player.E
             player.prepare(onCreateMediaSource(it))
         }
 
-        player.setVideoListener(object : SimpleExoPlayer.VideoListener {
+        player.addVideoListener(object : SimpleExoPlayer.VideoListener {
             override fun onVideoSizeChanged(width: Int, height: Int, unappliedRotationDegrees: Int, pixelWidthHeightRatio: Float) {
                 currentRecordingWidth = (width * pixelWidthHeightRatio).toInt()
                 currentRecordingHeight = height
