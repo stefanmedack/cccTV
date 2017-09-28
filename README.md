@@ -1,5 +1,8 @@
 [![Apache License](http://img.shields.io/badge/license-Apache%20License%202.0-blue.svg)](http://choosealicense.com/licenses/apache-2.0/)
 
+Disclaimer: due to some legal issues, the Google Play entry and screenshots are temporarily unavailable (hopefully just temporarily).
+In order to install the App on your TV, downloading an APK is currently the only option.
+
 [<img src="https://upload.wikimedia.org/wikipedia/commons/c/cd/Get_it_on_Google_play.svg" alt="Get it on Google Play" width="230">][play] &nbsp;&nbsp;&nbsp; **OR** [get an APK][releases]
 
 # cccTV
