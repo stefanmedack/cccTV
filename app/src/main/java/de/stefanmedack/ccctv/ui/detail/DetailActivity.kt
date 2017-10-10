@@ -7,11 +7,11 @@ import android.support.v4.app.ActivityOptionsCompat
 import android.view.KeyEvent
 import android.widget.ImageView
 import de.stefanmedack.ccctv.R
-import de.stefanmedack.ccctv.model.MiniEvent
+import de.stefanmedack.ccctv.persistence.entities.Event
 import de.stefanmedack.ccctv.ui.base.BaseInjectibleActivity
-import de.stefanmedack.ccctv.util.EVENT
+import de.stefanmedack.ccctv.util.EVENT_ID
+import de.stefanmedack.ccctv.util.EVENT_PICTURE
 import de.stefanmedack.ccctv.util.SHARED_DETAIL_TRANSITION
-import info.metadude.kotlin.library.c3media.models.Event
 
 class DetailActivity : BaseInjectibleActivity() {
 
@@ -38,7 +38,8 @@ class DetailActivity : BaseInjectibleActivity() {
     companion object {
         fun start(activity: Activity, event: Event, sharedImage: ImageView? = null) {
             val intent = Intent(activity, DetailActivity::class.java)
-            intent.putExtra(EVENT, MiniEvent.ModelMapper.from(event))
+            intent.putExtra(EVENT_ID, event.id)
+            intent.putExtra(EVENT_PICTURE, event.thumbUrl)
 
             if (sharedImage != null) {
                 val bundle = ActivityOptionsCompat.makeSceneTransitionAnimation(

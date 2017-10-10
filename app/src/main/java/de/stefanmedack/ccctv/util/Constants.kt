@@ -18,7 +18,8 @@ val SUPPORTED_VIDEO_MIME_TYPE_SORTING = listOf(
 
 typealias ConferenceGroup = String
 
-const val EVENT = "Event"
+const val EVENT_ID = "EventId"
+const val EVENT_PICTURE = "EventPicture"
 const val CONFERENCE_GROUP = "CGroup"
 
 const val DETAIL_ACTION_PLAY: Long = 1

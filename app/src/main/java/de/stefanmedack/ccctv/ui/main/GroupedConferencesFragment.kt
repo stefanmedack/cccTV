@@ -10,11 +10,11 @@ import android.widget.Toast
 import dagger.android.support.AndroidSupportInjection
 import de.stefanmedack.ccctv.model.Resource
 import de.stefanmedack.ccctv.persistence.entities.ConferenceWithEvents
+import de.stefanmedack.ccctv.persistence.entities.Event
 import de.stefanmedack.ccctv.ui.cards.EventCardPresenter
 import de.stefanmedack.ccctv.ui.detail.DetailActivity
 import de.stefanmedack.ccctv.util.CONFERENCE_GROUP
 import de.stefanmedack.ccctv.util.plusAssign
-import info.metadude.kotlin.library.c3media.models.Event
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.subscribeBy
 import javax.inject.Inject
@@ -75,7 +75,7 @@ class GroupedConferencesFragment : RowsSupportFragment() {
         val adapter = ArrayObjectAdapter(EventCardPresenter())
         adapter += conference.events
 
-        val headerItem = HeaderItem(conference.conference?.title)
+        val headerItem = HeaderItem(conference.conference.title)
         return ListRow(headerItem, adapter)
     }
 

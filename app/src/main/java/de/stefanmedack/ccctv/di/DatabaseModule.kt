@@ -7,6 +7,7 @@ import dagger.Provides
 import de.stefanmedack.ccctv.di.Scopes.ApplicationContext
 import de.stefanmedack.ccctv.persistence.C3Db
 import de.stefanmedack.ccctv.persistence.daos.ConferenceDao
+import de.stefanmedack.ccctv.persistence.daos.EventDao
 import javax.inject.Singleton
 
 @Module
@@ -23,5 +24,10 @@ class DatabaseModule {
     @Singleton
     fun provideConferenceDao(db: C3Db): ConferenceDao
             = db.conferenceDao()
+
+    @Provides
+    @Singleton
+    fun provideEventDao(db: C3Db): EventDao
+            = db.eventDao()
 
 }

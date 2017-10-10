@@ -16,6 +16,7 @@ import com.bumptech.glide.request.animation.GlideAnimation
 import com.bumptech.glide.request.target.SimpleTarget
 import dagger.android.support.AndroidSupportInjection
 import de.stefanmedack.ccctv.R
+import de.stefanmedack.ccctv.persistence.entities.Event
 import de.stefanmedack.ccctv.ui.cards.EventCardPresenter
 import de.stefanmedack.ccctv.ui.cards.SpeakerCardPresenter
 import de.stefanmedack.ccctv.ui.detail.playback.ExoPlayerAdapter
@@ -23,7 +24,6 @@ import de.stefanmedack.ccctv.ui.detail.playback.VideoMediaPlayerGlue
 import de.stefanmedack.ccctv.ui.detail.uiModels.DetailUiModel
 import de.stefanmedack.ccctv.ui.detail.uiModels.SpeakerUiModel
 import de.stefanmedack.ccctv.util.*
-import info.metadude.kotlin.library.c3media.models.Event
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.subscribeBy
 import javax.inject.Inject
@@ -43,9 +43,8 @@ class DetailFragment : DetailsSupportFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         AndroidSupportInjection.inject(this)
         super.onCreate(savedInstanceState)
-        viewModel = ViewModelProviders.of(this, viewModelFactory).get(DetailViewModel::class.java).apply {
-            event = activity.intent.getParcelableExtra("Event")
-        }
+        viewModel = ViewModelProviders.of(this, viewModelFactory).get(DetailViewModel::class.java)
+        viewModel.init(activity.intent.getIntExtra(EVENT_ID, -1))
 
         setupUi()
         setupEventListeners()
@@ -71,7 +70,7 @@ class DetailFragment : DetailsSupportFragment() {
         detailOverviewRowPresenter.isParticipatingEntranceTransition = true
 
         // Setup action and detail row.
-        detailsOverview = DetailsOverviewRow(viewModel.event)
+        detailsOverview = DetailsOverviewRow(Any())
         showPoster(detailsOverview)
 
         detailsOverview.actionsAdapter = ArrayObjectAdapter().apply {
@@ -97,7 +96,7 @@ class DetailFragment : DetailsSupportFragment() {
         detailsOverview.imageDrawable = ContextCompat.getDrawable(activity, R.drawable.voctocat)
 
         Glide.with(activity)
-                .load(viewModel.event.thumbUrl)
+                .load(activity.intent.getStringExtra(EVENT_PICTURE))
                 .centerCrop()
                 .error(R.drawable.voctocat)
                 .into<SimpleTarget<GlideDrawable>>(object : SimpleTarget<GlideDrawable>(
@@ -111,21 +110,23 @@ class DetailFragment : DetailsSupportFragment() {
     }
 
     private fun bindViewModel() {
-        disposables.add(viewModel.getEventDetail()
+        disposables.add(viewModel.detailUi
                 .subscribeBy(
-                        onSuccess = { render(it) },
+                        onNext = { render(it) },
                         // TODO proper error handling
                         onError = { it.printStackTrace() }
                 ))
     }
 
     private fun render(result: DetailUiModel) {
+        detailsOverview.item = result.event
+
         val playerAdapter = ExoPlayerAdapter(activity)
         val mediaPlayerGlue = VideoMediaPlayerGlue(activity, playerAdapter)
         mediaPlayerGlue.isSeekEnabled = true
         mediaPlayerGlue.title = result.event.title
         mediaPlayerGlue.subtitle = result.event.subtitle
-        mediaPlayerGlue.playerAdapter.setEvent(result.event)
+        mediaPlayerGlue.playerAdapter.bindRecordings(viewModel.eventWithRecordings)
 
         detailsBackground.enableParallax()
         detailsBackground.setupVideoPlayback(mediaPlayerGlue)

@@ -19,18 +19,16 @@ class GroupedConferencesViewModel @Inject constructor(
     }
 
     val conferencesWithEvents: Flowable<Resource<List<ConferenceWithEvents>>>
-        get() =
-            repository.conferencesWithEvents()
-                    // TODO filter in repository
-                    .map<Resource<List<ConferenceWithEvents>>> {
-                        if (it is Resource.Success)
-                            Resource.Success(it.data.filter { it.conference.group() == conferenceGroup })
-                        else
-                            it
-                    } //
-    //                    .filter { it is Resource.Success }
-    //                    .map { (it as Resource.Success).data.groupConferences()[conferenceGroup] }
-    //                    .flatMap { it.toFlowable() }
-    //                    .toSortedList(compareByDescending(Conference::title))
+        get() = repository.conferencesWithEvents
+                // TODO filter in repository
+                .map<Resource<List<ConferenceWithEvents>>> {
+                    if (it is Resource.Success)
+                        Resource.Success(it.data
+                                .filter { it.conference.group() == conferenceGroup }
+                                .sortedByDescending { it.conference.title }
+                        )
+                    else
+                        it
+                }
 
 }

@@ -1,6 +1,7 @@
 package de.stefanmedack.ccctv.ui.search
 
 import android.arch.lifecycle.ViewModel
+import de.stefanmedack.ccctv.persistence.toEntity
 import de.stefanmedack.ccctv.ui.search.uiModels.SearchResultUiModel
 import de.stefanmedack.ccctv.util.applySchedulers
 import info.metadude.kotlin.library.c3media.RxC3MediaService
@@ -25,7 +26,7 @@ class SearchViewModel @Inject constructor(
         return c3MediaService
                 .searchEvents(searchTerm)
                 .applySchedulers()
-                .map { SearchResultUiModel(searchTerm, it.events) }
+                .map { SearchResultUiModel(searchTerm, it.events.mapNotNull { it.toEntity(-1) }) }
                 .toObservable()
     }
 }

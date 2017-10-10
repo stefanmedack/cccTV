@@ -1,7 +1,6 @@
 package de.stefanmedack.ccctv.util
 
 import de.stefanmedack.ccctv.BuildConfig.DEBUG
-import de.stefanmedack.ccctv.model.MiniEvent
 import de.stefanmedack.ccctv.persistence.entities.Conference
 import de.stefanmedack.ccctv.repository.ConferenceEntity
 import de.stefanmedack.ccctv.repository.ConferenceRemote
@@ -20,8 +19,6 @@ fun List<Conference>.groupConferences(): Map<ConferenceGroup, List<ConferenceEnt
         .toSortedMap(Comparator { lhs, rhs -> lhs.sortingIndex() - rhs.sortingIndex() })
 
 fun EventRemote.id(): Int? = this.url?.substringAfterLast('/')?.toIntOrNull()
-
-fun MiniEvent.id(): Int = this.url.substringAfterLast('/').toIntOrNull() ?: -1
 
 fun Event.bestRecording(favoriteLanguage: Language, isFavoriteQualityHigh: Boolean = true): Recording? {
     val sortedRecordings = this.recordings

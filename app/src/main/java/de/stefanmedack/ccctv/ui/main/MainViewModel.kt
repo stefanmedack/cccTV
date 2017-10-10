@@ -13,19 +13,19 @@ class MainViewModel @Inject constructor(
 ) : ViewModel() {
 
     val conferences: Flowable<Resource<List<ConferenceGroup>>>
-        get() =
-            repository.conferencesWithEvents()
-                    .map<Resource<List<ConferenceGroup>>> {
-                        when (it) {
-                            is Resource.Success -> Resource.Success(it.data
-                                    .map { it.conference }
-                                    .groupConferences()
-                                    .keys
-                                    .toList())
-                            is Resource.Loading -> Resource.Loading()
-                            is Resource.Error -> Resource.Error(it.msg)
-                        }
+        get() = repository.conferencesWithEvents
+                .map<Resource<List<ConferenceGroup>>> {
+                    when (it) {
+                    // TODO create helper method for Success-Mapping
+                        is Resource.Success -> Resource.Success(it.data
+                                .map { it.conference }
+                                .groupConferences()
+                                .keys
+                                .toList())
+                        is Resource.Loading -> Resource.Loading()
+                        is Resource.Error -> Resource.Error(it.msg)
                     }
+                }
 
     // TODO move back?
     //            repository.conferences
