@@ -18,6 +18,9 @@ interface ConferenceDao {
     @Query("SELECT * FROM Conferences")
     fun getConferencesWithEvents(): Flowable<List<ConferenceWithEvents>>
 
+    @Query("SELECT * FROM Conferences WHERE slug LIKE :conferenceGroup || '%'")
+    fun getConferencesWithEvents(conferenceGroup: String): Flowable<List<ConferenceWithEvents>>
+
     @Query("SELECT * FROM Conferences WHERE id = :id")
     fun getConferenceById(id: Int): Flowable<Conference>
 

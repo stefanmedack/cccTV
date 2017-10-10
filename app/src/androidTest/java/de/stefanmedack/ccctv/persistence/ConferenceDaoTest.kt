@@ -7,6 +7,7 @@ import de.stefanmedack.ccctv.minimalEventEntity
 import de.stefanmedack.ccctv.persistence.entities.ConferenceWithEvents
 import de.stefanmedack.ccctv.persistence.entities.Event
 import org.junit.Assert
+import org.junit.Assert.assertEquals
 import org.junit.Test
 import org.junit.runner.RunWith
 
@@ -62,7 +63,7 @@ class ConferenceDaoTest : BaseDbTest() {
         val loadedConferences = db.conferenceDao().getConferences().test().values()[0]
 
         Assert.assertNotEquals(loadedConferences[0], oldConference)
-        Assert.assertEquals(loadedConferences[0], newConference)
+        assertEquals(loadedConferences[0], newConference)
     }
 
     // Conferences with Events
@@ -96,10 +97,10 @@ class ConferenceDaoTest : BaseDbTest() {
 
         val loadedConferences = db.conferenceDao().getConferencesWithEvents().test().values()[0]
 
-        Assert.assertEquals(loadedConferences[0].conference, conferences[0])
-        Assert.assertEquals(loadedConferences[0].events, listOf(eventForFirstConference))
-        Assert.assertEquals(loadedConferences[1].conference, conferences[1])
-        Assert.assertEquals(loadedConferences[1].events, listOf<Event>())
+        assertEquals(loadedConferences[0].conference, conferences[0])
+        assertEquals(loadedConferences[0].events, listOf(eventForFirstConference))
+        assertEquals(loadedConferences[1].conference, conferences[1])
+        assertEquals(loadedConferences[1].events, listOf<Event>())
     }
 
   @Test
@@ -123,4 +124,17 @@ class ConferenceDaoTest : BaseDbTest() {
         loadedConferences.assertValue(conferencesWithEvents)
     }
 
+    @Test
+    fun insert_and_retrieve_multiple_conferences_with_events_filtered_by_group() {
+        val conferences = listOf(
+                minimalConferenceEntity.copy(id = 1, slug = "congress/33c3"),
+                fullConferenceEntity.copy(id = 2, slug = "not_congress/droidcon")
+        )
+
+        db.conferenceDao().insertAll(conferences)
+        val loadedConferences = db.conferenceDao().getConferencesWithEvents("congress").test().values()[0]
+
+        assertEquals(loadedConferences.size, 1)
+        assertEquals(loadedConferences[0].conference, conferences[0])
+    }
 }
