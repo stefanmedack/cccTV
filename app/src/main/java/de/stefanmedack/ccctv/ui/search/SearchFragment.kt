@@ -31,7 +31,10 @@ class SearchFragment : SearchSupportFragment() {
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
-    private lateinit var viewModel: SearchViewModel
+
+    private val viewModel: SearchViewModel by lazy {
+        ViewModelProviders.of(activity, viewModelFactory).get(SearchViewModel::class.java)
+    }
 
     private val disposables = CompositeDisposable()
 
@@ -40,7 +43,6 @@ class SearchFragment : SearchSupportFragment() {
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         AndroidSupportInjection.inject(this)
         super.onViewCreated(view, savedInstanceState)
-        viewModel = ViewModelProviders.of(activity, viewModelFactory).get(SearchViewModel::class.java)
 
         setupUi()
         bindViewModel(view)

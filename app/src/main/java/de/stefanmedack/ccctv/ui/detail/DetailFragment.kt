@@ -33,7 +33,11 @@ class DetailFragment : DetailsSupportFragment() {
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
 
-    private lateinit var viewModel: DetailViewModel
+    private val viewModel: DetailViewModel by lazy {
+        ViewModelProviders.of(this, viewModelFactory).get(DetailViewModel::class.java).apply {
+            init(activity.intent.getIntExtra(EVENT_ID, -1))
+        }
+    }
 
     private val disposables = CompositeDisposable()
 
@@ -43,8 +47,6 @@ class DetailFragment : DetailsSupportFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         AndroidSupportInjection.inject(this)
         super.onCreate(savedInstanceState)
-        viewModel = ViewModelProviders.of(this, viewModelFactory).get(DetailViewModel::class.java)
-        viewModel.init(activity.intent.getIntExtra(EVENT_ID, -1))
 
         setupUi()
         setupEventListeners()

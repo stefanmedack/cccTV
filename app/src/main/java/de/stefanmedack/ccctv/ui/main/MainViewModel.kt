@@ -26,15 +26,4 @@ class MainViewModel @Inject constructor(
                         is Resource.Error -> Resource.Error(it.msg)
                     }
                 }
-
-    // TODO move back?
-    //            repository.conferences
-    //                    .map<Resource<List<ConferenceGroup>>> {
-    //                        when (it) {
-    //                            is Resource.Success -> Resource.Success(it.data.groupConferences().keys.toList())
-    //                            is Resource.Loading -> Resource.Loading()
-    //                            is Resource.Error -> Resource.Error(it.msg)
-    //                        }
-    //                    }
-    //
 }

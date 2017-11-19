@@ -24,16 +24,17 @@ class GroupedConferencesFragment : RowsSupportFragment() {
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
 
-    private lateinit var viewModel: GroupedConferencesViewModel
+    private val viewModel: GroupedConferencesViewModel by lazy {
+        ViewModelProviders.of(activity, viewModelFactory).get(GroupedConferencesViewModel::class.java).apply {
+            init(arguments.getString(CONFERENCE_GROUP, ""))
+        }
+    }
 
     private val disposables = CompositeDisposable()
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         AndroidSupportInjection.inject(this)
         super.onViewCreated(view, savedInstanceState)
-        viewModel = ViewModelProviders.of(activity, viewModelFactory).get(GroupedConferencesViewModel::class.java)
-
-        viewModel.init(arguments.getString(CONFERENCE_GROUP, ""))
 
         setupUi()
         bindViewModel()
@@ -64,8 +65,8 @@ class GroupedConferencesFragment : RowsSupportFragment() {
 
     private fun render(resource: Resource<List<ConferenceWithEvents>>) {
         mainFragmentAdapter.fragmentHost.notifyDataReady(mainFragmentAdapter)
-//        adapter = ArrayObjectAdapter(ListRowPresenter())
-        when(resource) {
+        //        adapter = ArrayObjectAdapter(ListRowPresenter())
+        when (resource) {
             is Resource.Success -> (adapter as ArrayObjectAdapter) += resource.data.map { createEventRow(it) }
             is Resource.Error -> Toast.makeText(activity, resource.msg, Toast.LENGTH_LONG).show()
         }

@@ -27,14 +27,15 @@ class MainFragment : BrowseSupportFragment() {
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
 
-    private lateinit var viewModel: MainViewModel
+    private val viewModel: MainViewModel by lazy {
+        ViewModelProviders.of(activity, viewModelFactory).get(MainViewModel::class.java)
+    }
 
     private val disposables = CompositeDisposable()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         AndroidSupportInjection.inject(this)
         super.onCreate(savedInstanceState)
-        viewModel = ViewModelProviders.of(activity, viewModelFactory).get(MainViewModel::class.java)
 
         setupUi()
         bindViewModel()

@@ -9,7 +9,7 @@ apply plugin: 'io.fabric'
 apply plugin: 'com.google.gms.oss.licenses.plugin'
 
 ext {
-    archComponentsVersion = "1.0.0-beta2"
+    archComponentsVersion = "1.0.0"
     assertjVersion = "3.8.0"
     c3mediaVersion = "2.0.0-SNAPSHOT"
     crashlyticsVersion = "2.6.8"
