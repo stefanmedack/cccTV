@@ -27,7 +27,8 @@ class DetailViewModel @Inject constructor(
                         speaker = it.persons?.mapNotNull { if (it != null) SpeakerUiModel(it) else null } ?: listOf()
                 )
             }.flatMap { detailUiModel: DetailUiModel ->
-                getRelatedEvents(detailUiModel.event.metadata?.related ?: listOf())
+                // TODO fix parsing of related events
+                getRelatedEvents(/*detailUiModel.event.metadata?.related ?: */listOf())
                     .map { detailUiModel.copy(related = it) }
 
     }
