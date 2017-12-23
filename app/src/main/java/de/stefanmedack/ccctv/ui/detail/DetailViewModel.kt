@@ -23,7 +23,8 @@ class DetailViewModel @Inject constructor(
     val detailUi: Flowable<DetailUiModel>
         get() = repository.getEvent(eventId)
                 .flatMap { event: Event ->
-                    getRelatedEvents(event.metadata?.related ?: listOf())
+                    // TODO fix parsing of related events
+                    getRelatedEvents(/*detailUiModel.event.metadata?.related ?: */listOf())
                             .map {
                                 DetailUiModel(
                                         event = event,
