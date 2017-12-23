@@ -9,6 +9,7 @@ import org.amshove.kluent.shouldBeNull
 import org.amshove.kluent.shouldEqual
 import org.junit.Test
 
+@Suppress("IllegalIdentifier")
 class EventExtensionsTest {
 
     @Test

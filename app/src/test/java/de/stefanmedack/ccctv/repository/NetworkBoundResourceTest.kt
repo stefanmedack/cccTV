@@ -12,6 +12,7 @@ import org.junit.Test
 import java.util.concurrent.TimeUnit
 
 
+@Suppress("IllegalIdentifier")
 class NetworkBoundResourceTest {
 
     @Before
