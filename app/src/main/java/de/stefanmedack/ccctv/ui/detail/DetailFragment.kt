@@ -35,7 +35,7 @@ class DetailFragment : DetailsSupportFragment() {
 
     private val viewModel: DetailViewModel by lazy {
         ViewModelProviders.of(this, viewModelFactory).get(DetailViewModel::class.java).apply {
-            init(activity.intent.getIntExtra(EVENT_ID, -1))
+            init(arguments.getInt(EVENT_ID))
         }
     }
 
@@ -98,7 +98,7 @@ class DetailFragment : DetailsSupportFragment() {
         detailsOverview.imageDrawable = ContextCompat.getDrawable(activity, R.drawable.voctocat)
 
         Glide.with(activity)
-                .load(activity.intent.getStringExtra(EVENT_PICTURE))
+                .load(arguments.getString(EVENT_PICTURE))
                 .centerCrop()
                 .error(R.drawable.voctocat)
                 .into<SimpleTarget<GlideDrawable>>(object : SimpleTarget<GlideDrawable>(

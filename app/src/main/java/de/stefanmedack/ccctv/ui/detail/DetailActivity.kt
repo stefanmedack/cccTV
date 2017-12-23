@@ -25,6 +25,10 @@ class DetailActivity : BaseInjectableActivity() {
 
         if (savedInstanceState == null) {
             fragment = DetailFragment()
+            fragment?.arguments = Bundle(2).apply {
+                putInt(EVENT_ID, intent.getIntExtra(EVENT_ID, -1))
+                putString(EVENT_PICTURE, intent.getStringExtra(EVENT_PICTURE))
+            }
             supportFragmentManager.beginTransaction().replace(R.id.fragment, fragment, DETAIL_TAG).commit()
         } else {
             fragment = supportFragmentManager.findFragmentByTag(DETAIL_TAG) as DetailFragment

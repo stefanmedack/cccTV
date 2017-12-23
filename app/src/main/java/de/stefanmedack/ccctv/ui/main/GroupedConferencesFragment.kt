@@ -83,9 +83,9 @@ class GroupedConferencesFragment : RowsSupportFragment() {
     companion object {
         fun create(conferenceGroup: String): GroupedConferencesFragment {
             val fragment = GroupedConferencesFragment()
-            val args = Bundle()
-            args.putString(CONFERENCE_GROUP, conferenceGroup)
-            fragment.arguments = args
+            fragment.arguments = Bundle(1).apply {
+                putString(CONFERENCE_GROUP, conferenceGroup)
+            }
             return fragment
         }
     }
