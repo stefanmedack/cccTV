@@ -1,4 +1,4 @@
-package de.stefanmedack.ccctv.di
+package de.stefanmedack.ccctv.di.modules
 
 import android.arch.persistence.room.Room
 import android.content.Context
@@ -16,9 +16,8 @@ class DatabaseModule {
     @Provides
     @Singleton
     fun provideDb(@ApplicationContext context: Context): C3Db
-            = Room.inMemoryDatabaseBuilder(context, C3Db::class.java).build()
-    // TODO change back for live version
-//            = Room.databaseBuilder(app, C3Db::class.java, "ccc.db").build()
+//            = Room.inMemoryDatabaseBuilder(context, C3Db::class.java).build()
+            = Room.databaseBuilder(context, C3Db::class.java, "ccc.db").build()
 
     @Provides
     @Singleton

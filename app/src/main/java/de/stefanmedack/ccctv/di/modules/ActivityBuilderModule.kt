@@ -1,4 +1,4 @@
-package de.stefanmedack.ccctv.di
+package de.stefanmedack.ccctv.di.modules
 
 import dagger.Module
 import dagger.android.ContributesAndroidInjector

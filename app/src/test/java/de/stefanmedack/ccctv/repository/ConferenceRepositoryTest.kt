@@ -1,19 +1,10 @@
 package de.stefanmedack.ccctv.repository
 
-import de.stefanmedack.ccctv.minimalConferenceEntity
-import de.stefanmedack.ccctv.model.Resource
 import de.stefanmedack.ccctv.persistence.daos.ConferenceDao
 import info.metadude.kotlin.library.c3media.RxC3MediaService
-import info.metadude.kotlin.library.c3media.models.ConferencesResponse
-import io.reactivex.Flowable
-import io.reactivex.Single
 import io.reactivex.android.plugins.RxAndroidPlugins
 import io.reactivex.schedulers.Schedulers
-import org.amshove.kluent.When
-import org.amshove.kluent.calling
-import org.amshove.kluent.itReturns
 import org.junit.Before
-import org.junit.Test
 import org.mockito.InjectMocks
 import org.mockito.Mock
 import org.mockito.MockitoAnnotations
@@ -36,28 +27,29 @@ class ConferenceRepositoryTest {
         RxAndroidPlugins.setInitMainThreadSchedulerHandler { _ -> Schedulers.trampoline() }
     }
 
-    @Test
-    fun `fetch conferences from local`() {
-        val confList = listOf(minimalConferenceEntity)
-        When calling conferenceDao.getConferences() itReturns Flowable.just(confList)
-        When calling mediaService.getConferences() itReturns Single.never()
-
-        val result = repositoy.conferences.test().await()
-
-        result.assertValueAt(0, Resource.Loading())
-        result.assertValueAt(1, Resource.Success(confList))
-    }
-
-    @Test
-    fun `fetch conferences from network`() {
-        When calling conferenceDao.getConferences() itReturns Flowable.empty()
-        When calling mediaService.getConferences() itReturns Single.just(ConferencesResponse(listOf()))
-
-        val result = repositoy.conferences.test().await()
-
-        result.assertValueAt(0, Resource.Loading())
-        result.assertValueAt(1, Resource.Success(listOf()))
-    }
+    // TODO add back in case plain conferences are still needed
+//    @Test
+//    fun `fetch conferences from local`() {
+//        val confList = listOf(minimalConferenceEntity)
+//        When calling conferenceDao.getConferences() itReturns Flowable.just(confList)
+//        When calling mediaService.getConferences() itReturns Single.never()
+//
+//        val result = repositoy.conferences.test().await()
+//
+//        result.assertValueAt(0, Resource.Loading())
+//        result.assertValueAt(1, Resource.Success(confList))
+//    }
+//
+//    @Test
+//    fun `fetch conferences from network`() {
+//        When calling conferenceDao.getConferences() itReturns Flowable.empty()
+//        When calling mediaService.getConferences() itReturns Single.just(ConferencesResponse(listOf()))
+//
+//        val result = repositoy.conferences.test().await()
+//
+//        result.assertValueAt(0, Resource.Loading())
+//        result.assertValueAt(1, Resource.Success(listOf()))
+//    }
 
     // TODO implement conference with events tests
 //    @Test

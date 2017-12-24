@@ -4,7 +4,10 @@ import de.stefanmedack.ccctv.persistence.entities.Conference
 import de.stefanmedack.ccctv.persistence.entities.Event
 import de.stefanmedack.ccctv.persistence.entities.LanguageList
 import de.stefanmedack.ccctv.repository.EventRemote
-import info.metadude.kotlin.library.c3media.models.*
+import info.metadude.kotlin.library.c3media.models.AspectRatio
+import info.metadude.kotlin.library.c3media.models.Language
+import info.metadude.kotlin.library.c3media.models.MimeType
+import info.metadude.kotlin.library.c3media.models.Recording
 import org.threeten.bp.LocalDate
 import org.threeten.bp.OffsetDateTime
 
@@ -51,7 +54,7 @@ val fullEventEntity = Event(
         viewCount = 8,
         promoted = true,
         tags = listOf("33c3", "fnord"),
-        metadata = Metadata(listOf(0, 8, 15), 42),
+//        metadata = Metadata(listOf(0, 8, 15), 42), // TODO fix parsing of related events
         releaseDate = LocalDate.now(),
         date = OffsetDateTime.now(),
         updatedAt = OffsetDateTime.now()
