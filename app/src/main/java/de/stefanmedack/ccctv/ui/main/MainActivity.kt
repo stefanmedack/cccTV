@@ -3,9 +3,9 @@ package de.stefanmedack.ccctv.ui.main
 import android.os.Bundle
 import android.view.KeyEvent
 import de.stefanmedack.ccctv.R
-import de.stefanmedack.ccctv.ui.base.BaseInjectibleActivity
+import de.stefanmedack.ccctv.ui.base.BaseInjectableActivity
 
-class MainActivity : BaseInjectibleActivity() {
+class MainActivity : BaseInjectableActivity() {
 
     private val MAIN_TAG = "MAIN_TAG"
 

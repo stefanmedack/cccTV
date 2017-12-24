@@ -3,9 +3,9 @@ package de.stefanmedack.ccctv.ui.search
 import android.content.Intent
 import android.os.Bundle
 import de.stefanmedack.ccctv.R
-import de.stefanmedack.ccctv.ui.base.BaseInjectibleActivity
+import de.stefanmedack.ccctv.ui.base.BaseInjectableActivity
 
-class SearchActivity : BaseInjectibleActivity() {
+class SearchActivity : BaseInjectableActivity() {
 
     private val SEARCH_TAG = "SEARCH_TAG"
 

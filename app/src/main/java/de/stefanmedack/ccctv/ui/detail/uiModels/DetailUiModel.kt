@@ -1,6 +1,6 @@
 package de.stefanmedack.ccctv.ui.detail.uiModels
 
-import info.metadude.kotlin.library.c3media.models.Event
+import de.stefanmedack.ccctv.persistence.entities.Event
 
 data class DetailUiModel(
         val event: Event,

@@ -3,6 +3,7 @@ package de.stefanmedack.ccctv.util
 import info.metadude.kotlin.library.c3media.models.MimeType
 
 const val CACHE_MAX_SIZE_HTTP = (20 * 1024 * 1024).toLong()
+const val EMPTY_STRING = ""
 
 val CONFERENCE_GROUP_SORTING = listOf(
         "Congress",
@@ -17,7 +18,8 @@ val SUPPORTED_VIDEO_MIME_TYPE_SORTING = listOf(
 
 typealias ConferenceGroup = String
 
-const val EVENT = "Event"
+const val EVENT_ID = "EventId"
+const val EVENT_PICTURE = "EventPicture"
 const val CONFERENCE_GROUP = "CGroup"
 
 const val DETAIL_ACTION_PLAY: Long = 1
