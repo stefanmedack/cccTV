@@ -14,12 +14,12 @@ import android.view.View
 import com.jakewharton.rxbinding2.support.v17.leanback.widget.searchQueryChanges
 import dagger.android.support.AndroidSupportInjection
 import de.stefanmedack.ccctv.R
+import de.stefanmedack.ccctv.persistence.entities.Event
 import de.stefanmedack.ccctv.ui.cards.EventCardPresenter
 import de.stefanmedack.ccctv.ui.detail.DetailActivity
 import de.stefanmedack.ccctv.ui.search.uiModels.SearchResultUiModel
 import de.stefanmedack.ccctv.util.hasPermission
 import de.stefanmedack.ccctv.util.plusAssign
-import info.metadude.kotlin.library.c3media.models.Event
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.subscribeBy
 import timber.log.Timber
@@ -31,7 +31,10 @@ class SearchFragment : SearchSupportFragment() {
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
-    private lateinit var viewModel: SearchViewModel
+
+    private val viewModel: SearchViewModel by lazy {
+        ViewModelProviders.of(activity, viewModelFactory).get(SearchViewModel::class.java)
+    }
 
     private val disposables = CompositeDisposable()
 
@@ -40,7 +43,6 @@ class SearchFragment : SearchSupportFragment() {
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         AndroidSupportInjection.inject(this)
         super.onViewCreated(view, savedInstanceState)
-        viewModel = ViewModelProviders.of(activity, viewModelFactory).get(SearchViewModel::class.java)
 
         setupUi()
         bindViewModel(view)

@@ -7,7 +7,7 @@ import android.support.v7.view.ContextThemeWrapper
 import android.view.ViewGroup
 import com.bumptech.glide.Glide
 import de.stefanmedack.ccctv.R
-import info.metadude.kotlin.library.c3media.models.Event
+import de.stefanmedack.ccctv.persistence.entities.Event
 import kotlin.properties.Delegates
 
 class EventCardPresenter : Presenter() {

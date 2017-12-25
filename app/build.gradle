@@ -9,13 +9,14 @@ apply plugin: 'io.fabric'
 apply plugin: 'com.google.gms.oss.licenses.plugin'
 
 ext {
-    archComponentsVersion = "1.0.0-beta1"
+    archComponentsVersion = "1.0.0"
     assertjVersion = "3.8.0"
     c3mediaVersion = "2.0.0-SNAPSHOT"
     crashlyticsVersion = "2.6.8"
     daggerVersion = "2.11"
     exoplayerVersion = "r2.5.3"
     glideVersion = "3.8.0"
+    gsonVersion = "2.8.2"
     paperParcelVersion = "2.0.4"
     playServicesVersion = "11.4.0"
     rxAndroidVersion = "2.0.1"
@@ -28,12 +29,14 @@ ext {
     // Test dependencies
     kluentVersion = "1.29"
     junitVersion = "4.12"
+    runnerVersion = '1.0.1'
+    rulesVersion = '1.0.1'
 }
 
 android {
 
     compileSdkVersion 26
-    buildToolsVersion "26.0.1"
+    buildToolsVersion '26.0.2'
     defaultConfig {
         applicationId "de.stefanmedack.ccctv"
         minSdkVersion 21
@@ -42,6 +45,7 @@ android {
         versionName "1.1.0"
         resConfigs "en", "de"
         multiDexEnabled true
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
 
     signingConfigs {
@@ -70,6 +74,10 @@ android {
             signingConfig signingConfigs.release
         }
     }
+    sourceSets {
+        androidTest.java.srcDirs += "src/test-common/java"
+        test.java.srcDirs += "src/test-common/java"
+    }
 }
 
 dependencies {
@@ -80,10 +88,15 @@ dependencies {
     implementation "com.android.support:appcompat-v7:$supportLibVersion"
     implementation "com.android.support:leanback-v17:$supportLibVersion"
 
-    // Architecture Components
+    // Architecture Components - View Model (+ Lifecycles, LiveData)
     implementation "android.arch.lifecycle:runtime:$archComponentsVersion"
     implementation "android.arch.lifecycle:extensions:$archComponentsVersion"
     kapt "android.arch.lifecycle:compiler:$archComponentsVersion"
+
+    // Architecture Components - Room
+    implementation "android.arch.persistence.room:runtime:$archComponentsVersion"
+    implementation "android.arch.persistence.room:rxjava2:$archComponentsVersion"
+    kapt "android.arch.persistence.room:compiler:$archComponentsVersion"
 
     //Dagger 2 dependencies
     implementation "com.google.dagger:dagger:$daggerVersion"
@@ -121,12 +134,22 @@ dependencies {
     implementation "nz.bradcampbell:paperparcel-kotlin:$paperParcelVersion" // Optional
     kapt "nz.bradcampbell:paperparcel-compiler:$paperParcelVersion"
 
+    // Gson
+    implementation "com.google.code.gson:gson:$gsonVersion"
+
     // Licenses Screen
     implementation "com.google.android.gms:play-services-oss-licenses:$playServicesVersion"
 
     // Test dependencies
     testImplementation "junit:junit:$junitVersion"
     testImplementation "org.amshove.kluent:kluent:$kluentVersion"
+
+    // Android Instrumented Test
+    androidTestImplementation "com.android.support.test:runner:$runnerVersion"
+
+    // Arch Component
+    androidTestImplementation "android.arch.core:core-testing:$archComponentsVersion"
+
 }
 
 static def getFormattedDate() {

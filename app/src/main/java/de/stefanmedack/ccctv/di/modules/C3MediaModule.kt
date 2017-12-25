@@ -1,4 +1,4 @@
-package de.stefanmedack.ccctv.di
+package de.stefanmedack.ccctv.di.modules
 
 import android.content.Context
 import dagger.Module
