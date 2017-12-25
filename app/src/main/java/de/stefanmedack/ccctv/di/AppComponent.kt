@@ -16,13 +16,13 @@ import javax.inject.Singleton
 
 @Singleton
 @Component(
-        modules = arrayOf(
-                AndroidSupportInjectionModule::class,
-                C3MediaModule::class,
-                DatabaseModule::class,
-                SharedPreferencesModule::class,
-                ActivityBuilderModule::class
-        )
+        modules = [
+            AndroidSupportInjectionModule::class,
+            C3MediaModule::class,
+            DatabaseModule::class,
+            SharedPreferencesModule::class,
+            ActivityBuilderModule::class
+        ]
 )
 interface AppComponent : AndroidInjector<C3TVApp> {
 

@@ -20,6 +20,7 @@ import de.stefanmedack.ccctv.util.ConferenceGroup
 import de.stefanmedack.ccctv.util.plusAssign
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.subscribeBy
+import timber.log.Timber
 import javax.inject.Inject
 
 class MainFragment : BrowseSupportFragment() {
@@ -66,6 +67,14 @@ class MainFragment : BrowseSupportFragment() {
                         onNext = { render(it) },
                         onError = { it.printStackTrace() }
                 ))
+        disposables.add(viewModel.streams
+                .subscribeBy(
+                        onNext = {
+                            // TODO display
+                            Timber.d("StreamsResult: $it")
+                        },
+                        onError = { it.printStackTrace() }
+                ))
     }
 
     private fun render(resource: Resource<List<ConferenceGroup>>) {
@@ -80,7 +89,7 @@ class MainFragment : BrowseSupportFragment() {
                     it += PageRow(HeaderItem(4L, getString(R.string.main_about_app)))
                 }
             }
-//            is Resource.Loading -> adapter = null
+        //            is Resource.Loading -> adapter = null
             is Resource.Error -> Toast.makeText(activity, resource.msg, Toast.LENGTH_LONG).show()
         }
 
