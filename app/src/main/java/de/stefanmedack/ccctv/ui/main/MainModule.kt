@@ -28,4 +28,7 @@ abstract class MainModule {
     @ContributesAndroidInjector
     abstract fun contributeConferenceGroupDetailFragment(): GroupedConferencesFragment
 
+    @ContributesAndroidInjector
+    abstract fun contributeLiveStreamingFragment(): LiveStreamingFragment
+
 }
