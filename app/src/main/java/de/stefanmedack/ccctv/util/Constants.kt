@@ -22,6 +22,7 @@ const val EVENT_ID = "EventId"
 const val EVENT_PICTURE = "EventPicture"
 const val CONFERENCE_GROUP = "CGroup"
 const val STREAM_ID = "StreamId"
+const val STREAM_URL = "StreamUrl"
 
 const val DETAIL_ACTION_PLAY: Long = 1
 const val DETAIL_ACTION_BOOKMARK: Long = 2

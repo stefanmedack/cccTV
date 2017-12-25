@@ -7,12 +7,12 @@ import android.support.v17.leanback.app.RowsSupportFragment
 import android.support.v17.leanback.widget.*
 import android.view.View
 import dagger.android.support.AndroidSupportInjection
-import de.stefanmedack.ccctv.persistence.entities.Event
 import de.stefanmedack.ccctv.ui.cards.StreamCardPresenter
-import de.stefanmedack.ccctv.ui.detail.DetailActivity
+import de.stefanmedack.ccctv.ui.playback.ExoPlayerActivity
 import de.stefanmedack.ccctv.util.STREAM_ID
 import de.stefanmedack.ccctv.util.plusAssign
 import info.metadude.java.library.brockman.models.Room
+import info.metadude.java.library.brockman.models.Stream
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.subscribeBy
 import javax.inject.Inject
@@ -45,9 +45,9 @@ class LiveStreamingFragment : RowsSupportFragment() {
 
     private fun setupUi() {
         adapter = ArrayObjectAdapter(ListRowPresenter())
-        onItemViewClickedListener = OnItemViewClickedListener { itemViewHolder, item, _, _ ->
-            if (item is Event) {
-                DetailActivity.start(activity, item, (itemViewHolder.view as ImageCardView).mainImageView)
+        onItemViewClickedListener = OnItemViewClickedListener { _, item, _, _ ->
+            if (item is Stream) {
+                ExoPlayerActivity.start(activity, item)
             }
         }
     }
