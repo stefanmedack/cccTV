@@ -22,6 +22,12 @@ class ExoPlayerActivity : FragmentActivity() {
         ft.commit()
     }
 
+    override fun onVisibleBehindCanceled() {
+        mediaController?.transportControls?.pause()
+        super.onVisibleBehindCanceled()
+    }
+
+    // TODO workaround for amazon - move to new implementation
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         // This part is necessary to ensure that getIntent returns the latest intent when
