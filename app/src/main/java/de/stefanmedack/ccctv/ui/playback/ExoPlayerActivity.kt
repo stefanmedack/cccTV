@@ -1,14 +1,12 @@
 package de.stefanmedack.ccctv.ui.playback
 
-import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.os.Bundle
 import android.support.v4.app.FragmentActivity
-import android.support.v4.os.BuildCompat
 import de.stefanmedack.ccctv.R
 import de.stefanmedack.ccctv.util.STREAM_URL
 import info.metadude.java.library.brockman.models.Stream
+import info.metadude.java.library.brockman.models.Url.TYPE
 
 class ExoPlayerActivity : FragmentActivity() {
 
@@ -45,16 +43,10 @@ class ExoPlayerActivity : FragmentActivity() {
     }
 
     companion object {
-        fun supportsPictureInPicture(context: Context): Boolean {
-            return BuildCompat.isAtLeastN() && context.packageManager.hasSystemFeature(
-                    PackageManager.FEATURE_PICTURE_IN_PICTURE)
-        }
-
         fun start(activity: FragmentActivity, item: Stream) {
             val intent = Intent(activity, ExoPlayerActivity::class.java)
-//            val url = item.urls.find { it.type == TYPE.HLS }?.url ?: item.urls[0].url
-            val url = "https://player.vimeo.com/external/244076670.m3u8?s=617848b2ce9b93d5052b21177d61a1ec7ff237ae&oauth2_token_id=925454046"
-            //            Timber.d(url)
+            val url = item.urls.find { it.type == TYPE.HLS }?.url ?: item.urls[0].url
+            //            val url = "http://cdn.c3voc.de/hls/sX_native_hd.m3u8"
             intent.putExtra(STREAM_URL, url)
             activity.startActivity(intent)
         }
