@@ -41,6 +41,7 @@
         </activity>
 
         <activity android:name=".ui.detail.DetailActivity"/>
+        <activity android:name=".ui.search.SearchActivity"/>
 
         <activity
             android:name="com.google.android.gms.oss.licenses.OssLicensesMenuActivity"
@@ -50,6 +51,14 @@
             android:name="com.google.android.gms.oss.licenses.OssLicensesActivity"
             android:theme="@style/Theme.AppCompat"
             />
+
+        <activity
+            android:name=".ui.playback.ExoPlayerActivity"
+            android:exported="true"
+            android:configChanges="screenSize|smallestScreenSize|screenLayout|orientation|layoutDirection"
+            android:launchMode="singleTask"
+            android:resizeableActivity="true"
+            android:supportsPictureInPicture="true"/>
 
         <meta-data
             android:name="io.fabric.ApiKey"

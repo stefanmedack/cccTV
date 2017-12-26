@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">cccTV</string>
-    <string name="main_videos_header">Videos</string>
+    <string name="main_streams_header">Live Streaming</string>
+    <string name="main_videos_header">Library</string>
     <string name="main_more_header">More</string>
     <string name="main_about_app">About cccTV</string>
     <string name="action_watch">Watch</string>
@@ -24,6 +25,7 @@
     <string name="voctocat">Voctocat</string>
     <string name="voctocat_toast">This little fella is designed by Sebastian Morr and distributed under CC BY-NC-SA 4.0 License
         (https://morr.cc/voctocat/)</string>
+    <string name="search_result_header">%1$s videos found for \"%2$s\"</string>
 
     <string name="implement_me_toast">Uups, this feature is still missing - check back later</string>
 </resources>

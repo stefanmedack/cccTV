@@ -18,11 +18,15 @@ import com.google.android.exoplayer2.upstream.DefaultHttpDataSource
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory
 import com.google.android.exoplayer2.util.Util
 import de.stefanmedack.ccctv.R
+import de.stefanmedack.ccctv.repository.EventRemote
 import de.stefanmedack.ccctv.util.bestRecording
 import de.stefanmedack.ccctv.util.switchAspectRatio
 import info.metadude.kotlin.library.c3media.models.Event
 import info.metadude.kotlin.library.c3media.models.Language
 import info.metadude.kotlin.library.c3media.models.Recording
+import io.reactivex.Single
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.rxkotlin.subscribeBy
 import java.util.*
 
 class ExoPlayerAdapter(private val context: Context) : PlayerAdapter(), Player.EventListener {
@@ -55,6 +59,8 @@ class ExoPlayerAdapter(private val context: Context) : PlayerAdapter(), Player.E
     private var currentRecordingWidth: Int? = null
     private var currentRecordingHeight: Int? = null
     private var mediaSourceUri: Uri? = null
+
+    private val disposables = CompositeDisposable()
 
     override fun onAttachedToHost(host: PlaybackGlueHost?) {
         if (host is SurfaceHolderGlueHost) {
@@ -102,6 +108,7 @@ class ExoPlayerAdapter(private val context: Context) : PlayerAdapter(), Player.E
     }
 
     override fun onDetachedFromHost() {
+        disposables.clear()
         if (surfaceHolderGlueHost != null) {
             surfaceHolderGlueHost?.setSurfaceHolderCallback(null)
             surfaceHolderGlueHost = null
@@ -182,19 +189,25 @@ class ExoPlayerAdapter(private val context: Context) : PlayerAdapter(), Player.E
         return player.bufferedPosition
     }
 
-    fun setEvent(ev: Event) {
-        event = ev
-        extractBestRecording(ev)
-        prepareMediaForPlaying()
+    fun bindRecordings(recordings: Single<EventRemote>) {
+        disposables.add(recordings.subscribeBy(
+                onSuccess = {
+                    event = it
+                    extractBestRecording(it)
+                    prepareMediaForPlaying()
+                }
+        ))
     }
 
     fun changeQuality(isHigh: Boolean) {
-        shouldUseHighQuality = isHigh
-        extractBestRecording(event!!)
-        mediaSourceUri?.let {
-            val currPos = player.currentPosition
-            player.prepare(onCreateMediaSource(it))
-            player.seekTo(currPos)
+        event?.let { event ->
+            shouldUseHighQuality = isHigh
+            extractBestRecording(event)
+            mediaSourceUri?.let {
+                val currPos = player.currentPosition
+                player.prepare(onCreateMediaSource(it))
+                player.seekTo(currPos)
+            }
         }
     }
 
@@ -242,10 +255,10 @@ class ExoPlayerAdapter(private val context: Context) : PlayerAdapter(), Player.E
             player.prepare(onCreateMediaSource(it))
         }
 
-        player.setVideoListener(object : SimpleExoPlayer.VideoListener {
+        player.addVideoListener(object : SimpleExoPlayer.VideoListener {
             override fun onVideoSizeChanged(width: Int, height: Int, unappliedRotationDegrees: Int, pixelWidthHeightRatio: Float) {
-                currentRecordingWidth = currentRecordingWidth ?: width
-                currentRecordingHeight = currentRecordingHeight ?: height
+                currentRecordingWidth = (width * pixelWidthHeightRatio).toInt()
+                currentRecordingHeight = height
                 callback.onVideoSizeChanged(
                         this@ExoPlayerAdapter,
                         currentRecordingWidth!!,

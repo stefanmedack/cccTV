@@ -9,34 +9,43 @@ apply plugin: 'io.fabric'
 apply plugin: 'com.google.gms.oss.licenses.plugin'
 
 ext {
-    archComponentsVersion = "1.0.0-alpha9"
+    archComponentsVersion = "1.0.0"
     assertjVersion = "3.8.0"
+    c3mediaVersion = "2.0.0-SNAPSHOT"
     crashlyticsVersion = "2.6.8"
     daggerVersion = "2.11"
-    exoplayerVersion = "r2.5.1"
+    exoplayerVersion = "r2.5.3"
     glideVersion = "3.8.0"
-    junitVersion = "4.12"
+    gsonVersion = "2.8.2"
     paperParcelVersion = "2.0.4"
-    playServicesVersion = "11.2.2"
+    playServicesVersion = "11.4.0"
     rxAndroidVersion = "2.0.1"
-    rxJavaVersion = "2.1.3"
+    rxBindingVersion = "2.0.0"
+    rxJavaVersion = "2.1.4"
     rxKotlinVersion = "2.1.0"
-    supportLibVersion = "26.0.2"
+    supportLibVersion = "26.1.0"
     timberVersion = "4.5.1"
+
+    // Test dependencies
+    kluentVersion = "1.29"
+    junitVersion = "4.12"
+    runnerVersion = '1.0.1'
+    rulesVersion = '1.0.1'
 }
 
 android {
 
     compileSdkVersion 26
-    buildToolsVersion "26.0.1"
+    buildToolsVersion '26.0.2'
     defaultConfig {
         applicationId "de.stefanmedack.ccctv"
         minSdkVersion 21
         targetSdkVersion 26
-        versionCode 2
-        versionName "1.1.0"
+        versionCode 4
+        versionName "2.0.0-RC1"
         resConfigs "en", "de"
         multiDexEnabled true
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
 
     signingConfigs {
@@ -65,6 +74,26 @@ android {
             signingConfig signingConfigs.release
         }
     }
+
+    // TODO think about reworking the dimensions/configs for streaming
+    flavorDimensions "default"
+    productFlavors {
+        dev {
+            buildConfigField "String", "STREAMING_API_BASE_URL", "\"http://gist.githubusercontent.com\""
+            buildConfigField "String", "STREAMING_API_OFFERS_PATH",
+                    "\"/MaZderMind/a91f242efb2f446a2237d4596896efd6/raw/7ab4e206f19ed4d63a67917fe6e3a15a96218ac9/streams-v2.json\""
+//                    "\"/johnjohndoe/617bbfa2ac36f5148a049548b419e299/raw/7ab4e206f19ed4d63a67917fe6e3a15a96218ac9/streams-v2.json\""
+        }
+        live {
+            buildConfigField "String", "STREAMING_API_BASE_URL", "\"http://streaming.media.ccc.de\""
+            buildConfigField "String", "STREAMING_API_OFFERS_PATH", "\"/streams/v2.json\""
+        }
+    }
+
+    sourceSets {
+        androidTest.java.srcDirs += "src/test-common/java"
+        test.java.srcDirs += "src/test-common/java"
+    }
 }
 
 dependencies {
@@ -75,20 +104,27 @@ dependencies {
     implementation "com.android.support:appcompat-v7:$supportLibVersion"
     implementation "com.android.support:leanback-v17:$supportLibVersion"
 
-    // Architecture Components
+    // Architecture Components - View Model (+ Lifecycles, LiveData)
     implementation "android.arch.lifecycle:runtime:$archComponentsVersion"
     implementation "android.arch.lifecycle:extensions:$archComponentsVersion"
     kapt "android.arch.lifecycle:compiler:$archComponentsVersion"
 
+    // Architecture Components - Room
+    implementation "android.arch.persistence.room:runtime:$archComponentsVersion"
+    implementation "android.arch.persistence.room:rxjava2:$archComponentsVersion"
+    kapt "android.arch.persistence.room:compiler:$archComponentsVersion"
+
     //Dagger 2 dependencies
     implementation "com.google.dagger:dagger:$daggerVersion"
-    compile "com.google.dagger:dagger-android:$daggerVersion"
-    compile "com.google.dagger:dagger-android-support:$daggerVersion"
+    implementation "com.google.dagger:dagger-android:$daggerVersion"
+    implementation "com.google.dagger:dagger-android-support:$daggerVersion"
     kapt "com.google.dagger:dagger-android-processor:$daggerVersion"
     kapt "com.google.dagger:dagger-compiler:$daggerVersion"
 
-    // c3media API - TODO PR to Tobis Repo + replace by original release version
-    implementation "com.github.stefanmedack:c3media-base:c9a508e640"
+    // c3media library
+    implementation "info.metadude.kotlin.library.c3media:c3media-rx-java-2:${c3mediaVersion}"
+    // c3media streaming
+    implementation "com.github.johnjohndoe:Brockman:1886e90a92029ceba978e3326202383c63ed8efd"
 
     // Exo Player
     implementation "com.google.android.exoplayer:exoplayer:$exoplayerVersion"
@@ -101,11 +137,14 @@ dependencies {
     implementation "io.reactivex.rxjava2:rxkotlin:$rxKotlinVersion"
     implementation "io.reactivex.rxjava2:rxandroid:$rxAndroidVersion"
 
+    // RXBinding
+    compile "com.jakewharton.rxbinding2:rxbinding-leanback-v17-kotlin:$rxBindingVersion"
+
     // timber - better logging
     implementation "com.jakewharton.timber:timber:$timberVersion"
 
     // Crashlytics
-    compile("com.crashlytics.sdk.android:crashlytics:$crashlyticsVersion@aar") {
+    implementation("com.crashlytics.sdk.android:crashlytics:$crashlyticsVersion@aar") {
         transitive = true
     }
 
@@ -114,12 +153,22 @@ dependencies {
     implementation "nz.bradcampbell:paperparcel-kotlin:$paperParcelVersion" // Optional
     kapt "nz.bradcampbell:paperparcel-compiler:$paperParcelVersion"
 
+    // Gson
+    implementation "com.google.code.gson:gson:$gsonVersion"
+
     // Licenses Screen
     implementation "com.google.android.gms:play-services-oss-licenses:$playServicesVersion"
 
     // Test dependencies
-    testCompile "junit:junit:$junitVersion"
-    testCompile "org.assertj:assertj-core:$assertjVersion"
+    testImplementation "junit:junit:$junitVersion"
+    testImplementation "org.amshove.kluent:kluent:$kluentVersion"
+
+    // Android Instrumented Test
+    androidTestImplementation "com.android.support.test:runner:$runnerVersion"
+
+    // Arch Component
+    androidTestImplementation "android.arch.core:core-testing:$archComponentsVersion"
+
 }
 
 static def getFormattedDate() {

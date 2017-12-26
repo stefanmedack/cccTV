@@ -1,49 +1,54 @@
 package de.stefanmedack.ccctv.ui.main
 
 import android.arch.lifecycle.ViewModel
-import de.stefanmedack.ccctv.util.*
-import info.metadude.kotlin.library.c3media.RxC3MediaService
-import info.metadude.kotlin.library.c3media.models.Conference
-import io.reactivex.Single
-import io.reactivex.rxkotlin.toFlowable
+import de.stefanmedack.ccctv.model.Resource
+import de.stefanmedack.ccctv.repository.ConferenceRepository
+import de.stefanmedack.ccctv.repository.StreamingRepository
+import de.stefanmedack.ccctv.util.ConferenceGroup
+import de.stefanmedack.ccctv.util.groupConferences
+import info.metadude.java.library.brockman.models.Offer
+import io.reactivex.Flowable
+import io.reactivex.Flowable.combineLatest
+import io.reactivex.functions.BiFunction
 import javax.inject.Inject
 
 class MainViewModel @Inject constructor(
-        private val c3MediaService: RxC3MediaService
+        private val conferenceRepository: ConferenceRepository,
+        private val streamingRepository: StreamingRepository
 ) : ViewModel() {
 
-    private var loadedConferences = mapOf<ConferenceGroup, List<Conference>>()
+    data class MainUiModel(
+            val conferenceGroupResource: Resource<List<ConferenceGroup>>,
+            val offersResource: Resource<List<Offer>>
+    )
 
-    fun getConferences(): Single<Map<ConferenceGroup, List<Conference>>> = c3MediaService
-            .getConferences()
-            .applySchedulers()
-            .map { groupConferences(it.conferences) }
+    val data: Flowable<MainUiModel>
+        get() = combineLatest(
+                conferences,
+                streams,
+                BiFunction { u: Resource<List<ConferenceGroup>>,
+                             p: Resource<List<Offer>>
+                    ->
+                    MainUiModel(u, p)
+                }
+        )
 
-    private fun groupConferences(list: List<Conference?>?): Map<ConferenceGroup, List<Conference>> {
-        loadedConferences = list
-                ?.filterNotNull()
-                ?.groupBy { it.type() }
-                ?.toSortedMap(Comparator { lhs, rhs -> lhs.sortingIndex() - rhs.sortingIndex() })
-                ?: mapOf()
-        return loadedConferences
-    }
+    val conferences: Flowable<Resource<List<ConferenceGroup>>>
+        get() = conferenceRepository.conferencesWithEvents
+                .map<Resource<List<ConferenceGroup>>> {
+                    when (it) {
+                    // TODO create helper method for Success-Mapping
+                        is Resource.Success -> Resource.Success(it.data
+                                .map { it.conference }
+                                .groupConferences()
+                                .keys
+                                .toList())
+                        is Resource.Loading -> Resource.Loading()
+                        is Resource.Error -> Resource.Error(it.msg)
+                    }
+                }
 
-    fun getConferencesWithEvents(conferenceGroup: ConferenceGroup): Single<List<Conference>> = (loadedConferences[conferenceGroup] ?: listOf())
-            .toFlowable()
-            .map { it.id() }
-            .flatMap {
-                c3MediaService.getConference(it)
-                        .applySchedulers()
-                        // TODO improve sorting of events (may need different sorting for different categories)
-                        // .map { it.copy(events = it.events?.filterNotNull()?.sortedWith(compareByDescending(Event::updatedAt))) }
-                        .toFlowable()
-            }
-            .toSortedList(compareByDescending(Conference::title))
-
-    private fun ConferenceGroup.sortingIndex(): Int =
-            if (CONFERENCE_GROUP_SORTING.contains(this))
-                CONFERENCE_GROUP_SORTING.indexOf(this)
-            else
-                CONFERENCE_GROUP_SORTING.size
-
+    private val streams
+        get() =
+            streamingRepository.streams
 }

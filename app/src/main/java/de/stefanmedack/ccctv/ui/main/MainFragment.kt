@@ -2,6 +2,7 @@ package de.stefanmedack.ccctv.ui.main
 
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
+import android.content.Intent
 import android.os.Bundle
 import android.support.v17.leanback.app.BrowseFragment
 import android.support.v17.leanback.app.BrowseSupportFragment
@@ -9,11 +10,13 @@ import android.support.v17.leanback.widget.*
 import android.support.v4.app.Fragment
 import android.support.v4.content.ContextCompat
 import android.view.KeyEvent
+import android.widget.Toast
 import dagger.android.support.AndroidSupportInjection
 import de.stefanmedack.ccctv.R
+import de.stefanmedack.ccctv.model.Resource
 import de.stefanmedack.ccctv.ui.about.AboutFragment
+import de.stefanmedack.ccctv.ui.search.SearchActivity
 import de.stefanmedack.ccctv.util.plusAssign
-import info.metadude.kotlin.library.c3media.models.Conference
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.subscribeBy
 import javax.inject.Inject
@@ -23,14 +26,15 @@ class MainFragment : BrowseSupportFragment() {
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
 
-    private lateinit var viewModel: MainViewModel
+    private val viewModel: MainViewModel by lazy {
+        ViewModelProviders.of(activity, viewModelFactory).get(MainViewModel::class.java)
+    }
 
     private val disposables = CompositeDisposable()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         AndroidSupportInjection.inject(this)
         super.onCreate(savedInstanceState)
-        viewModel = ViewModelProviders.of(activity, viewModelFactory).get(MainViewModel::class.java)
 
         setupUi()
         bindViewModel()
@@ -48,33 +52,39 @@ class MainFragment : BrowseSupportFragment() {
         isHeadersTransitionOnBackEnabled = true
         badgeDrawable = ContextCompat.getDrawable(activity, R.drawable.voctocat)
 
-        // TODO add back search
-        //        setOnSearchClickedListener {
-        //            Toast.makeText(
-        //                    activity, "implement Search", Toast.LENGTH_SHORT)
-        //                    .show()
-        //        }
+        setOnSearchClickedListener {
+            activity.startActivity(Intent(activity, SearchActivity::class.java))
+        }
 
         mainFragmentRegistry.registerFragment(PageRow::class.java, PageRowFragmentFactory())
     }
 
     private fun bindViewModel() {
-        disposables.add(viewModel.getConferences()
+        disposables.add(viewModel.data
                 .subscribeBy(
-                        onSuccess = { render(it) },
-                        // TODO proper error handling
+                        onNext = ::render,
                         onError = { it.printStackTrace() }
                 ))
     }
 
-    private fun render(mappedConferences: Map<String, List<Conference>>) {
-        adapter = ArrayObjectAdapter(ListRowPresenter())
-        (adapter as ArrayObjectAdapter).let {
-            it += SectionRow(HeaderItem(1L, getString(R.string.main_videos_header)))
-            it += mappedConferences.map { PageRow(HeaderItem(2L, it.key)) }
-            it += DividerRow()
-            it += SectionRow(HeaderItem(3L, getString(R.string.main_more_header)))
-            it += PageRow(HeaderItem(4L, getString(R.string.main_about_app)))
+    private fun render(mainUiModel: MainViewModel.MainUiModel) {
+        when (mainUiModel.conferenceGroupResource) {
+            is Resource.Success -> {
+                adapter = ArrayObjectAdapter(ListRowPresenter())
+                (adapter as ArrayObjectAdapter).let {
+                    if(mainUiModel.offersResource is Resource.Success && mainUiModel.offersResource.data.isNotEmpty()) {
+                        it += SectionRow(HeaderItem(1L, getString(R.string.main_streams_header)))
+                        it += mainUiModel.offersResource.data.map { PageRow(HeaderItem(2L, it.conference)) }
+                    }
+                    it += SectionRow(HeaderItem(3L, getString(R.string.main_videos_header)))
+                    it += mainUiModel.conferenceGroupResource.data.map { PageRow(HeaderItem(4L, it)) }
+                    it += DividerRow()
+                    it += SectionRow(HeaderItem(5L, getString(R.string.main_more_header)))
+                    it += PageRow(HeaderItem(6L, getString(R.string.main_about_app)))
+                }
+            }
+        //            is Resource.Loading -> adapter = null
+            is Resource.Error -> Toast.makeText(activity, mainUiModel.conferenceGroupResource.msg, Toast.LENGTH_LONG).show()
         }
 
         startEntranceTransition()
@@ -103,7 +113,8 @@ class MainFragment : BrowseSupportFragment() {
     private class PageRowFragmentFactory internal constructor() : BrowseSupportFragment.FragmentFactory<Fragment>() {
         override fun createFragment(rowObj: Any): Fragment {
             return when ((rowObj as Row).headerItem.id) {
-                4L -> AboutFragment()
+                6L -> AboutFragment()
+                2L -> LiveStreamingFragment.create(rowObj.headerItem.name)
                 else -> GroupedConferencesFragment.create(rowObj.headerItem.name)
             }
         }
