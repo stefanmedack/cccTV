@@ -41,8 +41,8 @@ android {
         applicationId "de.stefanmedack.ccctv"
         minSdkVersion 21
         targetSdkVersion 26
-        versionCode 2
-        versionName "1.1.0"
+        versionCode 4
+        versionName "2.0.0-RC"
         resConfigs "en", "de"
         multiDexEnabled true
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
