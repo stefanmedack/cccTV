@@ -3,17 +3,38 @@ package de.stefanmedack.ccctv.ui.main
 import android.arch.lifecycle.ViewModel
 import de.stefanmedack.ccctv.model.Resource
 import de.stefanmedack.ccctv.repository.ConferenceRepository
+import de.stefanmedack.ccctv.repository.StreamingRepository
 import de.stefanmedack.ccctv.util.ConferenceGroup
 import de.stefanmedack.ccctv.util.groupConferences
+import info.metadude.java.library.brockman.models.Offer
 import io.reactivex.Flowable
+import io.reactivex.Flowable.combineLatest
+import io.reactivex.functions.BiFunction
 import javax.inject.Inject
 
 class MainViewModel @Inject constructor(
-        private val repository: ConferenceRepository
+        private val conferenceRepository: ConferenceRepository,
+        private val streamingRepository: StreamingRepository
 ) : ViewModel() {
 
+    data class MainUiModel(
+            val conferenceGroupResource: Resource<List<ConferenceGroup>>,
+            val offersResource: Resource<List<Offer>>
+    )
+
+    val data: Flowable<MainUiModel>
+        get() = combineLatest(
+                conferences,
+                streams,
+                BiFunction { u: Resource<List<ConferenceGroup>>,
+                             p: Resource<List<Offer>>
+                    ->
+                    MainUiModel(u, p)
+                }
+        )
+
     val conferences: Flowable<Resource<List<ConferenceGroup>>>
-        get() = repository.conferencesWithEvents
+        get() = conferenceRepository.conferencesWithEvents
                 .map<Resource<List<ConferenceGroup>>> {
                     when (it) {
                     // TODO create helper method for Success-Mapping
@@ -26,4 +47,8 @@ class MainViewModel @Inject constructor(
                         is Resource.Error -> Resource.Error(it.msg)
                     }
                 }
+
+    private val streams
+        get() =
+            streamingRepository.streams
 }

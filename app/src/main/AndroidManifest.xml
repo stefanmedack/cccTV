@@ -52,6 +52,14 @@
             android:theme="@style/Theme.AppCompat"
             />
 
+        <activity
+            android:name=".ui.playback.ExoPlayerActivity"
+            android:exported="true"
+            android:configChanges="screenSize|smallestScreenSize|screenLayout|orientation|layoutDirection"
+            android:launchMode="singleTask"
+            android:resizeableActivity="true"
+            android:supportsPictureInPicture="true"/>
+
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="2661981927f4d4deaa30951bef2f35d92f832716"

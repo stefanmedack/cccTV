@@ -16,7 +16,6 @@ import de.stefanmedack.ccctv.R
 import de.stefanmedack.ccctv.model.Resource
 import de.stefanmedack.ccctv.ui.about.AboutFragment
 import de.stefanmedack.ccctv.ui.search.SearchActivity
-import de.stefanmedack.ccctv.util.ConferenceGroup
 import de.stefanmedack.ccctv.util.plusAssign
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.subscribeBy
@@ -61,27 +60,31 @@ class MainFragment : BrowseSupportFragment() {
     }
 
     private fun bindViewModel() {
-        disposables.add(viewModel.conferences
+        disposables.add(viewModel.data
                 .subscribeBy(
-                        onNext = { render(it) },
+                        onNext = ::render,
                         onError = { it.printStackTrace() }
                 ))
     }
 
-    private fun render(resource: Resource<List<ConferenceGroup>>) {
-        when (resource) {
+    private fun render(mainUiModel: MainViewModel.MainUiModel) {
+        when (mainUiModel.conferenceGroupResource) {
             is Resource.Success -> {
                 adapter = ArrayObjectAdapter(ListRowPresenter())
                 (adapter as ArrayObjectAdapter).let {
-                    it += SectionRow(HeaderItem(1L, getString(R.string.main_videos_header)))
-                    it += resource.data.map { PageRow(HeaderItem(2L, it)) }
+                    if(mainUiModel.offersResource is Resource.Success && mainUiModel.offersResource.data.isNotEmpty()) {
+                        it += SectionRow(HeaderItem(1L, getString(R.string.main_streams_header)))
+                        it += mainUiModel.offersResource.data.map { PageRow(HeaderItem(2L, it.conference)) }
+                    }
+                    it += SectionRow(HeaderItem(3L, getString(R.string.main_videos_header)))
+                    it += mainUiModel.conferenceGroupResource.data.map { PageRow(HeaderItem(4L, it)) }
                     it += DividerRow()
-                    it += SectionRow(HeaderItem(3L, getString(R.string.main_more_header)))
-                    it += PageRow(HeaderItem(4L, getString(R.string.main_about_app)))
+                    it += SectionRow(HeaderItem(5L, getString(R.string.main_more_header)))
+                    it += PageRow(HeaderItem(6L, getString(R.string.main_about_app)))
                 }
             }
-//            is Resource.Loading -> adapter = null
-            is Resource.Error -> Toast.makeText(activity, resource.msg, Toast.LENGTH_LONG).show()
+        //            is Resource.Loading -> adapter = null
+            is Resource.Error -> Toast.makeText(activity, mainUiModel.conferenceGroupResource.msg, Toast.LENGTH_LONG).show()
         }
 
         startEntranceTransition()
@@ -110,7 +113,8 @@ class MainFragment : BrowseSupportFragment() {
     private class PageRowFragmentFactory internal constructor() : BrowseSupportFragment.FragmentFactory<Fragment>() {
         override fun createFragment(rowObj: Any): Fragment {
             return when ((rowObj as Row).headerItem.id) {
-                4L -> AboutFragment()
+                6L -> AboutFragment()
+                2L -> LiveStreamingFragment.create(rowObj.headerItem.name)
                 else -> GroupedConferencesFragment.create(rowObj.headerItem.name)
             }
         }

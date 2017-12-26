@@ -1,5 +1,10 @@
 # Change Log
 
+## 2.0.0
+
+- adds streaming
+- adds Room for caching Events 
+
 ## 1.2.0
 
 ### Added

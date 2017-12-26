@@ -41,8 +41,8 @@ android {
         applicationId "de.stefanmedack.ccctv"
         minSdkVersion 21
         targetSdkVersion 26
-        versionCode 2
-        versionName "1.1.0"
+        versionCode 4
+        versionName "2.0.0-RC"
         resConfigs "en", "de"
         multiDexEnabled true
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -74,6 +74,22 @@ android {
             signingConfig signingConfigs.release
         }
     }
+
+    // TODO think about reworking the dimensions/configs for streaming
+    flavorDimensions "default"
+    productFlavors {
+        dev {
+            buildConfigField "String", "STREAMING_API_BASE_URL", "\"http://gist.githubusercontent.com\""
+            buildConfigField "String", "STREAMING_API_OFFERS_PATH",
+                    "\"/MaZderMind/a91f242efb2f446a2237d4596896efd6/raw/7ab4e206f19ed4d63a67917fe6e3a15a96218ac9/streams-v2.json\""
+//                    "\"/johnjohndoe/617bbfa2ac36f5148a049548b419e299/raw/7ab4e206f19ed4d63a67917fe6e3a15a96218ac9/streams-v2.json\""
+        }
+        live {
+            buildConfigField "String", "STREAMING_API_BASE_URL", "\"http://streaming.media.ccc.de\""
+            buildConfigField "String", "STREAMING_API_OFFERS_PATH", "\"/streams/v2.json\""
+        }
+    }
+
     sourceSets {
         androidTest.java.srcDirs += "src/test-common/java"
         test.java.srcDirs += "src/test-common/java"
@@ -105,7 +121,10 @@ dependencies {
     kapt "com.google.dagger:dagger-android-processor:$daggerVersion"
     kapt "com.google.dagger:dagger-compiler:$daggerVersion"
 
+    // c3media library
     implementation "info.metadude.kotlin.library.c3media:c3media-rx-java-2:${c3mediaVersion}"
+    // c3media streaming
+    implementation "com.github.johnjohndoe:Brockman:1886e90a92029ceba978e3326202383c63ed8efd"
 
     // Exo Player
     implementation "com.google.android.exoplayer:exoplayer:$exoplayerVersion"

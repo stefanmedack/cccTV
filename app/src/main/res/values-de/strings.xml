@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">cccTV</string>
-    <string name="main_videos_header">Videos</string>
+    <string name="main_streams_header">Gerade Live</string>
+    <string name="main_videos_header">Mediathek</string>
     <string name="main_more_header">Weiteres</string>
     <string name="main_about_app">Über cccTV</string>
     <string name="action_watch">Anschauen</string>
