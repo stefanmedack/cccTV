@@ -1,11 +1,8 @@
 package de.stefanmedack.ccctv.ui.playback
 
-import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.os.Bundle
 import android.support.v4.app.FragmentActivity
-import android.support.v4.os.BuildCompat
 import de.stefanmedack.ccctv.R
 import de.stefanmedack.ccctv.util.STREAM_URL
 import info.metadude.java.library.brockman.models.Stream
@@ -18,10 +15,23 @@ class ExoPlayerActivity : FragmentActivity() {
         setContentView(R.layout.activity_video_example)
 
         val ft = supportFragmentManager.beginTransaction()
-        ft.add(R.id.videoFragment, ExoPlayerFragment(), ExoPlayerFragment.TAG)
+        ft.add(
+                R.id.videoFragment,
+                ExoPlayerFragment().apply {
+                    arguments = Bundle(1).also {
+                        it.putString(STREAM_URL, intent.getStringExtra(STREAM_URL))
+                    }
+                },
+                ExoPlayerFragment.TAG)
         ft.commit()
     }
 
+    override fun onVisibleBehindCanceled() {
+        mediaController?.transportControls?.pause()
+        super.onVisibleBehindCanceled()
+    }
+
+    // TODO workaround for amazon - move to new implementation
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         // This part is necessary to ensure that getIntent returns the latest intent when
@@ -33,15 +43,10 @@ class ExoPlayerActivity : FragmentActivity() {
     }
 
     companion object {
-        fun supportsPictureInPicture(context: Context): Boolean {
-            return BuildCompat.isAtLeastN() && context.packageManager.hasSystemFeature(
-                    PackageManager.FEATURE_PICTURE_IN_PICTURE)
-        }
-
         fun start(activity: FragmentActivity, item: Stream) {
             val intent = Intent(activity, ExoPlayerActivity::class.java)
             val url = item.urls.find { it.type == TYPE.HLS }?.url ?: item.urls[0].url
-//            Timber.d(url)
+            //            val url = "http://cdn.c3voc.de/hls/sX_native_hd.m3u8"
             intent.putExtra(STREAM_URL, url)
             activity.startActivity(intent)
         }

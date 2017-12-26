@@ -32,8 +32,12 @@ class ExoPlayerFragment : VideoSupportFragment() {
             Log.w(TAG, "video player cannot obtain audio focus!")
         }
 
-        val streamUrl = activity.intent.getStringExtra(STREAM_URL)
-        playVideo(streamUrl)
+        val streamUrl = arguments.getString(STREAM_URL)
+        if (streamUrl != null) {
+            playVideo(streamUrl)
+        } else {
+            activity?.finish()
+        }
     }
 
     override fun onPause() {

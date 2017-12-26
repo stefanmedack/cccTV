@@ -71,7 +71,7 @@ class MainFragment : BrowseSupportFragment() {
         when (mainUiModel.conferenceGroupResource) {
             is Resource.Success -> {
                 adapter = ArrayObjectAdapter(ListRowPresenter())
-                (adapter as ArrayObjectAdapter).let {
+                (adapter as? ArrayObjectAdapter)?.let {
                     if(mainUiModel.offersResource is Resource.Success && mainUiModel.offersResource.data.isNotEmpty()) {
                         it += SectionRow(HeaderItem(1L, getString(R.string.main_streams_header)))
                         it += mainUiModel.offersResource.data.map { PageRow(HeaderItem(2L, it.conference)) }
@@ -97,7 +97,7 @@ class MainFragment : BrowseSupportFragment() {
             }
 
     private fun shouldScrollToHeadersOnKeyDown(keyCode: Int): Boolean {
-        return selectedPosition == adapter.size() - 1 // is last main menu item selected (AboutFragment)
+        return adapter != null && selectedPosition == adapter.size() - 1 // is last main menu item selected (AboutFragment)
                 && !isShowingHeaders // is left side bar not shown?
                 && (checkLeftKey(keyCode) || checkUpKey(keyCode))
     }
