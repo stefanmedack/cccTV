@@ -9,6 +9,7 @@ import android.support.v4.os.BuildCompat
 import de.stefanmedack.ccctv.R
 import de.stefanmedack.ccctv.util.STREAM_URL
 import info.metadude.java.library.brockman.models.Stream
+import info.metadude.java.library.brockman.models.Url.TYPE
 
 class ExoPlayerActivity : FragmentActivity() {
 
@@ -39,7 +40,9 @@ class ExoPlayerActivity : FragmentActivity() {
 
         fun start(activity: FragmentActivity, item: Stream) {
             val intent = Intent(activity, ExoPlayerActivity::class.java)
-            intent.putExtra(STREAM_URL, item.urls[0].url)
+            val url = item.urls.find { it.type == TYPE.HLS }?.url ?: item.urls[0].url
+//            Timber.d(url)
+            intent.putExtra(STREAM_URL, url)
             activity.startActivity(intent)
         }
     }
