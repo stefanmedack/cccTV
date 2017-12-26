@@ -9,7 +9,6 @@ import android.support.v4.os.BuildCompat
 import de.stefanmedack.ccctv.R
 import de.stefanmedack.ccctv.util.STREAM_URL
 import info.metadude.java.library.brockman.models.Stream
-import info.metadude.java.library.brockman.models.Url.TYPE
 
 class ExoPlayerActivity : FragmentActivity() {
 
@@ -18,7 +17,14 @@ class ExoPlayerActivity : FragmentActivity() {
         setContentView(R.layout.activity_video_example)
 
         val ft = supportFragmentManager.beginTransaction()
-        ft.add(R.id.videoFragment, ExoPlayerFragment(), ExoPlayerFragment.TAG)
+        ft.add(
+                R.id.videoFragment,
+                ExoPlayerFragment().apply {
+                    arguments = Bundle(1).also {
+                        it.putString(STREAM_URL, intent.getStringExtra(STREAM_URL))
+                    }
+                },
+                ExoPlayerFragment.TAG)
         ft.commit()
     }
 
@@ -46,8 +52,9 @@ class ExoPlayerActivity : FragmentActivity() {
 
         fun start(activity: FragmentActivity, item: Stream) {
             val intent = Intent(activity, ExoPlayerActivity::class.java)
-            val url = item.urls.find { it.type == TYPE.HLS }?.url ?: item.urls[0].url
-//            Timber.d(url)
+//            val url = item.urls.find { it.type == TYPE.HLS }?.url ?: item.urls[0].url
+            val url = "https://player.vimeo.com/external/244076670.m3u8?s=617848b2ce9b93d5052b21177d61a1ec7ff237ae&oauth2_token_id=925454046"
+            //            Timber.d(url)
             intent.putExtra(STREAM_URL, url)
             activity.startActivity(intent)
         }
