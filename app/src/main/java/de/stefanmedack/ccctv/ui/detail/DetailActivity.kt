@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.ActivityOptionsCompat
 import android.view.KeyEvent
+import android.view.WindowManager
 import android.widget.ImageView
 import de.stefanmedack.ccctv.R
 import de.stefanmedack.ccctv.persistence.entities.Event
@@ -22,6 +23,9 @@ class DetailActivity : BaseInjectableActivity() {
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.fragment_activity)
+
+        // prevent stand-by while playing videos
+        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
         if (savedInstanceState == null) {
             fragment = DetailFragment()
