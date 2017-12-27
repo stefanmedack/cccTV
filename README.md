@@ -1,6 +1,6 @@
 [![Apache License](http://img.shields.io/badge/license-Apache%20License%202.0-blue.svg)](http://choosealicense.com/licenses/apache-2.0/)
 
-[<img src="https://upload.wikimedia.org/wikipedia/commons/c/cd/Get_it_on_Google_play.svg" alt="Get it on Google Play" width="230">][play] &nbsp;&nbsp;&nbsp; **OR** [get an APK][releases]
+[<img src="https://upload.wikimedia.org/wikipedia/commons/c/cd/Get_it_on_Google_play.svg" alt="Get it on Google Play" width="230">][play] &nbsp;&nbsp;&nbsp; **OR** [<img src="https://images-na.ssl-images-amazon.com/images/G/01/mobile-apps/devportal2/res/images/amazon-appsstore-us-black-v2.eps" alt="Available at Amazon AppStore" width="230">][amazon] &nbsp;&nbsp;&nbsp; **OR** [Download an APK][releases]
 
 # cccTV
 
@@ -55,4 +55,5 @@ If you want to build a `release` version, it is important to replace the placeho
 [voctocat]: https://morr.cc/voctocat/
 
 [play]: https://play.google.com/store/apps/details?id=de.stefanmedack.ccctv
+[amazon]: https://www.amazon.de/cccTV-Chaos-Computer-Club-Videos/dp/B0787JP7RF
 [releases]: https://github.com/stefanmedack/cccTV/releases
