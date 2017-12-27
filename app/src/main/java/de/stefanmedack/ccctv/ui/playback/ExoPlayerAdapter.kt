@@ -9,9 +9,10 @@ import android.support.v17.leanback.media.SurfaceHolderGlueHost
 import android.view.SurfaceHolder
 import com.google.android.exoplayer2.*
 import com.google.android.exoplayer2.C.StreamType
+import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory
+import com.google.android.exoplayer2.source.ExtractorMediaSource
 import com.google.android.exoplayer2.source.MediaSource
 import com.google.android.exoplayer2.source.TrackGroupArray
-import com.google.android.exoplayer2.source.hls.HlsMediaSource
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSource
@@ -169,13 +170,6 @@ class ExoPlayerAdapter(context: Context) : PlayerAdapter(), Player.EventListener
         }
     }
 
-    override fun seekTo(newPosition: Long) {
-        if (!mInitialized) {
-            return
-        }
-        mPlayer.seekTo(newPosition)
-    }
-
     override fun getBufferedPosition(): Long {
         return mPlayer.bufferedPosition
     }
@@ -206,17 +200,24 @@ class ExoPlayerAdapter(context: Context) : PlayerAdapter(), Player.EventListener
      */
     fun onCreateMediaSource(uri: Uri): MediaSource {
         val userAgent = Util.getUserAgent(context, "ExoPlayerAdapter")
+        return ExtractorMediaSource(uri,
+                DefaultHttpDataSourceFactory(userAgent, null, DefaultHttpDataSource.DEFAULT_CONNECT_TIMEOUT_MILLIS,
+                        DefaultHttpDataSource.DEFAULT_READ_TIMEOUT_MILLIS, true),
+                DefaultExtractorsFactory(), null, null)
 
-        return HlsMediaSource(
-                uri,
-                DefaultHttpDataSourceFactory(
-                        userAgent,
-                        null,
-                        DefaultHttpDataSource.DEFAULT_CONNECT_TIMEOUT_MILLIS,
-                        DefaultHttpDataSource.DEFAULT_READ_TIMEOUT_MILLIS,
-                        true),
-                null,
-                null)
+
+        // HLS does not seem to work currently
+//        return HlsMediaSource(
+//                uri,
+//                DefaultHttpDataSourceFactory(
+//                        userAgent,
+//                        null,
+//                        DefaultHttpDataSource.DEFAULT_CONNECT_TIMEOUT_MILLIS,
+//                        DefaultHttpDataSource.DEFAULT_READ_TIMEOUT_MILLIS,
+//                        true),
+//                null,
+//                null)
+
     }
 
     private fun prepareMediaForPlaying() {
