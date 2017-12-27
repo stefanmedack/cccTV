@@ -67,12 +67,9 @@ class ExoPlayerFragment : VideoSupportFragment() {
         //        mediaPlayerGlue.subtitle = event.subtitle
 
         mediaPlayerGlue.playerAdapter.setDataSource(Uri.parse(videoUrl))
-
-        //        PlaybackSeekDiskDataProvider.setDemoSeekProvider(mediaPlayerGlue)
-        mediaPlayerGlue.isSeekEnabled = true
+        mediaPlayerGlue.isSeekEnabled = false
         playWhenReady(mediaPlayerGlue)
         backgroundType = PlaybackFragment.BG_LIGHT
-
     }
 
     companion object {

@@ -45,9 +45,7 @@ class ExoPlayerActivity : FragmentActivity() {
     companion object {
         fun start(activity: FragmentActivity, item: Stream) {
             val intent = Intent(activity, ExoPlayerActivity::class.java)
-            val url = item.urls.find { it.type == TYPE.HLS }?.url ?: item.urls[0].url
-            //            val url = "http://cdn.c3voc.de/hls/sX_native_hd.m3u8"
-            intent.putExtra(STREAM_URL, url)
+            intent.putExtra(STREAM_URL, item.urls.find { it.type == TYPE.WEBM }?.url ?: item.urls[0].url)
             activity.startActivity(intent)
         }
     }
