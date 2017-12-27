@@ -41,7 +41,7 @@ class ExoPlayerFragment : VideoSupportFragment() {
     }
 
     override fun onPause() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N && activity.isInPictureInPictureMode) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N || !activity.isInPictureInPictureMode) {
             mediaPlayerGlue.pause()
         }
         super.onPause()
