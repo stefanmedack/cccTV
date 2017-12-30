@@ -1,4 +1,4 @@
-package de.stefanmedack.ccctv.ui.playback
+package de.stefanmedack.ccctv.ui.streaming
 
 import android.content.Intent
 import android.os.Bundle
@@ -10,7 +10,7 @@ import de.stefanmedack.ccctv.util.addFragmentInTransaction
 import info.metadude.java.library.brockman.models.Stream
 import info.metadude.java.library.brockman.models.Url.TYPE
 
-class ExoPlayerActivity : FragmentActivity() {
+class StreamingPlayerActivity : FragmentActivity() {
 
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -19,12 +19,12 @@ class ExoPlayerActivity : FragmentActivity() {
         // prevent stand-by while playing videos
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
-        val fragment = ExoPlayerFragment().apply {
+        val fragment = StreamingPlayerFragment().apply {
             arguments = Bundle(1).also {
                 it.putString(STREAM_URL, intent.getStringExtra(STREAM_URL))
             }
         }
-        addFragmentInTransaction(fragment, R.id.videoFragment, ExoPlayerFragment.TAG)
+        addFragmentInTransaction(fragment, R.id.videoFragment, StreamingPlayerFragment.TAG)
     }
 
     override fun onVisibleBehindCanceled() {
@@ -45,7 +45,7 @@ class ExoPlayerActivity : FragmentActivity() {
 
     companion object {
         fun start(activity: FragmentActivity, item: Stream) {
-            val intent = Intent(activity, ExoPlayerActivity::class.java)
+            val intent = Intent(activity, StreamingPlayerActivity::class.java)
             intent.putExtra(STREAM_URL, item.urls.find { it.type == TYPE.WEBM }?.url ?: item.urls[0].url)
             activity.startActivity(intent)
         }

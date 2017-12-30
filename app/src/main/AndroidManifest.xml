@@ -92,7 +92,7 @@
             />
 
         <activity
-            android:name=".ui.playback.ExoPlayerActivity"
+            android:name=".ui.streaming.StreamingPlayerActivity"
             android:configChanges="screenSize|smallestScreenSize|screenLayout|orientation|layoutDirection"
             android:exported="true"
             android:launchMode="singleTask"

@@ -1,4 +1,4 @@
-package de.stefanmedack.ccctv.ui.playback
+package de.stefanmedack.ccctv.ui.streaming
 
 import android.content.Context
 import android.media.AudioManager
@@ -12,9 +12,9 @@ import android.support.v17.leanback.media.PlaybackGlue
 import android.util.Log
 import de.stefanmedack.ccctv.util.STREAM_URL
 
-class ExoPlayerFragment : VideoSupportFragment() {
+class StreamingPlayerFragment : VideoSupportFragment() {
 
-    private lateinit var mediaPlayerGlue: VideoMediaPlayerGlue<ExoPlayerAdapter>
+    private lateinit var mediaPlayerGlue: StreamingMediaPlayerGlue<StreamingPlayerAdapter>
 
     private val glueHost = VideoSupportFragmentGlueHost(this)
     private val onAudioFocusChangeListener: AudioManager.OnAudioFocusChangeListener = AudioManager.OnAudioFocusChangeListener { }
@@ -22,9 +22,9 @@ class ExoPlayerFragment : VideoSupportFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val playerAdapter = ExoPlayerAdapter(activity)
+        val playerAdapter = StreamingPlayerAdapter(activity)
         playerAdapter.audioStreamType = AudioManager.USE_DEFAULT_STREAM_TYPE
-        mediaPlayerGlue = VideoMediaPlayerGlue(activity, playerAdapter)
+        mediaPlayerGlue = StreamingMediaPlayerGlue(activity, playerAdapter)
         mediaPlayerGlue.host = glueHost
         val audioManager = activity.getSystemService(Context.AUDIO_SERVICE) as AudioManager
         if (audioManager.requestAudioFocus(onAudioFocusChangeListener, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN)
