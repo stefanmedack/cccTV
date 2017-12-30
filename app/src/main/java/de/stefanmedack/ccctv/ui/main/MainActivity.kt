@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.KeyEvent
 import de.stefanmedack.ccctv.R
 import de.stefanmedack.ccctv.ui.base.BaseInjectableActivity
+import de.stefanmedack.ccctv.util.replaceFragmentInTransaction
 
 class MainActivity : BaseInjectableActivity() {
 
@@ -15,11 +16,9 @@ class MainActivity : BaseInjectableActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.fragment_activity)
 
-        if (savedInstanceState == null) {
-            fragment = MainFragment()
-            supportFragmentManager.beginTransaction().replace(R.id.fragment, fragment).commit()
-        } else {
-            fragment = supportFragmentManager.findFragmentByTag(MAIN_TAG) as MainFragment
+        fragment = supportFragmentManager.findFragmentByTag(MAIN_TAG) as? MainFragment ?: MainFragment()
+        fragment?.let { frag ->
+            replaceFragmentInTransaction(frag, R.id.fragment, MAIN_TAG)
         }
     }
 

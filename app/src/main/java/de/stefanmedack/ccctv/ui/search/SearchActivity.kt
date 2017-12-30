@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import de.stefanmedack.ccctv.R
 import de.stefanmedack.ccctv.ui.base.BaseInjectableActivity
+import de.stefanmedack.ccctv.util.replaceFragmentInTransaction
 
 class SearchActivity : BaseInjectableActivity() {
 
@@ -15,11 +16,9 @@ class SearchActivity : BaseInjectableActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.fragment_activity)
 
-        if (savedInstanceState == null) {
-            fragment = SearchFragment()
-            supportFragmentManager.beginTransaction().replace(R.id.fragment, fragment).commit()
-        } else {
-            fragment = supportFragmentManager.findFragmentByTag(SEARCH_TAG) as SearchFragment
+        fragment = supportFragmentManager.findFragmentByTag(SEARCH_TAG) as? SearchFragment ?: SearchFragment()
+        fragment?.let { frag ->
+            replaceFragmentInTransaction(frag, R.id.fragment, SEARCH_TAG)
         }
     }
 

@@ -13,6 +13,46 @@
         />
 
     <uses-feature
+        android:name="android.hardware.faketouch"
+        android:required="false"
+        />
+    <uses-feature
+        android:name="android.hardware.telephony"
+        android:required="false"
+        />
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="false"
+        />
+    <uses-feature
+        android:name="android.hardware.camera.flash"
+        android:required="false"
+        />
+    <uses-feature
+        android:name="android.hardware.camera.autofocus"
+        android:required="false"
+        />
+    <uses-feature
+        android:name="android.hardware.nfc"
+        android:required="false"
+        />
+    <uses-feature
+        android:name="android.hardware.location"
+        android:required="false"
+        />
+    <uses-feature
+        android:name="android.hardware.location.gps"
+        android:required="false"
+        />
+    <uses-feature
+        android:name="android.hardware.microphone"
+        android:required="false"
+        />
+    <uses-feature
+        android:name="android.hardware.sensor"
+        android:required="false"
+        />
+    <uses-feature
         android:name="android.software.leanback"
         android:required="true"
         />
@@ -35,7 +75,6 @@
             >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
-
                 <category android:name="android.intent.category.LEANBACK_LAUNCHER"/>
             </intent-filter>
         </activity>
@@ -54,11 +93,12 @@
 
         <activity
             android:name=".ui.playback.ExoPlayerActivity"
-            android:exported="true"
             android:configChanges="screenSize|smallestScreenSize|screenLayout|orientation|layoutDirection"
+            android:exported="true"
             android:launchMode="singleTask"
             android:resizeableActivity="true"
-            android:supportsPictureInPicture="true"/>
+            android:supportsPictureInPicture="true"
+            />
 
         <meta-data
             android:name="io.fabric.ApiKey"

@@ -13,6 +13,7 @@ import de.stefanmedack.ccctv.ui.base.BaseInjectableActivity
 import de.stefanmedack.ccctv.util.EVENT_ID
 import de.stefanmedack.ccctv.util.EVENT_PICTURE
 import de.stefanmedack.ccctv.util.SHARED_DETAIL_TRANSITION
+import de.stefanmedack.ccctv.util.replaceFragmentInTransaction
 
 class DetailActivity : BaseInjectableActivity() {
 
@@ -27,15 +28,13 @@ class DetailActivity : BaseInjectableActivity() {
         // prevent stand-by while playing videos
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
-        if (savedInstanceState == null) {
-            fragment = DetailFragment()
-            fragment?.arguments = Bundle(2).apply {
+        fragment = DetailFragment()
+        fragment?.let { frag ->
+            frag.arguments = Bundle(2).apply {
                 putInt(EVENT_ID, intent.getIntExtra(EVENT_ID, -1))
                 putString(EVENT_PICTURE, intent.getStringExtra(EVENT_PICTURE))
             }
-            supportFragmentManager.beginTransaction().replace(R.id.fragment, fragment, DETAIL_TAG).commit()
-        } else {
-            fragment = supportFragmentManager.findFragmentByTag(DETAIL_TAG) as DetailFragment
+            replaceFragmentInTransaction(frag, R.id.fragment, DETAIL_TAG)
         }
     }
 
