@@ -38,6 +38,7 @@ class MainFragment : BrowseSupportFragment() {
         AndroidSupportInjection.inject(this)
         super.onCreate(savedInstanceState)
 
+        prepareEntranceTransition()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -53,8 +54,6 @@ class MainFragment : BrowseSupportFragment() {
     }
 
     private fun setupUi(context: Context) {
-        prepareEntranceTransition()
-
         headersState = BrowseFragment.HEADERS_ENABLED
         isHeadersTransitionOnBackEnabled = true
         badgeDrawable = ContextCompat.getDrawable(context, R.drawable.voctocat)
