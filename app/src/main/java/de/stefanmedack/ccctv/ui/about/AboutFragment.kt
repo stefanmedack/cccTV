@@ -1,5 +1,6 @@
 package de.stefanmedack.ccctv.ui.about
 
+import android.content.Context
 import android.content.Intent
 import android.graphics.BitmapFactory
 import android.os.Bundle
@@ -8,6 +9,7 @@ import android.support.v17.leanback.app.DetailsSupportFragment
 import android.support.v17.leanback.app.DetailsSupportFragmentBackgroundController
 import android.support.v17.leanback.widget.*
 import android.support.v4.content.ContextCompat
+import android.view.View
 import android.widget.Toast
 import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
 import de.stefanmedack.ccctv.R
@@ -27,14 +29,14 @@ class AboutFragment : DetailsSupportFragment(), BrowseSupportFragment.MainFragme
         return mMainFragmentAdapter
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
-        setupUi()
+        setupUi(view.context)
         setupEventListeners()
     }
 
-    private fun setupUi() {
+    private fun setupUi(context: Context) {
         DetailsSupportFragmentBackgroundController(this).apply {
             enableParallax()
             coverBitmap = BitmapFactory.decodeResource(resources,
@@ -42,8 +44,8 @@ class AboutFragment : DetailsSupportFragment(), BrowseSupportFragment.MainFragme
         }
 
         val detailOverviewRowPresenter = FullWidthDetailsOverviewRowPresenter(AboutDescriptionPresenter())
-        detailOverviewRowPresenter.actionsBackgroundColor = ContextCompat.getColor(activity, R.color.teal_900)
-        detailOverviewRowPresenter.backgroundColor = ContextCompat.getColor(activity, R.color.teal_900)
+        detailOverviewRowPresenter.actionsBackgroundColor = ContextCompat.getColor(context, R.color.teal_900)
+        detailOverviewRowPresenter.backgroundColor = ContextCompat.getColor(context, R.color.teal_900)
 
         val detailsOverview = DetailsOverviewRow(
                 AboutDescription(
@@ -51,7 +53,7 @@ class AboutFragment : DetailsSupportFragment(), BrowseSupportFragment.MainFragme
                         description = getString(R.string.about_description)
                 )
         )
-        detailsOverview.imageDrawable = ContextCompat.getDrawable(activity, R.drawable.store_qr)
+        detailsOverview.imageDrawable = ContextCompat.getDrawable(context, R.drawable.store_qr)
 
         adapter = ArrayObjectAdapter(
                 // Setup PresenterSelector to distinguish between the different rows.

@@ -2,6 +2,7 @@ package de.stefanmedack.ccctv.ui.main
 
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.support.v17.leanback.app.BrowseFragment
@@ -10,6 +11,7 @@ import android.support.v17.leanback.widget.*
 import android.support.v4.app.Fragment
 import android.support.v4.content.ContextCompat
 import android.view.KeyEvent
+import android.view.View
 import android.widget.Toast
 import dagger.android.support.AndroidSupportInjection
 import de.stefanmedack.ccctv.R
@@ -27,7 +29,7 @@ class MainFragment : BrowseSupportFragment() {
     lateinit var viewModelFactory: ViewModelProvider.Factory
 
     private val viewModel: MainViewModel by lazy {
-        ViewModelProviders.of(activity, viewModelFactory).get(MainViewModel::class.java)
+        ViewModelProviders.of(this, viewModelFactory).get(MainViewModel::class.java)
     }
 
     private val disposables = CompositeDisposable()
@@ -36,7 +38,12 @@ class MainFragment : BrowseSupportFragment() {
         AndroidSupportInjection.inject(this)
         super.onCreate(savedInstanceState)
 
-        setupUi()
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        setupUi(view.context)
         bindViewModel()
     }
 
@@ -45,16 +52,14 @@ class MainFragment : BrowseSupportFragment() {
         super.onDestroy()
     }
 
-    private fun setupUi() {
+    private fun setupUi(context: Context) {
         prepareEntranceTransition()
 
         headersState = BrowseFragment.HEADERS_ENABLED
         isHeadersTransitionOnBackEnabled = true
-        badgeDrawable = ContextCompat.getDrawable(activity, R.drawable.voctocat)
+        badgeDrawable = ContextCompat.getDrawable(context, R.drawable.voctocat)
 
-        setOnSearchClickedListener {
-            activity.startActivity(Intent(activity, SearchActivity::class.java))
-        }
+        setOnSearchClickedListener { activity?.startActivity(Intent(activity, SearchActivity::class.java)) }
 
         mainFragmentRegistry.registerFragment(PageRow::class.java, PageRowFragmentFactory())
     }

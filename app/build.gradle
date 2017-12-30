@@ -23,7 +23,7 @@ ext {
     rxBindingVersion = "2.0.0"
     rxJavaVersion = "2.1.4"
     rxKotlinVersion = "2.1.0"
-    supportLibVersion = "26.1.0"
+    supportLibVersion = "27.0.2"
     timberVersion = "4.5.1"
 
     // Test dependencies
@@ -35,12 +35,12 @@ ext {
 
 android {
 
-    compileSdkVersion 26
-    buildToolsVersion '26.0.2'
+    compileSdkVersion 27
+    buildToolsVersion '27.0.1'
     defaultConfig {
         applicationId "de.stefanmedack.ccctv"
         minSdkVersion 21
-        targetSdkVersion 26
+        targetSdkVersion 27
         versionCode 9
         versionName "2.0.0"
         resConfigs "en", "de"
@@ -102,6 +102,7 @@ dependencies {
 
     // Support Libs
     implementation "com.android.support:appcompat-v7:$supportLibVersion"
+    implementation "com.android.support:support-v4:$supportLibVersion"
     implementation "com.android.support:leanback-v17:$supportLibVersion"
 
     // Architecture Components - View Model (+ Lifecycles, LiveData)

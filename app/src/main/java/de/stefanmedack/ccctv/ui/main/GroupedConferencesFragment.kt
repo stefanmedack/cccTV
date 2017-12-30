@@ -25,8 +25,8 @@ class GroupedConferencesFragment : RowsSupportFragment() {
     lateinit var viewModelFactory: ViewModelProvider.Factory
 
     private val viewModel: GroupedConferencesViewModel by lazy {
-        ViewModelProviders.of(activity, viewModelFactory).get(GroupedConferencesViewModel::class.java).apply {
-            init(arguments.getString(CONFERENCE_GROUP, ""))
+        ViewModelProviders.of(this, viewModelFactory).get(GroupedConferencesViewModel::class.java).apply {
+            init(arguments?.getString(CONFERENCE_GROUP, "") ?: "")
         }
     }
 
@@ -49,7 +49,9 @@ class GroupedConferencesFragment : RowsSupportFragment() {
         adapter = ArrayObjectAdapter(ListRowPresenter())
         onItemViewClickedListener = OnItemViewClickedListener { itemViewHolder, item, _, _ ->
             if (item is Event) {
-                DetailActivity.start(activity, item, (itemViewHolder.view as ImageCardView).mainImageView)
+                activity?.let {
+                    DetailActivity.start(it, item, (itemViewHolder.view as ImageCardView).mainImageView)
+                }
             }
         }
     }

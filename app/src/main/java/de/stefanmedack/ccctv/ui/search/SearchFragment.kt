@@ -33,14 +33,14 @@ class SearchFragment : SearchSupportFragment() {
     lateinit var viewModelFactory: ViewModelProvider.Factory
 
     private val viewModel: SearchViewModel by lazy {
-        ViewModelProviders.of(activity, viewModelFactory).get(SearchViewModel::class.java)
+        ViewModelProviders.of(this, viewModelFactory).get(SearchViewModel::class.java)
     }
 
     private val disposables = CompositeDisposable()
 
     private val rowsAdapter: ArrayObjectAdapter = ArrayObjectAdapter(ListRowPresenter())
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         AndroidSupportInjection.inject(this)
         super.onViewCreated(view, savedInstanceState)
 
@@ -67,13 +67,12 @@ class SearchFragment : SearchSupportFragment() {
             override fun onQueryTextSubmit(query: String): Boolean = true
         })
 
-        setOnItemViewClickedListener { _, item, _, _ ->
-            if (item is Event) DetailActivity.start(activity, item)
-        }
+        setOnItemViewClickedListener { _, item, _, _ -> if (item is Event && activity != null) DetailActivity.start(activity!!, item) }
 
-        if (!activity.hasPermission(Manifest.permission.RECORD_AUDIO)) {
-            // SpeechRecognitionCallback is not required and if not provided recognition will be handled using internal speech
-            // recognizer, in which case you must have RECORD_AUDIO permission
+        // TODO solve deprecation
+        if (activity?.hasPermission(Manifest.permission.RECORD_AUDIO) == false) {
+            // SpeechRecognitionCallback is not required and if not provided recognition will be handled using internal speech recognizer,
+            // in which case you must have RECORD_AUDIO permission
             setSpeechRecognitionCallback {
                 try {
                     if (activity != null) {

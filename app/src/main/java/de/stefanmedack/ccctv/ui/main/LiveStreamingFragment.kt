@@ -23,8 +23,8 @@ class LiveStreamingFragment : RowsSupportFragment() {
     lateinit var viewModelFactory: ViewModelProvider.Factory
 
     private val viewModel: LiveStreamingViewModel by lazy {
-        ViewModelProviders.of(activity, viewModelFactory).get(LiveStreamingViewModel::class.java).apply {
-            init(arguments.getString(STREAM_ID, ""))
+        ViewModelProviders.of(this, viewModelFactory).get(LiveStreamingViewModel::class.java).apply {
+            init(arguments?.getString(STREAM_ID, "") ?: "")
         }
     }
 
@@ -47,7 +47,9 @@ class LiveStreamingFragment : RowsSupportFragment() {
         adapter = ArrayObjectAdapter(ListRowPresenter())
         onItemViewClickedListener = OnItemViewClickedListener { _, item, _, _ ->
             if (item is Stream) {
-                StreamingPlayerActivity.start(activity, item)
+                activity?.let {
+                    StreamingPlayerActivity.start(it, item)
+                }
             }
         }
     }

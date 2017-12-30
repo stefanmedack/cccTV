@@ -2,6 +2,7 @@ package de.stefanmedack.ccctv.ui.detail
 
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
+import android.content.Context
 import android.os.Build
 import android.os.Bundle
 import android.support.v17.leanback.app.DetailsSupportFragment
@@ -36,7 +37,7 @@ class DetailFragment : DetailsSupportFragment() {
 
     private val viewModel: DetailViewModel by lazy {
         ViewModelProviders.of(this, viewModelFactory).get(DetailViewModel::class.java).apply {
-            init(arguments.getInt(EVENT_ID))
+            init(arguments?.getInt(EVENT_ID) ?: -1)
         }
     }
 
@@ -48,14 +49,18 @@ class DetailFragment : DetailsSupportFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         AndroidSupportInjection.inject(this)
         super.onCreate(savedInstanceState)
+    }
 
-        setupUi()
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        setupUi(view.context)
         setupEventListeners()
         bindViewModel()
     }
 
     override fun onPause() {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N || !activity.isInPictureInPictureMode) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N || activity?.isInPictureInPictureMode == false) {
             detailsBackground.playbackGlue?.pause()
         }
         super.onPause()
@@ -66,12 +71,12 @@ class DetailFragment : DetailsSupportFragment() {
         super.onDestroy()
     }
 
-    private fun setupUi() {
+    private fun setupUi(context: Context) {
         detailsBackground = DetailsSupportFragmentBackgroundController(this)
 
         // detail overview row - presents the detail, description and actions
         val detailOverviewRowPresenter = FullWidthDetailsOverviewRowPresenter(DetailDescriptionPresenter())
-        detailOverviewRowPresenter.actionsBackgroundColor = ContextCompat.getColor(activity, R.color.amber_800)
+        detailOverviewRowPresenter.actionsBackgroundColor = ContextCompat.getColor(context, R.color.amber_800)
 
         // init Shared Element Transition
         detailOverviewRowPresenter.setListener(FullWidthDetailsOverviewSharedElementHelper().apply {
@@ -81,7 +86,7 @@ class DetailFragment : DetailsSupportFragment() {
 
         // Setup action and detail row.
         detailsOverview = DetailsOverviewRow(Any())
-        showPoster(detailsOverview)
+        showPoster(context, detailsOverview)
 
         detailsOverview.actionsAdapter = ArrayObjectAdapter().apply {
             add(Action(DETAIL_ACTION_PLAY, getString(R.string.action_watch)))
@@ -102,11 +107,11 @@ class DetailFragment : DetailsSupportFragment() {
         }
     }
 
-    private fun showPoster(detailsOverview: DetailsOverviewRow) {
-        detailsOverview.imageDrawable = ContextCompat.getDrawable(activity, R.drawable.voctocat)
+    private fun showPoster(context: Context, detailsOverview: DetailsOverviewRow) {
+        detailsOverview.imageDrawable = ContextCompat.getDrawable(context, R.drawable.voctocat)
 
         Glide.with(activity)
-                .load(arguments.getString(EVENT_PICTURE))
+                .load(arguments?.getString(EVENT_PICTURE))
                 .centerCrop()
                 .error(R.drawable.voctocat)
                 .into<SimpleTarget<GlideDrawable>>(object : SimpleTarget<GlideDrawable>(
@@ -131,15 +136,17 @@ class DetailFragment : DetailsSupportFragment() {
     private fun render(result: DetailUiModel) {
         detailsOverview.item = result.event
 
-        val playerAdapter = ExoPlayerAdapter(activity)
-        val mediaPlayerGlue = VideoMediaPlayerGlue(activity, playerAdapter)
-        mediaPlayerGlue.isSeekEnabled = true
-        mediaPlayerGlue.title = result.event.title
-        mediaPlayerGlue.subtitle = result.event.subtitle
-        mediaPlayerGlue.playerAdapter.bindRecordings(viewModel.eventWithRecordings)
+        activity?.let { activityContext ->
+            val playerAdapter = ExoPlayerAdapter(activityContext)
+            val mediaPlayerGlue = VideoMediaPlayerGlue(activityContext, playerAdapter)
+            mediaPlayerGlue.isSeekEnabled = true
+            mediaPlayerGlue.title = result.event.title
+            mediaPlayerGlue.subtitle = result.event.subtitle
+            mediaPlayerGlue.playerAdapter.bindRecordings(viewModel.eventWithRecordings)
 
-        detailsBackground.enableParallax()
-        detailsBackground.setupVideoPlayback(mediaPlayerGlue)
+            detailsBackground.enableParallax()
+            detailsBackground.setupVideoPlayback(mediaPlayerGlue)
+        }
 
         (adapter as ArrayObjectAdapter).apply {
             // add speaker
@@ -177,7 +184,9 @@ class DetailFragment : DetailsSupportFragment() {
                     Toast.makeText(activity, R.string.implement_me_toast, Toast.LENGTH_LONG).show()
                 }
                 is Event -> {
-                    DetailActivity.start(activity, item, (itemViewHolder.view as ImageCardView).mainImageView)
+                    activity?.let {
+                        DetailActivity.start(it, item, (itemViewHolder.view as ImageCardView).mainImageView)
+                    }
                 }
             }
         }
