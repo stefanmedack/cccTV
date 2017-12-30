@@ -6,6 +6,7 @@ import android.support.v4.app.FragmentActivity
 import android.view.WindowManager
 import de.stefanmedack.ccctv.R
 import de.stefanmedack.ccctv.util.STREAM_URL
+import de.stefanmedack.ccctv.util.addFragmentInTransaction
 import info.metadude.java.library.brockman.models.Stream
 import info.metadude.java.library.brockman.models.Url.TYPE
 
@@ -18,14 +19,12 @@ class ExoPlayerActivity : FragmentActivity() {
         // prevent stand-by while playing videos
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
-        val ft = supportFragmentManager.beginTransaction()
         val fragment = ExoPlayerFragment().apply {
             arguments = Bundle(1).also {
                 it.putString(STREAM_URL, intent.getStringExtra(STREAM_URL))
             }
         }
-        ft.add(R.id.videoFragment, fragment, ExoPlayerFragment.TAG)
-        ft.commit()
+        addFragmentInTransaction(fragment, R.id.videoFragment, ExoPlayerFragment.TAG)
     }
 
     override fun onVisibleBehindCanceled() {
