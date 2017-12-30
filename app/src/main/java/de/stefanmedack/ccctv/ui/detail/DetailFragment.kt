@@ -2,6 +2,7 @@ package de.stefanmedack.ccctv.ui.detail
 
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
+import android.os.Build
 import android.os.Bundle
 import android.support.v17.leanback.app.DetailsSupportFragment
 import android.support.v17.leanback.app.DetailsSupportFragmentBackgroundController
@@ -51,6 +52,13 @@ class DetailFragment : DetailsSupportFragment() {
         setupUi()
         setupEventListeners()
         bindViewModel()
+    }
+
+    override fun onPause() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N || !activity.isInPictureInPictureMode) {
+            detailsBackground.playbackGlue?.pause()
+        }
+        super.onPause()
     }
 
     override fun onDestroy() {

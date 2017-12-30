@@ -42,12 +42,6 @@ class DetailActivity : BaseInjectableActivity() {
         return (fragment?.onKeyDown(keyCode) == true) || super.onKeyDown(keyCode, event)
     }
 
-    // TODO workaround for amazon - move to new implementation
-    override fun onVisibleBehindCanceled() {
-        mediaController?.transportControls?.pause()
-        super.onVisibleBehindCanceled()
-    }
-
     companion object {
         fun start(activity: Activity, event: Event, sharedImage: ImageView? = null) {
             val intent = Intent(activity, DetailActivity::class.java)

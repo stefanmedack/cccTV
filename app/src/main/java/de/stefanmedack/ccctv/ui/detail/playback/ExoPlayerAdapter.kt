@@ -315,10 +315,11 @@ class ExoPlayerAdapter(private val context: Context) : PlayerAdapter(), Player.E
     }
 
     override fun onPlayerError(error: ExoPlaybackException) {
-        callback.onError(this@ExoPlayerAdapter, error.type,
-                context.getString(R.string.lb_media_player_error,
-                        error.type,
-                        error.rendererIndex))
+        callback.onError(
+                this@ExoPlayerAdapter,
+                error.type,
+                context.getString(R.string.lb_media_player_error, error.type, error.rendererIndex)
+        )
     }
 
     override fun onTracksChanged(trackGroups: TrackGroupArray?, trackSelections: TrackSelectionArray?) {}
