@@ -79,6 +79,7 @@
             </intent-filter>
         </activity>
 
+        <activity android:name=".ui.events.EventsActivity"/>
         <activity android:name=".ui.detail.DetailActivity"/>
         <activity android:name=".ui.search.SearchActivity"/>
 

@@ -2,6 +2,7 @@ package de.stefanmedack.ccctv.repository
 
 import de.stefanmedack.ccctv.model.Resource
 import de.stefanmedack.ccctv.persistence.daos.ConferenceDao
+import de.stefanmedack.ccctv.persistence.daos.EventDao
 import de.stefanmedack.ccctv.persistence.entities.ConferenceWithEvents
 import de.stefanmedack.ccctv.persistence.preferences.C3SharedPreferences
 import de.stefanmedack.ccctv.persistence.separateLists
@@ -18,6 +19,7 @@ import javax.inject.Singleton
 class ConferenceRepository @Inject constructor(
         private val mediaService: RxC3MediaService,
         private val conferenceDao: ConferenceDao,
+        private val eventDao: EventDao,
         private val preferences: C3SharedPreferences
 ) {
     val conferences: Flowable<Resource<List<ConferenceEntity>>>
@@ -40,6 +42,35 @@ class ConferenceRepository @Inject constructor(
             override fun mapNetworkToLocal(data: List<ConferenceRemote>) = data.mapNotNull { it.toEntity() }
 
         }.resource
+
+    fun conferenceWithEvents(conferenceId: Int): Flowable<Resource<ConferenceWithEvents>>
+            = object : NetworkBoundResource<ConferenceWithEvents, ConferenceRemote>() {
+
+        override fun fetchLocal(): Flowable<ConferenceWithEvents> = conferenceDao.getConferenceWithEventsById(conferenceId)
+
+        override fun saveLocal(data: ConferenceWithEvents) =
+                data.let { (_, events) ->
+                    eventDao.insertAll(events)
+                    preferences.updateLatestDataFetchDate()
+                }
+
+        override fun isStale(localResource: Resource<ConferenceWithEvents>) = when (localResource) {
+            is Resource.Success -> localResource.data.events.isEmpty() || preferences.isFetchedDataStale()
+            is Resource.Loading -> false
+            is Resource.Error -> true
+        }
+
+        override fun fetchNetwork(): Single<ConferenceRemote> = mediaService.getConference(conferenceId)
+                .applySchedulers()
+
+        override fun mapNetworkToLocal(data: ConferenceRemote): ConferenceWithEvents =
+                data.toEntity()?.let { conference ->
+                    ConferenceWithEvents(
+                            conference = conference,
+                            events = data.events?.mapNotNull { it?.toEntity(conferenceId) } ?: listOf()
+                    )
+                } ?: throw IllegalArgumentException("Could not parse ConferenceRemote to ConferenceEntity")
+    }.resource
 
     val conferencesWithEvents: Flowable<Resource<List<ConferenceWithEvents>>>
         get() = object : NetworkBoundResource<List<ConferenceWithEvents>, List<ConferenceRemote>>() {
