@@ -20,7 +20,7 @@ class ConferenceCardPresenter : Presenter() {
         selectedBackgroundColor = ContextCompat.getColor(parent.context, R.color.amber_800)
 
         // TODO ConferenceCardStyle?
-        val cardView = object : ImageCardView(ContextThemeWrapper(parent.context, R.style.EventCardStyle)) {
+        val cardView = object : ImageCardView(ContextThemeWrapper(parent.context, R.style.GridCardTheme)) {
             override fun setSelected(selected: Boolean) {
                 updateCardBackgroundColor(this, selected)
                 super.setSelected(selected)
@@ -40,7 +40,7 @@ class ConferenceCardPresenter : Presenter() {
                 it.contentText = item.acronym
                 Glide.with(viewHolder.view.context)
                         .load(item.logoUrl)
-                        .centerCrop()
+                        .fitCenter() // TODO check why fitCenter does not work
                         .error(R.drawable.voctocat)
                         .into(it.mainImageView)
             }
