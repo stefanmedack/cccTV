@@ -4,6 +4,7 @@ import android.app.Instrumentation
 import android.content.Context
 import android.net.Uri
 import android.view.KeyEvent
+import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.SimpleExoPlayer
 import de.stefanmedack.ccctv.repository.EventRemote
 import de.stefanmedack.ccctv.util.bestRecording
@@ -106,27 +107,22 @@ class ExoPlayerAdapter(context: Context) : BaseExoPlayerAdapter(context) {
     //
     // Any better solutions than this one are gladly accepted
 
-    private val DPAD_ENTER_KEY_DELAY = 2500L
-
     private var shouldTriggerDpadCenterKeyEvent = false
-    private val triggerDpadCenterKeyRunnable = Runnable {
-        if (shouldTriggerDpadCenterKeyEvent) {
-            shouldTriggerDpadCenterKeyEvent = false
-            triggerDpadCenterKeyEvent()
-        }
-    }
 
     override fun seekTo(newPosition: Long) {
         super.seekTo(newPosition)
         if (initialized) {
-            seekingWorkaround()
+            shouldTriggerDpadCenterKeyEvent = true
         }
     }
 
-    private fun seekingWorkaround() {
-        shouldTriggerDpadCenterKeyEvent = true
-        handler.removeCallbacks(triggerDpadCenterKeyRunnable)
-        handler.postDelayed(triggerDpadCenterKeyRunnable, DPAD_ENTER_KEY_DELAY)
+    override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
+        super.onPlayerStateChanged(playWhenReady, playbackState)
+
+        if (shouldTriggerDpadCenterKeyEvent && playbackState == Player.STATE_READY) {
+            shouldTriggerDpadCenterKeyEvent = false
+            triggerDpadCenterKeyEvent()
+        }
     }
 
     private fun triggerDpadCenterKeyEvent() {
