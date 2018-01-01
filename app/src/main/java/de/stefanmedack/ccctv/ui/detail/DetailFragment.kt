@@ -138,11 +138,12 @@ class DetailFragment : DetailsSupportFragment() {
 
         activity?.let { activityContext ->
             val playerAdapter = ExoPlayerAdapter(activityContext)
+            playerAdapter.bindRecordings(viewModel.eventWithRecordings)
+
             val mediaPlayerGlue = VideoMediaPlayerGlue(activityContext, playerAdapter)
             mediaPlayerGlue.isSeekEnabled = true
             mediaPlayerGlue.title = result.event.title
             mediaPlayerGlue.subtitle = result.event.subtitle
-            mediaPlayerGlue.playerAdapter.bindRecordings(viewModel.eventWithRecordings)
 
             detailsBackground.enableParallax()
             detailsBackground.setupVideoPlayback(mediaPlayerGlue)

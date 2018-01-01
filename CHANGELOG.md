@@ -1,5 +1,9 @@
 # Change Log
 
+## Unreleased
+
+- improves seeking workaround
+
 ## 2.0.0
 
 - adds streaming
