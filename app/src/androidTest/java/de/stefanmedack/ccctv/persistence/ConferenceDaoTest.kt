@@ -66,6 +66,20 @@ class ConferenceDaoTest : BaseDbTest() {
         assertEquals(loadedConferences[0], newConference)
     }
 
+    @Test
+    fun insert_and_retrieve_multiple_conferences_filtered_by_group() {
+        val conferences = listOf(
+                minimalConferenceEntity.copy(id = 1, slug = "congress/33c3"),
+                fullConferenceEntity.copy(id = 2, slug = "not_congress/droidcon")
+        )
+
+        db.conferenceDao().insertAll(conferences)
+        val loadedConferences = db.conferenceDao().getConferences("congress").test().values()[0]
+
+        assertEquals(loadedConferences.size, 1)
+        assertEquals(loadedConferences[0], conferences[0])
+    }
+
     // Conferences with Events
 
     @Test
@@ -103,7 +117,7 @@ class ConferenceDaoTest : BaseDbTest() {
         assertEquals(loadedConferences[1].events, listOf<Event>())
     }
 
-  @Test
+    @Test
     fun insert_and_retrieve_multiple_conferences_with_events_in_single_insert() {
         val conferences = listOf(
                 minimalConferenceEntity.copy(id = 1),

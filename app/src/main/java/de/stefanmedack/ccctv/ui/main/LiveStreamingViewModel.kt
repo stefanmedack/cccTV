@@ -21,7 +21,7 @@ class LiveStreamingViewModel @Inject constructor(
 
     private fun extractConference(): List<Room>
             = streamingRepository.cachedStreams.find { it.conference == conferenceName }?.
-                groups?.find { it.group == "Live" }?.rooms ?: listOf()
+                groups?.find { it.group == "Lecture Rooms" }?.rooms ?: listOf() // TODO do not check this change in!!!
 
     //    val conferencesWithEvents: Flowable<Resource<List<ConferenceWithEvents>>>
     //        get() = repository.loadedConferences(conferenceName)

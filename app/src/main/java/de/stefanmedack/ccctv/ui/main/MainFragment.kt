@@ -119,7 +119,7 @@ class MainFragment : BrowseSupportFragment() {
             return when ((rowObj as Row).headerItem.id) {
                 6L -> AboutFragment()
                 2L -> LiveStreamingFragment.create(rowObj.headerItem.name)
-                else -> GroupedConferencesFragment.create(rowObj.headerItem.name)
+                else -> ConferencesFragment.create(rowObj.headerItem.name)
             }
         }
     }

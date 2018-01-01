@@ -20,27 +20,26 @@ class ConferenceRepository @Inject constructor(
         private val conferenceDao: ConferenceDao,
         private val preferences: C3SharedPreferences
 ) {
-    // TODO are plain conferences still needed?
-    //    val conferences: Flowable<Resource<List<ConferenceEntity>>>
-    //        get() = object : NetworkBoundResource<List<ConferenceEntity>, List<ConferenceRemote>>() {
-    //
-    //            override fun fetchLocal(): Flowable<List<ConferenceEntity>> = conferenceDao.getConferences()
-    //
-    //            override fun saveLocal(data: List<ConferenceEntity>) = conferenceDao.insertAll(data)
-    //
-    //            override fun isStale(localResource: Resource<List<ConferenceEntity>>) = when (localResource) {
-    //                is Resource.Error -> true
-    //                is Resource.Loading -> false
-    //                is Resource.Success -> localResource.data.isEmpty()
-    //            }
-    //
-    //            override fun fetchNetwork(): Single<List<ConferenceRemote>> = mediaService
-    //                    .getConferences()
-    //                    .map { it.conferences?.filterNotNull() }
-    //
-    //            override fun mapNetworkToLocal(data: List<ConferenceRemote>) = data.mapNotNull { it.toEntity() }
-    //
-    //        }.resource
+    val conferences: Flowable<Resource<List<ConferenceEntity>>>
+        get() = object : NetworkBoundResource<List<ConferenceEntity>, List<ConferenceRemote>>() {
+
+            override fun fetchLocal(): Flowable<List<ConferenceEntity>> = conferenceDao.getConferences()
+
+            override fun saveLocal(data: List<ConferenceEntity>) = conferenceDao.insertAll(data)
+
+            override fun isStale(localResource: Resource<List<ConferenceEntity>>) = when (localResource) {
+                is Resource.Error -> true
+                is Resource.Loading -> false
+                is Resource.Success -> localResource.data.isEmpty()
+            }
+
+            override fun fetchNetwork(): Single<List<ConferenceRemote>> = mediaService
+                    .getConferences()
+                    .map { it.conferences?.filterNotNull() }
+
+            override fun mapNetworkToLocal(data: List<ConferenceRemote>) = data.mapNotNull { it.toEntity() }
+
+        }.resource
 
     val conferencesWithEvents: Flowable<Resource<List<ConferenceWithEvents>>>
         get() = object : NetworkBoundResource<List<ConferenceWithEvents>, List<ConferenceRemote>>() {
@@ -84,9 +83,9 @@ class ConferenceRepository @Inject constructor(
 
         }.resource
 
-    fun loadedConferences(conferenceGroup: String): Flowable<Resource<List<ConferenceWithEvents>>> = conferenceDao
-            .getConferencesWithEvents(conferenceGroup.toLowerCase())
-            .map<Resource<List<ConferenceWithEvents>>> { Resource.Success(it) }
+    fun loadedConferences(conferenceGroup: String): Flowable<Resource<List<ConferenceEntity>>> = conferenceDao
+            .getConferences(conferenceGroup.toLowerCase())
+            .map<Resource<List<ConferenceEntity>>> { Resource.Success(it) }
             .applySchedulers()
 
 }

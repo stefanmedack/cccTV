@@ -33,13 +33,12 @@ class MainViewModel @Inject constructor(
                 }
         )
 
-    val conferences: Flowable<Resource<List<ConferenceGroup>>>
-        get() = conferenceRepository.conferencesWithEvents
+    private val conferences: Flowable<Resource<List<ConferenceGroup>>>
+        get() = conferenceRepository.conferences
                 .map<Resource<List<ConferenceGroup>>> {
                     when (it) {
                     // TODO create helper method for Success-Mapping
                         is Resource.Success -> Resource.Success(it.data
-                                .map { it.conference }
                                 .groupConferences()
                                 .keys
                                 .toList())
@@ -49,6 +48,5 @@ class MainViewModel @Inject constructor(
                 }
 
     private val streams
-        get() =
-            streamingRepository.streams
+        get() = streamingRepository.streams
 }
