@@ -88,14 +88,6 @@ class EventsFragment : VerticalGridSupportFragment() {
         startEntranceTransition()
     }
 
-    //    private fun createEventRow(conference: Conference): Row {
-    //        val adapter = ArrayObjectAdapter(EventCardPresenter())
-    //        adapter += conference
-    //
-    //        val headerItem = HeaderItem(conference.conference.title)
-    //        return ListRow(headerItem, adapter)
-    //    }
-
     companion object {
         fun create(conferenceGroup: String): EventsFragment {
             val fragment = EventsFragment()

@@ -19,11 +19,5 @@ class EventsViewModel @Inject constructor(
 
     val conferenceWithEvents: Flowable<Resource<ConferenceWithEvents>>
         get() = repository.conferenceWithEvents(conferenceId)
-                .map<Resource<ConferenceWithEvents>> {
-                    if (it is Resource.Success)
-                        Resource.Success(it.data.copy(events = it.data.events.sortedByDescending { it.title }))
-                    else
-                        it
-                }
 
 }
