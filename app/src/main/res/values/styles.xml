@@ -8,6 +8,10 @@
         <item name="detailsDescriptionSubtitleStyle">@style/CCCDescriptionSubtitleStyle</item>
     </style>
 
+    <style name="EventsActivityTheme" parent="Theme.Leanback.VerticalGrid">
+        <!--<item name="android:windowBackground">@drawable/voctocat</item>-->
+    </style>
+
     <style name="CCCDescriptionSubtitleStyle" parent="Widget.Leanback.DetailsDescriptionSubtitleStyle">
         <item name="android:maxLines">20</item>
     </style>

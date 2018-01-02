@@ -15,7 +15,6 @@ import de.stefanmedack.ccctv.ui.cards.EventCardPresenter
 import de.stefanmedack.ccctv.ui.detail.DetailActivity
 import de.stefanmedack.ccctv.util.CONFERENCE_GROUP
 import de.stefanmedack.ccctv.util.CONFERENCE_ID
-import de.stefanmedack.ccctv.util.plusAssign
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.subscribeBy
 import javax.inject.Inject
@@ -54,7 +53,6 @@ class EventsFragment : VerticalGridSupportFragment() {
     }
 
     private fun setupUi() {
-        prepareEntranceTransition()
 
         gridPresenter = VerticalGridPresenter(ZOOM_FACTOR).apply {
             numberOfColumns = COLUMNS
@@ -69,6 +67,8 @@ class EventsFragment : VerticalGridSupportFragment() {
                 }
             }
         }
+
+        prepareEntranceTransition()
     }
 
     private fun bindViewModel() {
@@ -82,7 +82,7 @@ class EventsFragment : VerticalGridSupportFragment() {
 
     private fun render(resource: Resource<ConferenceWithEvents>) {
         when (resource) {
-            is Resource.Success -> (adapter as ArrayObjectAdapter) += resource.data.events
+            is Resource.Success -> (adapter as ArrayObjectAdapter).addAll(0, resource.data.events)
             is Resource.Error -> Toast.makeText(activity, resource.msg, Toast.LENGTH_LONG).show()
         }
         startEntranceTransition()

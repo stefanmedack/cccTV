@@ -3,6 +3,7 @@ package de.stefanmedack.ccctv.ui.events
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.support.v4.app.ActivityOptionsCompat
 import de.stefanmedack.ccctv.R
 import de.stefanmedack.ccctv.persistence.entities.Conference
 import de.stefanmedack.ccctv.ui.base.BaseInjectableActivity
@@ -30,10 +31,10 @@ class EventsActivity : BaseInjectableActivity() {
 
     companion object {
         fun start(activity: Activity, conference: Conference) {
-            val intent = Intent(activity, EventsActivity::class.java)
+            val intent = Intent(activity.baseContext, EventsActivity::class.java)
             intent.putExtra(CONFERENCE_ID, conference.id)
 
-            activity.startActivity(intent)
+            activity.startActivity(intent, ActivityOptionsCompat.makeSceneTransitionAnimation(activity).toBundle())
         }
     }
 

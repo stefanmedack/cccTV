@@ -19,7 +19,6 @@ import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory
 import com.google.android.exoplayer2.util.Util
 import de.stefanmedack.ccctv.R
 
-
 open class BaseExoPlayerAdapter(private val context: Context) : PlayerAdapter(), Player.EventListener {
 
     val updatePeriod = 16L
