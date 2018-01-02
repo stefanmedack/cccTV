@@ -22,6 +22,8 @@ const val EVENT_ID = "EventId"
 const val EVENT_PICTURE = "EventPicture"
 const val CONFERENCE_GROUP = "CGroup"
 const val CONFERENCE_ID = "ConferenceId"
+const val CONFERENCE_TITLE = "ConferenceTitle"
+const val CONFERENCE_LOGO_URL = "ConferenceLogo"
 const val STREAM_ID = "StreamId"
 const val STREAM_URL = "StreamUrl"
 
