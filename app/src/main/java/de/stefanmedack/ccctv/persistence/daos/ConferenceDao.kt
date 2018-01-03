@@ -15,6 +15,12 @@ interface ConferenceDao {
     @Query("SELECT * FROM Conferences")
     fun getConferences(): Flowable<List<Conference>>
 
+    @Query("SELECT * FROM Conferences WHERE slug LIKE :conferenceGroup || '%'")
+    fun getConferences(conferenceGroup: String): Flowable<List<Conference>>
+
+    @Query("SELECT * FROM Conferences WHERE id = :id")
+    fun getConferenceById(id: Int): Flowable<Conference>
+
     @Query("SELECT * FROM Conferences")
     fun getConferencesWithEvents(): Flowable<List<ConferenceWithEvents>>
 
@@ -22,7 +28,7 @@ interface ConferenceDao {
     fun getConferencesWithEvents(conferenceGroup: String): Flowable<List<ConferenceWithEvents>>
 
     @Query("SELECT * FROM Conferences WHERE id = :id")
-    fun getConferenceById(id: Int): Flowable<Conference>
+    fun getConferenceWithEventsById(id: Int): Flowable<ConferenceWithEvents>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(conference: Conference)

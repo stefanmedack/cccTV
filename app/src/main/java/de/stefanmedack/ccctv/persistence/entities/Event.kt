@@ -11,14 +11,12 @@ import org.threeten.bp.LocalDate
 import org.threeten.bp.OffsetDateTime
 
 @Entity(tableName = "events",
-        foreignKeys = arrayOf(
-                ForeignKey(
-                        entity = Conference::class,
-                        parentColumns = arrayOf("id"),
-                        childColumns = arrayOf("conference_id"),
-                        onDelete = CASCADE
-                ))
-)
+        foreignKeys = [ForeignKey(
+                entity = Conference::class,
+                parentColumns = arrayOf("id"),
+                childColumns = arrayOf("conference_id"),
+                onDelete = CASCADE
+        )])
 data class Event(
 
         @PrimaryKey

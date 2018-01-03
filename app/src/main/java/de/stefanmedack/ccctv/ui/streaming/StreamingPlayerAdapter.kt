@@ -1,4 +1,4 @@
-package de.stefanmedack.ccctv.ui.playback
+package de.stefanmedack.ccctv.ui.streaming
 
 import android.content.Context
 import android.net.Uri
@@ -24,15 +24,15 @@ import de.stefanmedack.ccctv.R
 /**
  * This implementation extends the [PlayerAdapter] with a [SimpleExoPlayer].
  */
-class ExoPlayerAdapter(context: Context) : PlayerAdapter(), Player.EventListener {
+class StreamingPlayerAdapter(context: Context) : PlayerAdapter(), Player.EventListener {
     var context: Context
         internal set
     internal val mPlayer: SimpleExoPlayer
     internal var mSurfaceHolderGlueHost: SurfaceHolderGlueHost? = null
     internal val mRunnable: Runnable = object : Runnable {
         override fun run() {
-            callback.onCurrentPositionChanged(this@ExoPlayerAdapter)
-            callback.onBufferedPositionChanged(this@ExoPlayerAdapter)
+            callback.onCurrentPositionChanged(this@StreamingPlayerAdapter)
+            callback.onBufferedPositionChanged(this@StreamingPlayerAdapter)
             mHandler.postDelayed(this, updatePeriod.toLong())
         }
     }
@@ -74,7 +74,7 @@ class ExoPlayerAdapter(context: Context) : PlayerAdapter(), Player.EventListener
             mInitialized = false
             notifyBufferingStartEnd()
             if (mHasDisplay) {
-                callback.onPreparedStateChanged(this@ExoPlayerAdapter)
+                callback.onPreparedStateChanged(this@StreamingPlayerAdapter)
             }
         }
     }
@@ -84,7 +84,7 @@ class ExoPlayerAdapter(context: Context) : PlayerAdapter(), Player.EventListener
      * according to the state of buffering.
      */
     internal fun notifyBufferingStartEnd() {
-        callback.onBufferingStateChanged(this@ExoPlayerAdapter,
+        callback.onBufferingStateChanged(this@StreamingPlayerAdapter,
                 mBufferingStart || !mInitialized)
     }
 
@@ -119,11 +119,11 @@ class ExoPlayerAdapter(context: Context) : PlayerAdapter(), Player.EventListener
         mPlayer.setVideoSurfaceHolder(surfaceHolder)
         if (mHasDisplay) {
             if (mInitialized) {
-                callback.onPreparedStateChanged(this@ExoPlayerAdapter)
+                callback.onPreparedStateChanged(this@StreamingPlayerAdapter)
             }
         } else {
             if (mInitialized) {
-                callback.onPreparedStateChanged(this@ExoPlayerAdapter)
+                callback.onPreparedStateChanged(this@StreamingPlayerAdapter)
             }
         }
     }
@@ -159,14 +159,14 @@ class ExoPlayerAdapter(context: Context) : PlayerAdapter(), Player.EventListener
         }
 
         mPlayer.playWhenReady = true
-        callback.onPlayStateChanged(this@ExoPlayerAdapter)
-        callback.onCurrentPositionChanged(this@ExoPlayerAdapter)
+        callback.onPlayStateChanged(this@StreamingPlayerAdapter)
+        callback.onCurrentPositionChanged(this@StreamingPlayerAdapter)
     }
 
     override fun pause() {
         if (isPlaying) {
             mPlayer.playWhenReady = false
-            callback.onPlayStateChanged(this@ExoPlayerAdapter)
+            callback.onPlayStateChanged(this@StreamingPlayerAdapter)
         }
     }
 
@@ -199,7 +199,7 @@ class ExoPlayerAdapter(context: Context) : PlayerAdapter(), Player.EventListener
      * @return MediaSource for the player
      */
     fun onCreateMediaSource(uri: Uri): MediaSource {
-        val userAgent = Util.getUserAgent(context, "ExoPlayerAdapter")
+        val userAgent = Util.getUserAgent(context, "StreamingPlayerAdapter")
         return ExtractorMediaSource(uri,
                 DefaultHttpDataSourceFactory(userAgent, null, DefaultHttpDataSource.DEFAULT_CONNECT_TIMEOUT_MILLIS,
                         DefaultHttpDataSource.DEFAULT_READ_TIMEOUT_MILLIS, true),
@@ -231,13 +231,13 @@ class ExoPlayerAdapter(context: Context) : PlayerAdapter(), Player.EventListener
         mPlayer.setVideoListener(object : SimpleExoPlayer.VideoListener {
             override fun onVideoSizeChanged(width: Int, height: Int, unappliedRotationDegrees: Int,
                                             pixelWidthHeightRatio: Float) {
-                callback.onVideoSizeChanged(this@ExoPlayerAdapter, width, height)
+                callback.onVideoSizeChanged(this@StreamingPlayerAdapter, width, height)
             }
 
             override fun onRenderedFirstFrame() {}
         })
         notifyBufferingStartEnd()
-        callback.onPlayStateChanged(this@ExoPlayerAdapter)
+        callback.onPlayStateChanged(this@StreamingPlayerAdapter)
     }
 
     /**
@@ -271,19 +271,19 @@ class ExoPlayerAdapter(context: Context) : PlayerAdapter(), Player.EventListener
         if (playbackState == Player.STATE_READY && !mInitialized) {
             mInitialized = true
             if (mSurfaceHolderGlueHost == null || mHasDisplay) {
-                callback.onPreparedStateChanged(this@ExoPlayerAdapter)
+                callback.onPreparedStateChanged(this@StreamingPlayerAdapter)
             }
         } else if (playbackState == Player.STATE_BUFFERING) {
             mBufferingStart = true
         } else if (playbackState == Player.STATE_ENDED) {
-            callback.onPlayStateChanged(this@ExoPlayerAdapter)
-            callback.onPlayCompleted(this@ExoPlayerAdapter)
+            callback.onPlayStateChanged(this@StreamingPlayerAdapter)
+            callback.onPlayCompleted(this@StreamingPlayerAdapter)
         }
         notifyBufferingStartEnd()
     }
 
     override fun onPlayerError(error: ExoPlaybackException) {
-        callback.onError(this@ExoPlayerAdapter, error.type,
+        callback.onError(this@StreamingPlayerAdapter, error.type,
                 context.getString(R.string.lb_media_player_error,
                         error.type,
                         error.rendererIndex))

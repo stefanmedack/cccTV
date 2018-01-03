@@ -10,7 +10,8 @@ import android.support.v17.leanback.widget.PlaybackControlsRow.HighQualityAction
 import android.support.v17.leanback.widget.PlaybackControlsRow.HighQualityAction.INDEX_ON
 import de.stefanmedack.ccctv.ui.detail.playback.actions.AspectRatioAction
 
-class VideoMediaPlayerGlue<T : PlayerAdapter>(activity: Activity, impl: T) : PlaybackTransportControlGlue<T>(activity, impl) {
+class VideoMediaPlayerGlue<T : PlayerAdapter>(activity: Activity, playerAdapter: T)
+    : PlaybackTransportControlGlue<T>(activity, playerAdapter) {
 
     private val pipAction = PlaybackControlsRow.PictureInPictureAction(activity)
     private val highQualityAction = PlaybackControlsRow.HighQualityAction(activity).apply { index = INDEX_ON }
@@ -34,11 +35,10 @@ class VideoMediaPlayerGlue<T : PlayerAdapter>(activity: Activity, impl: T) : Pla
         super.onActionClicked(action)
     }
 
-    private fun shouldDispatchAction(action: Action): Boolean {
-        return action == pipAction
-                || action == highQualityAction
-                || action == aspectRatioAction
-    }
+    private fun shouldDispatchAction(action: Action): Boolean =
+            action == pipAction
+                    || action == highQualityAction
+                    || action == aspectRatioAction
 
     private fun dispatchAction(action: Action) {
         when (action) {

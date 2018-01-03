@@ -1,4 +1,4 @@
-package de.stefanmedack.ccctv.ui.playback
+package de.stefanmedack.ccctv.ui.streaming
 
 import android.app.Activity
 import android.support.v17.leanback.media.PlaybackTransportControlGlue
@@ -10,4 +10,4 @@ import android.support.v17.leanback.media.PlayerAdapter
  * PlayerGlue for video playback
  * @param <T>
 </T> */
-class VideoMediaPlayerGlue<T : PlayerAdapter>(context: Activity, impl: T) : PlaybackTransportControlGlue<T>(context, impl)
+class StreamingMediaPlayerGlue<T : PlayerAdapter>(context: Activity, impl: T) : PlaybackTransportControlGlue<T>(context, impl)

@@ -1,4 +1,4 @@
-package de.stefanmedack.ccctv.ui.playback
+package de.stefanmedack.ccctv.ui.streaming
 
 import android.content.Context
 import android.media.AudioManager
@@ -10,29 +10,32 @@ import android.support.v17.leanback.app.VideoSupportFragment
 import android.support.v17.leanback.app.VideoSupportFragmentGlueHost
 import android.support.v17.leanback.media.PlaybackGlue
 import android.util.Log
+import android.view.View
 import de.stefanmedack.ccctv.util.STREAM_URL
 
-class ExoPlayerFragment : VideoSupportFragment() {
+class StreamingPlayerFragment : VideoSupportFragment() {
 
-    private lateinit var mediaPlayerGlue: VideoMediaPlayerGlue<ExoPlayerAdapter>
+    private lateinit var mediaPlayerGlue: StreamingMediaPlayerGlue<StreamingPlayerAdapter>
 
     private val glueHost = VideoSupportFragmentGlueHost(this)
     private val onAudioFocusChangeListener: AudioManager.OnAudioFocusChangeListener = AudioManager.OnAudioFocusChangeListener { }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
-        val playerAdapter = ExoPlayerAdapter(activity)
+        val playerAdapter = StreamingPlayerAdapter(view.context)
         playerAdapter.audioStreamType = AudioManager.USE_DEFAULT_STREAM_TYPE
-        mediaPlayerGlue = VideoMediaPlayerGlue(activity, playerAdapter)
-        mediaPlayerGlue.host = glueHost
-        val audioManager = activity.getSystemService(Context.AUDIO_SERVICE) as AudioManager
-        if (audioManager.requestAudioFocus(onAudioFocusChangeListener, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN)
-                != AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
-            Log.w(TAG, "video player cannot obtain audio focus!")
+        activity?.let { activityContext ->
+            mediaPlayerGlue = StreamingMediaPlayerGlue(activityContext, playerAdapter)
+            mediaPlayerGlue.host = glueHost
+            val audioManager = activityContext.getSystemService(Context.AUDIO_SERVICE) as AudioManager
+            if (audioManager.requestAudioFocus(onAudioFocusChangeListener, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN)
+                    != AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
+                Log.w(TAG, "video player cannot obtain audio focus!")
+            }
         }
 
-        val streamUrl = arguments.getString(STREAM_URL)
+        val streamUrl = arguments?.getString(STREAM_URL)
         if (streamUrl != null) {
             playVideo(streamUrl)
         } else {
@@ -41,7 +44,7 @@ class ExoPlayerFragment : VideoSupportFragment() {
     }
 
     override fun onPause() {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N || !activity.isInPictureInPictureMode) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N || activity?.isInPictureInPictureMode == false) {
             mediaPlayerGlue.pause()
         }
         super.onPause()

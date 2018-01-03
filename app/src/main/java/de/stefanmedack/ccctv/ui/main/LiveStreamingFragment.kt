@@ -8,7 +8,7 @@ import android.support.v17.leanback.widget.*
 import android.view.View
 import dagger.android.support.AndroidSupportInjection
 import de.stefanmedack.ccctv.ui.cards.StreamCardPresenter
-import de.stefanmedack.ccctv.ui.playback.ExoPlayerActivity
+import de.stefanmedack.ccctv.ui.streaming.StreamingPlayerActivity
 import de.stefanmedack.ccctv.util.STREAM_ID
 import de.stefanmedack.ccctv.util.plusAssign
 import info.metadude.java.library.brockman.models.Room
@@ -23,8 +23,8 @@ class LiveStreamingFragment : RowsSupportFragment() {
     lateinit var viewModelFactory: ViewModelProvider.Factory
 
     private val viewModel: LiveStreamingViewModel by lazy {
-        ViewModelProviders.of(activity, viewModelFactory).get(LiveStreamingViewModel::class.java).apply {
-            init(arguments.getString(STREAM_ID, ""))
+        ViewModelProviders.of(this, viewModelFactory).get(LiveStreamingViewModel::class.java).apply {
+            init(arguments?.getString(STREAM_ID, "") ?: "")
         }
     }
 
@@ -47,7 +47,9 @@ class LiveStreamingFragment : RowsSupportFragment() {
         adapter = ArrayObjectAdapter(ListRowPresenter())
         onItemViewClickedListener = OnItemViewClickedListener { _, item, _, _ ->
             if (item is Stream) {
-                ExoPlayerActivity.start(activity, item)
+                activity?.let {
+                    StreamingPlayerActivity.start(it, item)
+                }
             }
         }
     }
