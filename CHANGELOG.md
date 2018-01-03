@@ -1,8 +1,10 @@
 # Change Log
 
-## Unreleased
+## 2.1.0
 
 - improves seeking workaround
+- split up conferences and events
+- dedicated event list section
 
 ## 2.0.0
 
