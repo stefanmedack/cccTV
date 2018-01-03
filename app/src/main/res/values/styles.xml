@@ -17,7 +17,7 @@
     </style>
 
     <style name="TitleOnlyStyle" parent="Widget.Leanback.ImageCardViewStyle">
-        <item name="lbImageCardViewType">Title</item>
+        <item name="lbImageCardViewType">Title|Content</item>
     </style>
 
     <style name="EventCardImageStyle" parent="Widget.Leanback.ImageCardView.ImageStyle">
@@ -25,9 +25,14 @@
         <item name="android:layout_height">@dimen/event_card_height</item>
     </style>
 
-    <style name="TwoLineTitleStyle" parent="Widget.Leanback.ImageCardView.TitleStyle">
+    <style name="MultiLineTitleStyle" parent="Widget.Leanback.ImageCardView.TitleStyle">
         <item name="android:minLines">2</item>
         <item name="android:maxLines">2</item>
+    </style>
+
+    <style name="MultiLineContentStyle" parent="Widget.Leanback.ImageCardView.ContentStyle">
+        <item name="android:minLines">3</item>
+        <item name="android:maxLines">3</item>
     </style>
 
     <style name="GridCardStyle" parent="Widget.Leanback.ImageCardViewStyle">
@@ -47,7 +52,8 @@
     <style name="EventCardStyle" parent="Theme.Leanback">
         <item name="imageCardViewStyle">@style/TitleOnlyStyle</item>
         <item name="imageCardViewImageStyle">@style/EventCardImageStyle</item>
-        <item name="imageCardViewTitleStyle">@style/TwoLineTitleStyle</item>
+        <item name="imageCardViewTitleStyle">@style/MultiLineTitleStyle</item>
+        <item name="imageCardViewContentStyle">@style/MultiLineContentStyle</item>
     </style>
 
     <style name="SpeakerCardStyle" parent="Widget.Leanback.BaseCardViewStyle">
