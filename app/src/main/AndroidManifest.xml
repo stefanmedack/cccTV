@@ -79,7 +79,13 @@
             </intent-filter>
         </activity>
 
+        <activity
+            android:name=".ui.events.EventsActivity"
+            android:theme="@style/EventsActivityTheme"
+            />
+
         <activity android:name=".ui.detail.DetailActivity"/>
+
         <activity android:name=".ui.search.SearchActivity"/>
 
         <activity

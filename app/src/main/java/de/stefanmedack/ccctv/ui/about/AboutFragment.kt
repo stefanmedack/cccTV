@@ -23,10 +23,10 @@ class AboutFragment : DetailsSupportFragment(), BrowseSupportFragment.MainFragme
     var shouldKeyLeftEventTriggerBackAnimation = true
     var shouldKeyUpEventTriggerBackAnimation = false
 
-    private val mMainFragmentAdapter = BrowseSupportFragment.MainFragmentAdapter(this)
+    private val mainFragmentAdapter = BrowseSupportFragment.MainFragmentAdapter(this)
 
     override fun getMainFragmentAdapter(): BrowseSupportFragment.MainFragmentAdapter<*> {
-        return mMainFragmentAdapter
+        return mainFragmentAdapter
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -39,8 +39,7 @@ class AboutFragment : DetailsSupportFragment(), BrowseSupportFragment.MainFragme
     private fun setupUi(context: Context) {
         DetailsSupportFragmentBackgroundController(this).apply {
             enableParallax()
-            coverBitmap = BitmapFactory.decodeResource(resources,
-                    R.drawable.about_cover)
+            coverBitmap = BitmapFactory.decodeResource(resources, R.drawable.about_cover)
         }
 
         val detailOverviewRowPresenter = FullWidthDetailsOverviewRowPresenter(AboutDescriptionPresenter())

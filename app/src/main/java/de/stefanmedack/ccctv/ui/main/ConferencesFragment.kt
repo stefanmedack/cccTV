@@ -3,40 +3,50 @@ package de.stefanmedack.ccctv.ui.main
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
-import android.support.v17.leanback.app.RowsSupportFragment
-import android.support.v17.leanback.widget.*
+import android.support.v17.leanback.widget.ArrayObjectAdapter
+import android.support.v17.leanback.widget.FocusHighlight
+import android.support.v17.leanback.widget.OnItemViewClickedListener
+import android.support.v17.leanback.widget.VerticalGridPresenter
 import android.view.View
 import android.widget.Toast
 import dagger.android.support.AndroidSupportInjection
 import de.stefanmedack.ccctv.model.Resource
-import de.stefanmedack.ccctv.persistence.entities.ConferenceWithEvents
-import de.stefanmedack.ccctv.persistence.entities.Event
-import de.stefanmedack.ccctv.ui.cards.EventCardPresenter
-import de.stefanmedack.ccctv.ui.detail.DetailActivity
+import de.stefanmedack.ccctv.persistence.entities.Conference
+import de.stefanmedack.ccctv.ui.base.GridFragment
+import de.stefanmedack.ccctv.ui.cards.ConferenceCardPresenter
+import de.stefanmedack.ccctv.ui.events.EventsActivity
 import de.stefanmedack.ccctv.util.CONFERENCE_GROUP
 import de.stefanmedack.ccctv.util.plusAssign
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.subscribeBy
 import javax.inject.Inject
 
-class GroupedConferencesFragment : RowsSupportFragment() {
+class ConferencesFragment : GridFragment() {
+
+    private val COLUMNS = 4
+    private val ZOOM_FACTOR = FocusHighlight.ZOOM_FACTOR_SMALL
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
 
-    private val viewModel: GroupedConferencesViewModel by lazy {
-        ViewModelProviders.of(this, viewModelFactory).get(GroupedConferencesViewModel::class.java).apply {
+    private val viewModel: ConferencesViewModel by lazy {
+        ViewModelProviders.of(this, viewModelFactory).get(ConferencesViewModel::class.java).apply {
             init(arguments?.getString(CONFERENCE_GROUP, "") ?: "")
         }
     }
 
     private val disposables = CompositeDisposable()
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        setupUi()
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         AndroidSupportInjection.inject(this)
         super.onViewCreated(view, savedInstanceState)
 
-        setupUi()
         bindViewModel()
     }
 
@@ -46,18 +56,23 @@ class GroupedConferencesFragment : RowsSupportFragment() {
     }
 
     private fun setupUi() {
-        adapter = ArrayObjectAdapter(ListRowPresenter())
-        onItemViewClickedListener = OnItemViewClickedListener { itemViewHolder, item, _, _ ->
-            if (item is Event) {
+        gridPresenter = VerticalGridPresenter(ZOOM_FACTOR).apply {
+            numberOfColumns = COLUMNS
+        }
+
+        adapter = ArrayObjectAdapter(ConferenceCardPresenter())
+
+        onItemViewClickedListener = OnItemViewClickedListener { _, item, _, _ ->
+            if (item is Conference) {
                 activity?.let {
-                    DetailActivity.start(it, item, (itemViewHolder.view as ImageCardView).mainImageView)
+                    EventsActivity.start(it, item)
                 }
             }
         }
     }
 
     private fun bindViewModel() {
-        disposables.add(viewModel.conferencesWithEvents
+        disposables.add(viewModel.conferences
                 .subscribeBy(
                         onNext = { render(it) },
                         onError = { it.printStackTrace() }
@@ -65,26 +80,18 @@ class GroupedConferencesFragment : RowsSupportFragment() {
         )
     }
 
-    private fun render(resource: Resource<List<ConferenceWithEvents>>) {
+    private fun render(resource: Resource<List<Conference>>) {
         mainFragmentAdapter.fragmentHost.notifyDataReady(mainFragmentAdapter)
-        //        adapter = ArrayObjectAdapter(ListRowPresenter())
+
         when (resource) {
-            is Resource.Success -> (adapter as ArrayObjectAdapter) += resource.data.map { createEventRow(it) }
+            is Resource.Success -> (adapter as ArrayObjectAdapter) += resource.data
             is Resource.Error -> Toast.makeText(activity, resource.msg, Toast.LENGTH_LONG).show()
         }
     }
 
-    private fun createEventRow(conference: ConferenceWithEvents): Row {
-        val adapter = ArrayObjectAdapter(EventCardPresenter())
-        adapter += conference.events
-
-        val headerItem = HeaderItem(conference.conference.title)
-        return ListRow(headerItem, adapter)
-    }
-
     companion object {
-        fun create(conferenceGroup: String): GroupedConferencesFragment {
-            val fragment = GroupedConferencesFragment()
+        fun create(conferenceGroup: String): ConferencesFragment {
+            val fragment = ConferencesFragment()
             fragment.arguments = Bundle(1).apply {
                 putString(CONFERENCE_GROUP, conferenceGroup)
             }

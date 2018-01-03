@@ -25,9 +25,9 @@ class ConferenceDaoTest : BaseDbTest() {
     fun insert_and_retrieve_minimal_conference() {
         db.conferenceDao().insert(minimalConferenceEntity)
 
-        val loadedConferences = db.conferenceDao().getConferenceById(minimalConferenceEntity.id).test()
+        val loadedConference = db.conferenceDao().getConferenceById(minimalConferenceEntity.id).test()
 
-        loadedConferences.assertValue(minimalConferenceEntity)
+        loadedConference.assertValue(minimalConferenceEntity)
     }
 
     @Test
@@ -64,6 +64,20 @@ class ConferenceDaoTest : BaseDbTest() {
 
         Assert.assertNotEquals(loadedConferences[0], oldConference)
         assertEquals(loadedConferences[0], newConference)
+    }
+
+    @Test
+    fun insert_and_retrieve_multiple_conferences_filtered_by_group() {
+        val conferences = listOf(
+                minimalConferenceEntity.copy(id = 1, slug = "congress/33c3"),
+                fullConferenceEntity.copy(id = 2, slug = "not_congress/droidcon")
+        )
+
+        db.conferenceDao().insertAll(conferences)
+        val loadedConferences = db.conferenceDao().getConferences("congress").test().values()[0]
+
+        assertEquals(loadedConferences.size, 1)
+        assertEquals(loadedConferences[0], conferences[0])
     }
 
     // Conferences with Events
@@ -103,7 +117,7 @@ class ConferenceDaoTest : BaseDbTest() {
         assertEquals(loadedConferences[1].events, listOf<Event>())
     }
 
-  @Test
+    @Test
     fun insert_and_retrieve_multiple_conferences_with_events_in_single_insert() {
         val conferences = listOf(
                 minimalConferenceEntity.copy(id = 1),
@@ -136,5 +150,18 @@ class ConferenceDaoTest : BaseDbTest() {
 
         assertEquals(loadedConferences.size, 1)
         assertEquals(loadedConferences[0].conference, conferences[0])
+    }
+
+    @Test
+    fun insert_and_retrieve_multiple_conferences_with_events_by_conference_id() {
+        val conferences = listOf(
+                minimalConferenceEntity.copy(id = 1, slug = "congress/33c3"),
+                fullConferenceEntity.copy(id = 2, slug = "not_congress/droidcon")
+        )
+
+        db.conferenceDao().insertAll(conferences)
+        val loadedConference = db.conferenceDao().getConferenceWithEventsById(2).test()
+
+        loadedConference.assertValue(ConferenceWithEvents(fullConferenceEntity, listOf()))
     }
 }
