@@ -38,7 +38,7 @@ open class BaseExoPlayerAdapter(private val context: Context) : PlayerAdapter(),
             handler.postDelayed(this, updatePeriod)
         }
     }
-    internal val handler = Handler()
+    internal val handler by lazy { Handler() }
     internal var initialized = false
     internal var hasDisplay: Boolean = false
     internal var bufferingStart: Boolean = false

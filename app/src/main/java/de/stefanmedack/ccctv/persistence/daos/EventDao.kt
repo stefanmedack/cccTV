@@ -6,6 +6,7 @@ import android.arch.persistence.room.OnConflictStrategy
 import android.arch.persistence.room.Query
 import de.stefanmedack.ccctv.persistence.entities.Event
 import io.reactivex.Flowable
+import io.reactivex.Single
 
 @Dao
 interface EventDao {
@@ -17,7 +18,7 @@ interface EventDao {
     fun getEvents(ids: List<Int>): Flowable<List<Event>>
 
     @Query("SELECT * FROM Events WHERE id = :id")
-    fun getEventById(id: Int): Flowable<Event>
+    fun getEventById(id: Int): Single<Event>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(event: Event)

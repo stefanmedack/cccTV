@@ -2,6 +2,7 @@ package de.stefanmedack.ccctv.repository
 
 import de.stefanmedack.ccctv.persistence.daos.EventDao
 import de.stefanmedack.ccctv.persistence.entities.Event
+import de.stefanmedack.ccctv.persistence.toEntity
 import de.stefanmedack.ccctv.util.applySchedulers
 import info.metadude.kotlin.library.c3media.RxC3MediaService
 import io.reactivex.Flowable
@@ -15,7 +16,11 @@ class EventRepository @Inject constructor(
         private val eventDao: EventDao
 ) {
     fun getEvent(id: Int): Flowable<Event> = eventDao.getEventById(id)
-            .applySchedulers()
+            .onErrorResumeNext(
+                    mediaService.getEvent(id)
+                            .applySchedulers()
+                            .map { it.toEntity(-1)!! }
+            ).toFlowable()
 
     fun getEvents(ids: List<Int>): Flowable<List<Event>> = eventDao.getEvents(ids)
             .applySchedulers()
