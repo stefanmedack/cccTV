@@ -1,5 +1,6 @@
 package de.stefanmedack.ccctv.ui.main
 
+import android.arch.lifecycle.BuildConfig
 import android.arch.lifecycle.ViewModel
 import de.stefanmedack.ccctv.repository.StreamingRepository
 import info.metadude.java.library.brockman.models.Room
@@ -19,9 +20,12 @@ class LiveStreamingViewModel @Inject constructor(
     val roomsForConference: Flowable<List<Room>>
         get() = Flowable.just(extractConference())
 
-    private fun extractConference(): List<Room>
-            = streamingRepository.cachedStreams.find { it.conference == conferenceName }?.
-                groups?.find { it.group == "Lecture Rooms" }?.rooms ?: listOf() // TODO do not check this change in!!!
+    @Suppress("ConstantConditionIf")
+    private fun extractConference(): List<Room> = streamingRepository.cachedStreams
+            .find { it.conference == conferenceName }
+            ?.groups
+            ?.find { it.group == if (BuildConfig.DEBUG) "Lecture Rooms" else "Live" }
+            ?.rooms ?: listOf()
 
     //    val conferencesWithEvents: Flowable<Resource<List<ConferenceWithEvents>>>
     //        get() = repository.loadedConferences(conferenceName)

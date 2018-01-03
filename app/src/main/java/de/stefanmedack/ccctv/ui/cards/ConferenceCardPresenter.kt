@@ -19,7 +19,6 @@ class ConferenceCardPresenter : Presenter() {
         defaultBackgroundColor = ContextCompat.getColor(parent.context, R.color.teal_900)
         selectedBackgroundColor = ContextCompat.getColor(parent.context, R.color.amber_800)
 
-        // TODO ConferenceCardStyle?
         val cardView = object : ImageCardView(ContextThemeWrapper(parent.context, R.style.GridCardTheme)) {
             override fun setSelected(selected: Boolean) {
                 updateCardBackgroundColor(this, selected)
