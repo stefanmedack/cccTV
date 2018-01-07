@@ -28,6 +28,7 @@ import de.stefanmedack.ccctv.ui.detail.uiModels.SpeakerUiModel
 import de.stefanmedack.ccctv.util.*
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.subscribeBy
+import timber.log.Timber
 import javax.inject.Inject
 
 class DetailFragment : DetailsSupportFragment() {
@@ -73,6 +74,7 @@ class DetailFragment : DetailsSupportFragment() {
 
     private fun setupUi(context: Context) {
         detailsBackground = DetailsSupportFragmentBackgroundController(this)
+        detailsBackground.enableParallax()
 
         // detail overview row - presents the detail, description and actions
         val detailOverviewRowPresenter = FullWidthDetailsOverviewRowPresenter(DetailDescriptionPresenter())
@@ -145,7 +147,6 @@ class DetailFragment : DetailsSupportFragment() {
             mediaPlayerGlue.title = result.event.title
             mediaPlayerGlue.subtitle = result.event.subtitle
 
-            detailsBackground.enableParallax()
             detailsBackground.setupVideoPlayback(mediaPlayerGlue)
         }
 
@@ -176,7 +177,11 @@ class DetailFragment : DetailsSupportFragment() {
         onItemViewClickedListener = OnItemViewClickedListener { itemViewHolder, item, _, _ ->
             when (item) {
                 is Action -> when (item.id) {
-                    DETAIL_ACTION_PLAY -> detailsBackground.switchToVideo()
+                    DETAIL_ACTION_PLAY -> try {
+                        detailsBackground.switchToVideo()
+                    } catch (e: Exception) {
+                        Timber.w(e, "Could not switch to video on detailsBackground - probably not initialized yet")
+                    }
                     DETAIL_ACTION_SPEAKER -> setSelectedPosition(1)
                     DETAIL_ACTION_RELATED -> setSelectedPosition(2)
                     else -> Toast.makeText(activity, R.string.implement_me_toast, Toast.LENGTH_LONG).show()
