@@ -22,7 +22,6 @@ import de.stefanmedack.ccctv.persistence.entities.ConferenceWithEvents
 import de.stefanmedack.ccctv.persistence.entities.Event
 import de.stefanmedack.ccctv.ui.cards.EventCardPresenter
 import de.stefanmedack.ccctv.ui.detail.DetailActivity
-import de.stefanmedack.ccctv.util.CONFERENCE_GROUP
 import de.stefanmedack.ccctv.util.CONFERENCE_ID
 import de.stefanmedack.ccctv.util.CONFERENCE_LOGO_URL
 import de.stefanmedack.ccctv.util.CONFERENCE_TITLE
@@ -48,11 +47,8 @@ class EventsFragment : VerticalGridSupportFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setupUi()
-    }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
+        setupUi()
         prepareBackground()
     }
 
@@ -138,12 +134,15 @@ class EventsFragment : VerticalGridSupportFragment() {
     }
 
     companion object {
-        fun create(conferenceGroup: String): EventsFragment {
-            val fragment = EventsFragment()
-            fragment.arguments = Bundle(1).apply {
-                putString(CONFERENCE_GROUP, conferenceGroup)
-            }
-            return fragment
-        }
+
+        fun create(conferenceId: Int, conferenceTitle: String, conferenceLogoUrl: String): EventsFragment =
+                EventsFragment().apply {
+                    arguments = Bundle(3).apply {
+                        putInt(CONFERENCE_ID, conferenceId)
+                        putString(CONFERENCE_TITLE, conferenceTitle)
+                        putString(CONFERENCE_LOGO_URL, conferenceLogoUrl)
+                    }
+                }
+
     }
 }

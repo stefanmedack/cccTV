@@ -10,26 +10,24 @@ import de.stefanmedack.ccctv.ui.base.BaseInjectableActivity
 import de.stefanmedack.ccctv.util.CONFERENCE_ID
 import de.stefanmedack.ccctv.util.CONFERENCE_LOGO_URL
 import de.stefanmedack.ccctv.util.CONFERENCE_TITLE
-import de.stefanmedack.ccctv.util.replaceFragmentInTransaction
+import de.stefanmedack.ccctv.util.addFragmentInTransaction
 
 class EventsActivity : BaseInjectableActivity() {
 
     private val EVENTS_TAG = "EVENTS_TAG"
 
-    var fragment: EventsFragment? = null
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.fragment_activity)
 
-        fragment = EventsFragment()
-        fragment?.let { frag ->
-            frag.arguments = Bundle(3).apply {
-                putInt(CONFERENCE_ID, intent.getIntExtra(CONFERENCE_ID, -1))
-                putString(CONFERENCE_TITLE, intent.getStringExtra(CONFERENCE_TITLE))
-                putString(CONFERENCE_LOGO_URL, intent.getStringExtra(CONFERENCE_LOGO_URL))
-            }
-            replaceFragmentInTransaction(frag, R.id.fragment, EVENTS_TAG)
+        if (savedInstanceState == null) {
+            addFragmentInTransaction(
+                    fragment = EventsFragment.create(
+                            conferenceId = intent.getIntExtra(CONFERENCE_ID, -1),
+                            conferenceTitle = intent.getStringExtra(CONFERENCE_TITLE),
+                            conferenceLogoUrl = intent.getStringExtra(CONFERENCE_LOGO_URL)),
+                    containerId = R.id.fragment,
+                    tag = EVENTS_TAG)
         }
     }
 
