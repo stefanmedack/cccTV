@@ -29,4 +29,7 @@
     <string name="search_result_header">%1$s Videos gefunden für \"%2$s\"</string>
 
     <string name="implement_me_toast">Uups, under construction. Beim nächsten Mal ist hier aber bestimmt etwas.</string>
+    <string name="events_view_search_result_header">Suchergebnisse für %s</string>
+
+
 </resources>

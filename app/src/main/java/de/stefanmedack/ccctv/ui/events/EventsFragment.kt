@@ -18,13 +18,13 @@ import com.bumptech.glide.request.animation.GlideAnimation
 import com.bumptech.glide.request.target.SimpleTarget
 import dagger.android.support.AndroidSupportInjection
 import de.stefanmedack.ccctv.model.Resource
-import de.stefanmedack.ccctv.persistence.entities.ConferenceWithEvents
 import de.stefanmedack.ccctv.persistence.entities.Event
 import de.stefanmedack.ccctv.ui.cards.EventCardPresenter
 import de.stefanmedack.ccctv.ui.detail.DetailActivity
 import de.stefanmedack.ccctv.util.CONFERENCE_ID
 import de.stefanmedack.ccctv.util.CONFERENCE_LOGO_URL
-import de.stefanmedack.ccctv.util.CONFERENCE_TITLE
+import de.stefanmedack.ccctv.util.EVENTS_VIEW_TITLE
+import de.stefanmedack.ccctv.util.SEARCH_QUERY
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.subscribeBy
 import javax.inject.Inject
@@ -38,8 +38,14 @@ class EventsFragment : VerticalGridSupportFragment() {
     lateinit var viewModelFactory: ViewModelProvider.Factory
 
     private val viewModel: EventsViewModel by lazy {
-        ViewModelProviders.of(this, viewModelFactory).get(EventsViewModel::class.java).apply {
-            init(arguments?.getInt(CONFERENCE_ID, -1) ?: -1)
+        if(arguments?.getString(SEARCH_QUERY) != null) {
+            ViewModelProviders.of(this, viewModelFactory).get(SearchEventsViewModel::class.java).apply {
+                init(arguments?.getString(SEARCH_QUERY) ?: "NO QUERY PASSED")
+            }
+        } else {
+            ViewModelProviders.of(this, viewModelFactory).get(ConferenceEventsViewModel::class.java).apply {
+                init(arguments?.getInt(CONFERENCE_ID, -1) ?: -1)
+            }
         }
     }
 
@@ -65,7 +71,7 @@ class EventsFragment : VerticalGridSupportFragment() {
     }
 
     private fun setupUi() {
-        title = arguments?.getString(CONFERENCE_TITLE) ?: ""
+        title = arguments?.getString(EVENTS_VIEW_TITLE) ?: ""
         showTitle(true)
 
         gridPresenter = VerticalGridPresenter(ZOOM_FACTOR).apply {
@@ -116,7 +122,7 @@ class EventsFragment : VerticalGridSupportFragment() {
     }
 
     private fun bindViewModel() {
-        disposables.add(viewModel.conferenceWithEvents
+        disposables.add(viewModel.events
                 .subscribeBy(
                         onNext = { render(it) },
                         onError = { it.printStackTrace() }
@@ -124,9 +130,9 @@ class EventsFragment : VerticalGridSupportFragment() {
         )
     }
 
-    private fun render(resource: Resource<ConferenceWithEvents>) {
+    private fun render(resource: Resource<List<Event>>) {
         when (resource) {
-            is Resource.Success -> (adapter as ArrayObjectAdapter).addAll(0, resource.data.events)
+            is Resource.Success -> (adapter as ArrayObjectAdapter).addAll(0, resource.data)
             is Resource.Error -> Toast.makeText(activity, resource.msg, Toast.LENGTH_LONG).show()
         }
         // TODO why does the entrance transition not work???
@@ -135,14 +141,21 @@ class EventsFragment : VerticalGridSupportFragment() {
 
     companion object {
 
-        fun create(conferenceId: Int, conferenceTitle: String, conferenceLogoUrl: String): EventsFragment =
+        fun create(conferenceId: Int, title: String, conferenceLogoUrl: String): EventsFragment =
                 EventsFragment().apply {
                     arguments = Bundle(3).apply {
                         putInt(CONFERENCE_ID, conferenceId)
-                        putString(CONFERENCE_TITLE, conferenceTitle)
+                        putString(EVENTS_VIEW_TITLE, title)
                         putString(CONFERENCE_LOGO_URL, conferenceLogoUrl)
                     }
                 }
 
+        fun create(searchQuery: String, title: String): EventsFragment =
+                EventsFragment().apply {
+                    arguments = Bundle(2).apply {
+                        putString(EVENTS_VIEW_TITLE, title)
+                        putString(SEARCH_QUERY, searchQuery)
+                    }
+                }
     }
 }

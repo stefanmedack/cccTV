@@ -2,22 +2,9 @@ package de.stefanmedack.ccctv.ui.events
 
 import android.arch.lifecycle.ViewModel
 import de.stefanmedack.ccctv.model.Resource
-import de.stefanmedack.ccctv.persistence.entities.ConferenceWithEvents
-import de.stefanmedack.ccctv.repository.ConferenceRepository
+import de.stefanmedack.ccctv.persistence.entities.Event
 import io.reactivex.Flowable
-import javax.inject.Inject
 
-class EventsViewModel @Inject constructor(
-        private val repository: ConferenceRepository
-) : ViewModel() {
-
-    var conferenceId: Int = -1
-
-    fun init(conferenceId: Int) {
-        this.conferenceId = conferenceId
-    }
-
-    val conferenceWithEvents: Flowable<Resource<ConferenceWithEvents>>
-        get() = repository.conferenceWithEvents(conferenceId)
-
+abstract class EventsViewModel : ViewModel() {
+    abstract val events: Flowable<Resource<List<Event>>>
 }
