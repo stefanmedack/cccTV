@@ -38,7 +38,7 @@ class EventsActivity : BaseInjectableActivity() {
     }
 
     companion object {
-        fun start(activity: Activity, conference: Conference) {
+        fun startForConference(activity: Activity, conference: Conference) {
             val intent = Intent(activity.baseContext, EventsActivity::class.java)
             intent.putExtra(CONFERENCE_ID, conference.id)
             intent.putExtra(EVENTS_VIEW_TITLE, conference.title)
@@ -47,9 +47,9 @@ class EventsActivity : BaseInjectableActivity() {
             activity.startActivity(intent, ActivityOptionsCompat.makeSceneTransitionAnimation(activity).toBundle())
         }
 
-        fun start(activity: Activity, searchQuery: String) {
+        fun startWithSearch(activity: Activity, searchQuery: String) {
             val intent = Intent(activity.baseContext, EventsActivity::class.java)
-            intent.putExtra(EVENTS_VIEW_TITLE, activity.getString(R.string.events_view_search_result_header).format(searchQuery))
+            intent.putExtra(EVENTS_VIEW_TITLE, activity.getString(R.string.events_view_search_result_header, searchQuery))
             intent.putExtra(SEARCH_QUERY, searchQuery)
 
             activity.startActivity(intent, ActivityOptionsCompat.makeSceneTransitionAnimation(activity).toBundle())

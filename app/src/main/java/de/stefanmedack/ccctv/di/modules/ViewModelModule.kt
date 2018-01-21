@@ -8,8 +8,7 @@ import dagger.multibindings.IntoMap
 import de.stefanmedack.ccctv.di.C3ViewModelFactory
 import de.stefanmedack.ccctv.di.Scopes.ViewModelKey
 import de.stefanmedack.ccctv.ui.detail.DetailViewModel
-import de.stefanmedack.ccctv.ui.events.ConferenceEventsViewModel
-import de.stefanmedack.ccctv.ui.events.SearchEventsViewModel
+import de.stefanmedack.ccctv.ui.events.EventsViewModel
 import de.stefanmedack.ccctv.ui.main.ConferencesViewModel
 import de.stefanmedack.ccctv.ui.main.LiveStreamingViewModel
 import de.stefanmedack.ccctv.ui.main.MainViewModel
@@ -40,13 +39,8 @@ abstract class ViewModelModule {
 
     @Binds
     @IntoMap
-    @ViewModelKey(ConferenceEventsViewModel::class)
-    abstract fun bindConferenceEventsViewModel(viewModel: ConferenceEventsViewModel): ViewModel
-
-    @Binds
-    @IntoMap
-    @ViewModelKey(SearchEventsViewModel::class)
-    abstract fun bindSearchEventsViewModel(viewModel: SearchEventsViewModel): ViewModel
+    @ViewModelKey(EventsViewModel::class)
+    abstract fun bindEventsViewModel(viewModel: EventsViewModel): ViewModel
 
     @Binds
     @IntoMap

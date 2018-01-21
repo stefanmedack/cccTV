@@ -39,12 +39,12 @@ class EventsFragment : VerticalGridSupportFragment() {
 
     private val viewModel: EventsViewModel by lazy {
         if(arguments?.getString(SEARCH_QUERY) != null) {
-            ViewModelProviders.of(this, viewModelFactory).get(SearchEventsViewModel::class.java).apply {
-                init(arguments?.getString(SEARCH_QUERY) ?: "NO QUERY PASSED")
+            ViewModelProviders.of(this, viewModelFactory).get(EventsViewModel::class.java).apply {
+                initWithSearchString(arguments?.getString(SEARCH_QUERY) ?: "NO QUERY PASSED")
             }
         } else {
-            ViewModelProviders.of(this, viewModelFactory).get(ConferenceEventsViewModel::class.java).apply {
-                init(arguments?.getInt(CONFERENCE_ID, -1) ?: -1)
+            ViewModelProviders.of(this, viewModelFactory).get(EventsViewModel::class.java).apply {
+                initWithConferenceId(arguments?.getInt(CONFERENCE_ID, -1) ?: -1)
             }
         }
     }

@@ -65,7 +65,7 @@ class ConferencesFragment : GridFragment() {
         onItemViewClickedListener = OnItemViewClickedListener { _, item, _, _ ->
             if (item is Conference) {
                 activity?.let {
-                    EventsActivity.start(it, item)
+                    EventsActivity.startForConference(it, item)
                 }
             }
         }

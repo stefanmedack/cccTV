@@ -189,7 +189,7 @@ class DetailFragment : DetailsSupportFragment() {
                 }
                 is SpeakerUiModel -> {
                     activity?.let {
-                        EventsActivity.start(it, item.name)
+                        EventsActivity.startWithSearch(it, item.name)
                     }
                 }
                 is Event -> {
