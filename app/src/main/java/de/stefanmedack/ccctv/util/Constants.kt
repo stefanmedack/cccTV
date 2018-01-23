@@ -27,6 +27,7 @@ const val CONFERENCE_LOGO_URL = "ConferenceLogo"
 const val STREAM_ID = "StreamId"
 const val STREAM_URL = "StreamUrl"
 const val SEARCH_QUERY = "SearchQuery"
+const val FRAGMENT_ARGUMENTS = "FragmentArguments"
 
 const val DETAIL_ACTION_PLAY: Long = 1
 const val DETAIL_ACTION_BOOKMARK: Long = 2

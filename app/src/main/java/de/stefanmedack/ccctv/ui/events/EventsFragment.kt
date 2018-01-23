@@ -38,17 +38,18 @@ class EventsFragment : VerticalGridSupportFragment() {
     lateinit var viewModelFactory: ViewModelProvider.Factory
 
     private val viewModel: EventsViewModel by lazy {
-        if(arguments?.getString(SEARCH_QUERY) != null) {
-            ViewModelProviders.of(this, viewModelFactory).get(EventsViewModel::class.java).apply {
-                initWithSearchString(arguments?.getString(SEARCH_QUERY) ?: "NO QUERY PASSED")
-            }
-        } else {
-            ViewModelProviders.of(this, viewModelFactory).get(EventsViewModel::class.java).apply {
-                initWithConferenceId(arguments?.getInt(CONFERENCE_ID, -1) ?: -1)
+        ViewModelProviders.of(this, viewModelFactory).get(EventsViewModel::class.java).apply {
+            if (arguments?.getString(SEARCH_QUERY) != null) {
+                initWithSearchString(searchQuery = arguments?.getString(SEARCH_QUERY)
+                        ?: throw IllegalArgumentException("SearchQuery can not be null or empty")
+                )
+            } else {
+                initWithConferenceId(conferenceId = arguments?.getInt(CONFERENCE_ID, -1)
+                        ?: throw IllegalArgumentException("ConferenceId can not be null or empty")
+                )
             }
         }
     }
-
     private val disposables = CompositeDisposable()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -141,21 +142,17 @@ class EventsFragment : VerticalGridSupportFragment() {
 
     companion object {
 
-        fun create(conferenceId: Int, title: String, conferenceLogoUrl: String): EventsFragment =
-                EventsFragment().apply {
-                    arguments = Bundle(3).apply {
-                        putInt(CONFERENCE_ID, conferenceId)
-                        putString(EVENTS_VIEW_TITLE, title)
-                        putString(CONFERENCE_LOGO_URL, conferenceLogoUrl)
-                    }
+        fun getBundleForConference(conferenceId: Int, title: String, conferenceLogoUrl: String?): Bundle =
+                Bundle(3).apply {
+                    putInt(CONFERENCE_ID, conferenceId)
+                    putString(EVENTS_VIEW_TITLE, title)
+                    putString(CONFERENCE_LOGO_URL, conferenceLogoUrl)
                 }
 
-        fun create(searchQuery: String, title: String): EventsFragment =
-                EventsFragment().apply {
-                    arguments = Bundle(2).apply {
-                        putString(EVENTS_VIEW_TITLE, title)
-                        putString(SEARCH_QUERY, searchQuery)
-                    }
+        fun getBundleForSearch(searchQuery: String, title: String): Bundle =
+                Bundle(2).apply {
+                    putString(EVENTS_VIEW_TITLE, title)
+                    putString(SEARCH_QUERY, searchQuery)
                 }
     }
 }

@@ -2,7 +2,6 @@ package de.stefanmedack.ccctv.ui.events
 
 import android.arch.lifecycle.ViewModel
 import de.stefanmedack.ccctv.model.Resource
-import de.stefanmedack.ccctv.persistence.entities.ConferenceWithEvents
 import de.stefanmedack.ccctv.persistence.entities.Event
 import de.stefanmedack.ccctv.persistence.toEntity
 import de.stefanmedack.ccctv.repository.ConferenceRepository
@@ -33,8 +32,7 @@ class EventsViewModel @Inject constructor(
 
     fun initWithConferenceId(conferenceId: Int) {
         this.conferenceId = conferenceId
-
-        repository.conferenceWithEvents(conferenceId).map<Resource<List<Event>>>{
+        this.events = repository.conferenceWithEvents(conferenceId).map<Resource<List<Event>>>{
             when(it) {
                 is Resource.Success -> Resource.Success(it.data.events)
                 is Resource.Loading -> Resource.Loading()
