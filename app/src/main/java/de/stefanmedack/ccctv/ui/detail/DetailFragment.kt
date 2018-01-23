@@ -25,6 +25,7 @@ import de.stefanmedack.ccctv.ui.detail.playback.ExoPlayerAdapter
 import de.stefanmedack.ccctv.ui.detail.playback.VideoMediaPlayerGlue
 import de.stefanmedack.ccctv.ui.detail.uiModels.DetailUiModel
 import de.stefanmedack.ccctv.ui.detail.uiModels.SpeakerUiModel
+import de.stefanmedack.ccctv.ui.events.EventsActivity
 import de.stefanmedack.ccctv.util.*
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.subscribeBy
@@ -187,7 +188,9 @@ class DetailFragment : DetailsSupportFragment() {
                     else -> Toast.makeText(activity, R.string.implement_me_toast, Toast.LENGTH_LONG).show()
                 }
                 is SpeakerUiModel -> {
-                    Toast.makeText(activity, R.string.implement_me_toast, Toast.LENGTH_LONG).show()
+                    activity?.let {
+                        EventsActivity.startWithSearch(it, item.name)
+                    }
                 }
                 is Event -> {
                     activity?.let {

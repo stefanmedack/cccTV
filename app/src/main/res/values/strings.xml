@@ -28,4 +28,6 @@
     <string name="search_result_header">%1$s videos found for \"%2$s\"</string>
 
     <string name="implement_me_toast">Uups, this feature is still missing - check back later</string>
+
+    <string name="events_view_search_result_header">Search results for %1$s</string>
 </resources>
