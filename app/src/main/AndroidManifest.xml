@@ -81,7 +81,7 @@
 
         <activity
             android:name=".ui.events.EventsActivity"
-            android:theme="@style/EventsActivityTheme"
+            android:theme="@style/Theme.Leanback.VerticalGrid"
             />
 
         <activity android:name=".ui.detail.DetailActivity"/>
