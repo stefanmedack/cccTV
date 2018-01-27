@@ -17,10 +17,9 @@ class LiveStreamingViewModel @Inject constructor(
     }
 
     val roomsForConference: Flowable<List<Room>>
-        get() = Flowable.just(extractConference())
+        get() = Flowable.just(extractRooms())
 
-    @Suppress("ConstantConditionIf")
-    private fun extractConference(): List<Room> = streamingRepository.cachedStreams
+    private fun extractRooms(): List<Room> = streamingRepository.cachedStreams
             .find { it.conference == conferenceName }
             ?.groups
             ?.flatMap { group ->
@@ -32,8 +31,7 @@ class LiveStreamingViewModel @Inject constructor(
                                 room.scheduleName,
                                 room.slug,
                                 room.streams,
-                                room.thumb
-                        )
+                                room.thumb)
                     } else {
                         room
                     }
