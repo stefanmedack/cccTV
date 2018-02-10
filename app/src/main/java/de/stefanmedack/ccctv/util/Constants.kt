@@ -29,7 +29,7 @@ const val DETAIL_ACTION_RELATED: Long = 4
 
 const val SHARED_DETAIL_TRANSITION = "SHARED_DETAIL_TRANSITION"
 
-val conferenceGroupTranslations: Map<ConferenceGroup, Int> = mapOf(
+val CONFERENCE_GROUP_TRANSLATIONS: Map<ConferenceGroup, Int> = mapOf(
         ConferenceGroup.CONGRESS to R.string.cg_congress,
         ConferenceGroup.CAMP to R.string.cg_camp,
         ConferenceGroup.CRYPTOCON to R.string.cg_cryptocon,

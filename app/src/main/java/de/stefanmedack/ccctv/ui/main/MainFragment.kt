@@ -18,7 +18,7 @@ import de.stefanmedack.ccctv.R
 import de.stefanmedack.ccctv.model.Resource
 import de.stefanmedack.ccctv.ui.about.AboutFragment
 import de.stefanmedack.ccctv.ui.search.SearchActivity
-import de.stefanmedack.ccctv.util.conferenceGroupTranslations
+import de.stefanmedack.ccctv.util.CONFERENCE_GROUP_TRANSLATIONS
 import de.stefanmedack.ccctv.util.plusAssign
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.subscribeBy
@@ -84,8 +84,8 @@ class MainFragment : BrowseSupportFragment() {
                     it += SectionRow(HeaderItem(3L, getString(R.string.main_videos_header)))
                     it += mainUiModel.conferenceGroupResource.data.map {
                         PageRow(HeaderItem(
-                                conferenceGroupTranslations[it]?.toLong() ?: 4L,
-                                getString(conferenceGroupTranslations.getOrDefault(it, R.string.cg_other))
+                                CONFERENCE_GROUP_TRANSLATIONS[it]?.toLong() ?: 4L,
+                                getString(CONFERENCE_GROUP_TRANSLATIONS.getOrDefault(it, R.string.cg_other))
                         ))
                     }
                     it += DividerRow()
@@ -125,7 +125,7 @@ class MainFragment : BrowseSupportFragment() {
             return when ((rowObj as Row).headerItem.id) {
                 6L -> AboutFragment()
                 2L -> LiveStreamingFragment.create(rowObj.headerItem.name)
-                else -> ConferencesFragment.create(conferenceGroupTranslations.filterValues { it == rowObj.id.toInt() }.keys.first())
+                else -> ConferencesFragment.create(CONFERENCE_GROUP_TRANSLATIONS.filterValues { it == rowObj.id.toInt() }.keys.first())
             }
         }
     }
