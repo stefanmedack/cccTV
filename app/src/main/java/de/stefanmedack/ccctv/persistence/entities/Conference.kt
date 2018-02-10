@@ -3,6 +3,7 @@ package de.stefanmedack.ccctv.persistence.entities
 import android.arch.persistence.room.ColumnInfo
 import android.arch.persistence.room.Entity
 import android.arch.persistence.room.PrimaryKey
+import de.stefanmedack.ccctv.model.ConferenceGroup
 import info.metadude.kotlin.library.c3media.models.AspectRatio
 import org.threeten.bp.OffsetDateTime
 
@@ -17,7 +18,7 @@ data class Conference(
 
         // Note: this field is not available through the media.ccc.de API, but extracted from the slug
         @ColumnInfo(name = "c_group")
-        val group: String,
+        val group: ConferenceGroup,
 
         @ColumnInfo(name = "slug")
         val slug: String,

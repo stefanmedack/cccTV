@@ -1,12 +1,12 @@
 package de.stefanmedack.ccctv.persistence
 
+import de.stefanmedack.ccctv.model.ConferenceGroup
 import de.stefanmedack.ccctv.persistence.entities.ConferenceWithEvents
 import de.stefanmedack.ccctv.persistence.entities.LanguageList
 import de.stefanmedack.ccctv.repository.ConferenceEntity
 import de.stefanmedack.ccctv.repository.ConferenceRemote
 import de.stefanmedack.ccctv.repository.EventEntity
 import de.stefanmedack.ccctv.repository.EventRemote
-import de.stefanmedack.ccctv.util.ConferenceGroupSlugPrefixes
 import de.stefanmedack.ccctv.util.EMPTY_STRING
 import de.stefanmedack.ccctv.util.id
 import info.metadude.kotlin.library.c3media.models.AspectRatio
@@ -30,14 +30,14 @@ fun ConferenceRemote.toEntity() = try {
     null
 }
 
-private fun Conference.extractConferenceGroup(): String {
-    var group = ConferenceGroupSlugPrefixes.OTHER
-    ConferenceGroupSlugPrefixes.values().forEach {
-        if (slug.startsWith(it.slugPrefix) && group.slugPrefix.length < it.slugPrefix.length) {
-            group = it
+private fun Conference.extractConferenceGroup(): ConferenceGroup {
+    var longestSlugPrefixGroup = ConferenceGroup.OTHER
+    ConferenceGroup.values().forEach { currentGroup ->
+        if (this.slug.startsWith(currentGroup.slugPrefix) && longestSlugPrefixGroup.slugPrefix.length < currentGroup.slugPrefix.length) {
+            longestSlugPrefixGroup = currentGroup
         }
     }
-    return group.name
+    return longestSlugPrefixGroup
 }
 
 fun EventRemote.toEntity(conferenceId: Int) = try {

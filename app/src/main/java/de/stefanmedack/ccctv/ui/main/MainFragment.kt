@@ -76,12 +76,13 @@ class MainFragment : BrowseSupportFragment() {
             is Resource.Success -> {
                 adapter = ArrayObjectAdapter(ListRowPresenter())
                 (adapter as? ArrayObjectAdapter)?.let {
-                    if(mainUiModel.offersResource is Resource.Success && mainUiModel.offersResource.data.isNotEmpty()) {
+                    if (mainUiModel.offersResource is Resource.Success && mainUiModel.offersResource.data.isNotEmpty()) {
                         it += SectionRow(HeaderItem(1L, getString(R.string.main_streams_header)))
                         it += mainUiModel.offersResource.data.map { PageRow(HeaderItem(2L, it.conference)) }
                     }
                     it += SectionRow(HeaderItem(3L, getString(R.string.main_videos_header)))
-                    it += mainUiModel.conferenceGroupResource.data.map { PageRow(HeaderItem(4L, it)) }
+                    // TODO add translations
+                    it += mainUiModel.conferenceGroupResource.data.map { PageRow(HeaderItem(4L, it.name)) }
                     it += DividerRow()
                     it += SectionRow(HeaderItem(5L, getString(R.string.main_more_header)))
                     it += PageRow(HeaderItem(6L, getString(R.string.main_about_app)))
