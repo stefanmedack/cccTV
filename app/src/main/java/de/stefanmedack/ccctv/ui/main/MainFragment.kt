@@ -18,6 +18,7 @@ import de.stefanmedack.ccctv.R
 import de.stefanmedack.ccctv.model.Resource
 import de.stefanmedack.ccctv.ui.about.AboutFragment
 import de.stefanmedack.ccctv.ui.search.SearchActivity
+import de.stefanmedack.ccctv.util.conferenceGroupTranslations
 import de.stefanmedack.ccctv.util.plusAssign
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.subscribeBy
@@ -81,8 +82,12 @@ class MainFragment : BrowseSupportFragment() {
                         it += mainUiModel.offersResource.data.map { PageRow(HeaderItem(2L, it.conference)) }
                     }
                     it += SectionRow(HeaderItem(3L, getString(R.string.main_videos_header)))
-                    // TODO add translations
-                    it += mainUiModel.conferenceGroupResource.data.map { PageRow(HeaderItem(4L, it.name)) }
+                    it += mainUiModel.conferenceGroupResource.data.map {
+                        PageRow(HeaderItem(
+                                conferenceGroupTranslations[it]?.toLong() ?: 4L,
+                                getString(conferenceGroupTranslations.getOrDefault(it, R.string.cg_other))
+                        ))
+                    }
                     it += DividerRow()
                     it += SectionRow(HeaderItem(5L, getString(R.string.main_more_header)))
                     it += PageRow(HeaderItem(6L, getString(R.string.main_about_app)))
@@ -120,7 +125,7 @@ class MainFragment : BrowseSupportFragment() {
             return when ((rowObj as Row).headerItem.id) {
                 6L -> AboutFragment()
                 2L -> LiveStreamingFragment.create(rowObj.headerItem.name)
-                else -> ConferencesFragment.create(rowObj.headerItem.name)
+                else -> ConferencesFragment.create(conferenceGroupTranslations.filterValues { it == rowObj.id.toInt() }.keys.first())
             }
         }
     }

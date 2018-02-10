@@ -15,8 +15,8 @@ interface ConferenceDao {
     @Query("SELECT * FROM Conferences")
     fun getConferences(): Flowable<List<Conference>>
 
-    @Query("SELECT * FROM Conferences WHERE c_group LIKE :conferenceGroup")
-    fun getConferences(conferenceGroup: String): Flowable<List<Conference>>
+    @Query("SELECT * FROM Conferences WHERE c_group LIKE :conferenceGroupName")
+    fun getConferences(conferenceGroupName: String): Flowable<List<Conference>>
 
     @Query("SELECT * FROM Conferences WHERE id = :id")
     fun getConferenceById(id: Int): Flowable<Conference>
@@ -24,8 +24,8 @@ interface ConferenceDao {
     @Query("SELECT * FROM Conferences")
     fun getConferencesWithEvents(): Flowable<List<ConferenceWithEvents>>
 
-    @Query("SELECT * FROM Conferences WHERE c_group LIKE :conferenceGroup")
-    fun getConferencesWithEvents(conferenceGroup: String): Flowable<List<ConferenceWithEvents>>
+    @Query("SELECT * FROM Conferences WHERE c_group LIKE :conferenceGroupName")
+    fun getConferencesWithEvents(conferenceGroupName: String): Flowable<List<ConferenceWithEvents>>
 
     @Query("SELECT * FROM Conferences WHERE id = :id")
     fun getConferenceWithEventsById(id: Int): Flowable<ConferenceWithEvents>

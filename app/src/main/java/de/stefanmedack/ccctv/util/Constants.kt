@@ -1,5 +1,7 @@
 package de.stefanmedack.ccctv.util
 
+import de.stefanmedack.ccctv.R
+import de.stefanmedack.ccctv.model.ConferenceGroup
 import info.metadude.kotlin.library.c3media.models.MimeType
 
 const val CACHE_MAX_SIZE_HTTP = (20 * 1024 * 1024).toLong()
@@ -26,3 +28,24 @@ const val DETAIL_ACTION_SPEAKER: Long = 3
 const val DETAIL_ACTION_RELATED: Long = 4
 
 const val SHARED_DETAIL_TRANSITION = "SHARED_DETAIL_TRANSITION"
+
+val conferenceGroupTranslations: Map<ConferenceGroup, Int> = mapOf(
+        ConferenceGroup.CONGRESS to R.string.cg_congress,
+        ConferenceGroup.CAMP to R.string.cg_camp,
+        ConferenceGroup.CRYPTOCON to R.string.cg_cryptocon,
+        ConferenceGroup.DATENSPUREN to R.string.cg_datenspuren,
+        ConferenceGroup.DENOG to R.string.cg_denog,
+        ConferenceGroup.EH to R.string.cg_eh,
+        ConferenceGroup.FIFFKON to R.string.cg_fiffkon,
+        ConferenceGroup.FROSCON to R.string.cg_froscon,
+        ConferenceGroup.GPN to R.string.cg_gpn,
+        ConferenceGroup.HACKOVER to R.string.cg_hackover,
+        ConferenceGroup.JUGENDHACKT to R.string.cg_jugendhackt,
+        ConferenceGroup.MRMCD to R.string.cg_mrmcd,
+        ConferenceGroup.NETZPOLITIK to R.string.cg_netzpolitik,
+        ConferenceGroup.OSC to R.string.cg_osc,
+        ConferenceGroup.SIGINT to R.string.cg_sigint,
+        ConferenceGroup.VCFB to R.string.cg_vcfb,
+        ConferenceGroup.OTHER_CONFERENCES to R.string.cg_other_conferences,
+        ConferenceGroup.OTHER to R.string.cg_other
+)

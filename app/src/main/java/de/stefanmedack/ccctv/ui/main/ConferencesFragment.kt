@@ -10,6 +10,7 @@ import android.support.v17.leanback.widget.VerticalGridPresenter
 import android.view.View
 import android.widget.Toast
 import dagger.android.support.AndroidSupportInjection
+import de.stefanmedack.ccctv.model.ConferenceGroup
 import de.stefanmedack.ccctv.model.Resource
 import de.stefanmedack.ccctv.persistence.entities.Conference
 import de.stefanmedack.ccctv.ui.base.GridFragment
@@ -31,7 +32,7 @@ class ConferencesFragment : GridFragment() {
 
     private val viewModel: ConferencesViewModel by lazy {
         ViewModelProviders.of(this, viewModelFactory).get(ConferencesViewModel::class.java).apply {
-            init(arguments?.getString(CONFERENCE_GROUP, "") ?: "")
+            init(arguments?.getSerializable(CONFERENCE_GROUP) as? ConferenceGroup ?: ConferenceGroup.OTHER)
         }
     }
 
@@ -90,10 +91,10 @@ class ConferencesFragment : GridFragment() {
     }
 
     companion object {
-        fun create(conferenceGroup: String): ConferencesFragment {
+        fun create(conferenceGroup: ConferenceGroup): ConferencesFragment {
             val fragment = ConferencesFragment()
             fragment.arguments = Bundle(1).apply {
-                putString(CONFERENCE_GROUP, conferenceGroup)
+                putSerializable(CONFERENCE_GROUP, conferenceGroup)
             }
             return fragment
         }
