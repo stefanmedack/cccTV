@@ -1,5 +1,7 @@
 package de.stefanmedack.ccctv.util
 
+import android.os.Build
+import android.text.Html
 import de.stefanmedack.ccctv.BuildConfig.DEBUG
 import de.stefanmedack.ccctv.persistence.entities.Conference
 import de.stefanmedack.ccctv.repository.ConferenceEntity
@@ -13,10 +15,8 @@ import java.util.*
 
 fun ConferenceRemote.id(): Int? = this.url?.substringAfterLast('/')?.toIntOrNull()
 
-fun ConferenceEntity.group(): String = this.slug.substringBefore("/").capitalize()
-
-fun List<Conference>.groupConferences(): Map<ConferenceGroup, List<ConferenceEntity>> = groupBy { it.group() }
-        .toSortedMap(Comparator { lhs, rhs -> lhs.sortingIndex() - rhs.sortingIndex() })
+fun List<Conference>.groupConferences(): Map<ConferenceGroup, List<ConferenceEntity>> = groupBy { it.group }
+//        .toSortedMap(Comparator { lhs, rhs -> lhs.sortingIndex() - rhs.sortingIndex() })
 
 fun EventRemote.id(): Int? = this.url?.substringAfterLast('/')?.toIntOrNull()
 
@@ -60,3 +60,10 @@ fun Recording.languageSortingIndex(favoriteLanguage: Language): Int {
     return 42
 }
 
+fun String.stripHtml(): String =
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            Html.fromHtml(this, Html.FROM_HTML_MODE_COMPACT).toString()
+        } else {
+            @Suppress("DEPRECATION")
+            Html.fromHtml(this).toString()
+        }

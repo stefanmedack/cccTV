@@ -5,6 +5,7 @@ import de.stefanmedack.ccctv.model.Resource
 import de.stefanmedack.ccctv.repository.ConferenceRepository
 import de.stefanmedack.ccctv.repository.StreamingRepository
 import de.stefanmedack.ccctv.util.ConferenceGroup
+import de.stefanmedack.ccctv.util.ConferenceGroupSlugPrefixes
 import de.stefanmedack.ccctv.util.groupConferences
 import info.metadude.java.library.brockman.models.Offer
 import io.reactivex.Flowable
@@ -39,9 +40,11 @@ class MainViewModel @Inject constructor(
                     when (it) {
                     // TODO create helper method for Success-Mapping
                         is Resource.Success -> Resource.Success(it.data
-                                .groupConferences()
+                                .groupConferences() // TODO this has quite some optimization potential
                                 .keys
-                                .toList())
+                                .toList()
+                                .sortedBy { ConferenceGroupSlugPrefixes.valueOf(it) }
+                        )
                         is Resource.Loading -> Resource.Loading()
                         is Resource.Error -> Resource.Error(it.msg)
                     }

@@ -8,11 +8,16 @@ import org.threeten.bp.OffsetDateTime
 
 @Entity(tableName = "conferences")
 data class Conference(
+
         @PrimaryKey
         val id: Int,
 
         @ColumnInfo(name = "url")
         val url: String,
+
+        // Note: this field is not available through the media.ccc.de API, but extracted from the slug
+        @ColumnInfo(name = "c_group")
+        val group: String,
 
         @ColumnInfo(name = "slug")
         val slug: String,

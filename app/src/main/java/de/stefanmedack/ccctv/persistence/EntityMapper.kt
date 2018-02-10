@@ -6,15 +6,18 @@ import de.stefanmedack.ccctv.repository.ConferenceEntity
 import de.stefanmedack.ccctv.repository.ConferenceRemote
 import de.stefanmedack.ccctv.repository.EventEntity
 import de.stefanmedack.ccctv.repository.EventRemote
+import de.stefanmedack.ccctv.util.ConferenceGroupSlugPrefixes
 import de.stefanmedack.ccctv.util.EMPTY_STRING
 import de.stefanmedack.ccctv.util.id
 import info.metadude.kotlin.library.c3media.models.AspectRatio
+import info.metadude.kotlin.library.c3media.models.Conference
 import timber.log.Timber
 
 fun ConferenceRemote.toEntity() = try {
     ConferenceEntity(
             id = id() ?: throw EntityMappingException("invalid conference id: ${id()}"),
             url = url ?: throw EntityMappingException("invalid conference url: $url"),
+            group = extractConferenceGroup(),
             slug = slug,
             title = title ?: throw EntityMappingException("invalid conference title: $title"),
             acronym = acronym,
@@ -25,6 +28,16 @@ fun ConferenceRemote.toEntity() = try {
 } catch (e: EntityMappingException) {
     Timber.w(e)
     null
+}
+
+private fun Conference.extractConferenceGroup(): String {
+    var group = ConferenceGroupSlugPrefixes.OTHER
+    ConferenceGroupSlugPrefixes.values().forEach {
+        if (slug.startsWith(it.slugPrefix) && group.slugPrefix.length < it.slugPrefix.length) {
+            group = it
+        }
+    }
+    return group.name
 }
 
 fun EventRemote.toEntity(conferenceId: Int) = try {

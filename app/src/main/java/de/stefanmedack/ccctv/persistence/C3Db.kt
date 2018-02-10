@@ -9,10 +9,10 @@ import de.stefanmedack.ccctv.persistence.entities.Conference
 import de.stefanmedack.ccctv.persistence.entities.Event
 
 @Database(
-        entities = arrayOf(
-                Conference::class,
-                Event::class
-        ),
+        entities = [
+            Conference::class,
+            Event::class
+        ],
         version = 1)
 @TypeConverters(C3TypeConverters::class)
 abstract class C3Db : RoomDatabase() {

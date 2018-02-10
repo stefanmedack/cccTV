@@ -115,7 +115,7 @@ class ConferenceRepository @Inject constructor(
         }.resource
 
     fun loadedConferences(conferenceGroup: String): Flowable<Resource<List<ConferenceEntity>>> = conferenceDao
-            .getConferences(conferenceGroup.toLowerCase())
+            .getConferences(conferenceGroup)
             .map<Resource<List<ConferenceEntity>>> { Resource.Success(it) }
             .applySchedulers()
 

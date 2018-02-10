@@ -16,8 +16,8 @@ class DatabaseModule {
     @Provides
     @Singleton
     fun provideDb(@ApplicationContext context: Context): C3Db
-//            = Room.inMemoryDatabaseBuilder(context, C3Db::class.java).build()
-            = Room.databaseBuilder(context, C3Db::class.java, "ccc.db").build()
+            = Room.inMemoryDatabaseBuilder(context, C3Db::class.java).build()
+//            = Room.databaseBuilder(context, C3Db::class.java, "ccc.db").build() // TODO change back and update DB version
 
     @Provides
     @Singleton
