@@ -13,7 +13,7 @@ import de.stefanmedack.ccctv.persistence.entities.Event
             Conference::class,
             Event::class
         ],
-        version = 1)
+        version = 2)
 @TypeConverters(C3TypeConverters::class)
 abstract class C3Db : RoomDatabase() {
 
