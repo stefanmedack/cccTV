@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import com.bumptech.glide.Glide
 import de.stefanmedack.ccctv.R
 import de.stefanmedack.ccctv.persistence.entities.Event
+import de.stefanmedack.ccctv.util.stripHtml
 import kotlin.properties.Delegates
 
 class EventCardPresenter : Presenter() {
@@ -35,8 +36,8 @@ class EventCardPresenter : Presenter() {
     override fun onBindViewHolder(viewHolder: Presenter.ViewHolder, item: Any) {
         if (item is Event) {
             (viewHolder.view as ImageCardView).let {
-                it.titleText = item.title
-                it.contentText = item.description
+                it.titleText = item.title.stripHtml()
+                it.contentText = item.description.stripHtml()
                 Glide.with(viewHolder.view.context)
                         .load(item.thumbUrl)
                         .centerCrop()

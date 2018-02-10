@@ -15,18 +15,18 @@ class DatabaseModule {
 
     @Provides
     @Singleton
-    fun provideDb(@ApplicationContext context: Context): C3Db
-//            = Room.inMemoryDatabaseBuilder(context, C3Db::class.java).build()
-            = Room.databaseBuilder(context, C3Db::class.java, "ccc.db").build()
+    fun provideDb(@ApplicationContext context: Context): C3Db = Room
+            .databaseBuilder(context, C3Db::class.java, "ccc.db")
+            .fallbackToDestructiveMigration()
+            .build()
+    //            = Room.inMemoryDatabaseBuilder(context, C3Db::class.java).build()
 
     @Provides
     @Singleton
-    fun provideConferenceDao(db: C3Db): ConferenceDao
-            = db.conferenceDao()
+    fun provideConferenceDao(db: C3Db): ConferenceDao = db.conferenceDao()
 
     @Provides
     @Singleton
-    fun provideEventDao(db: C3Db): EventDao
-            = db.eventDao()
+    fun provideEventDao(db: C3Db): EventDao = db.eventDao()
 
 }

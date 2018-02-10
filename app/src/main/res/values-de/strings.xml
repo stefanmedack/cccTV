@@ -30,6 +30,26 @@
     <string name="search_result_header">%1$s Videos gefunden für \"%2$s\"</string>
     <string name="events_view_search_result_header">Suchergebnisse für \"%1$s\"</string>
 
+    <!-- ConferenceGroups -->
+    <string name="cg_congress">Congress</string>
+    <string name="cg_camp">Camp</string>
+    <string name="cg_cryptocon">CryptoCon</string>
+    <string name="cg_datenspuren">Datenspuren</string>
+    <string name="cg_denog">DENOG</string>
+    <string name="cg_eh">Easterhegg</string>
+    <string name="cg_fiffkon">FIfFKon</string>
+    <string name="cg_froscon">FrOSCon</string>
+    <string name="cg_gpn">GPN</string>
+    <string name="cg_hackover">Hackover</string>
+    <string name="cg_jugendhackt">Jugend Hackt</string>
+    <string name="cg_mrmcd">MRMCD</string>
+    <string name="cg_netzpolitik">Netzpolitik</string>
+    <string name="cg_osc">openSUSE</string>
+    <string name="cg_sigint">sigint</string>
+    <string name="cg_vcfb">Vintage Computing Festival Berlin</string>
+    <string name="cg_other_conferences">Weitere Konferenzen</string>
+    <string name="cg_other">Noch mehr…</string>
+
     <string name="implement_me_toast">Uups, under construction. Beim nächsten Mal ist hier aber bestimmt etwas.</string>
 
 </resources>

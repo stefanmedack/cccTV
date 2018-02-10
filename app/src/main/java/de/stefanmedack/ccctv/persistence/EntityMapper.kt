@@ -1,5 +1,6 @@
 package de.stefanmedack.ccctv.persistence
 
+import de.stefanmedack.ccctv.model.ConferenceGroup
 import de.stefanmedack.ccctv.persistence.entities.ConferenceWithEvents
 import de.stefanmedack.ccctv.persistence.entities.LanguageList
 import de.stefanmedack.ccctv.repository.ConferenceEntity
@@ -9,12 +10,14 @@ import de.stefanmedack.ccctv.repository.EventRemote
 import de.stefanmedack.ccctv.util.EMPTY_STRING
 import de.stefanmedack.ccctv.util.id
 import info.metadude.kotlin.library.c3media.models.AspectRatio
+import info.metadude.kotlin.library.c3media.models.Conference
 import timber.log.Timber
 
 fun ConferenceRemote.toEntity() = try {
     ConferenceEntity(
             id = id() ?: throw EntityMappingException("invalid conference id: ${id()}"),
             url = url ?: throw EntityMappingException("invalid conference url: $url"),
+            group = extractConferenceGroup(),
             slug = slug,
             title = title ?: throw EntityMappingException("invalid conference title: $title"),
             acronym = acronym,
@@ -25,6 +28,16 @@ fun ConferenceRemote.toEntity() = try {
 } catch (e: EntityMappingException) {
     Timber.w(e)
     null
+}
+
+private fun Conference.extractConferenceGroup(): ConferenceGroup {
+    var longestSlugPrefixGroup = ConferenceGroup.OTHER
+    ConferenceGroup.values().forEach { currentGroup ->
+        if (this.slug.startsWith(currentGroup.slugPrefix) && longestSlugPrefixGroup.slugPrefix.length < currentGroup.slugPrefix.length) {
+            longestSlugPrefixGroup = currentGroup
+        }
+    }
+    return longestSlugPrefixGroup
 }
 
 fun EventRemote.toEntity(conferenceId: Int) = try {

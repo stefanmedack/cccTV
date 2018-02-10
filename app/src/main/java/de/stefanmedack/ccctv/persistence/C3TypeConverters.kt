@@ -3,6 +3,7 @@ package de.stefanmedack.ccctv.persistence
 import android.arch.persistence.room.TypeConverter
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import de.stefanmedack.ccctv.model.ConferenceGroup
 import de.stefanmedack.ccctv.persistence.entities.LanguageList
 import de.stefanmedack.ccctv.util.EMPTY_STRING
 import info.metadude.kotlin.library.c3media.models.AspectRatio
@@ -113,5 +114,15 @@ class C3TypeConverters {
             null
         }
     }
+
+    // *********************************************************
+    // *** ConferenceGroup *******************************************
+    // *********************************************************
+
+    @TypeConverter
+    fun fromConferenceGroupString(text: String?): ConferenceGroup? = text?.let { ConferenceGroup.valueOf(it) }
+
+    @TypeConverter
+    fun toConferenceGroupString(conferenceGroup: ConferenceGroup?) = conferenceGroup?.name
 
 }
