@@ -23,7 +23,8 @@ fun ConferenceRemote.toEntity() = try {
             acronym = acronym,
             aspectRatio = aspectRatio ?: AspectRatio.UNKNOWN,
             logoUrl = logoUrl,
-            updatedAt = updatedAt
+            updatedAt = updatedAt,
+            eventLastReleasedAt = eventLastReleasedAt
     )
 } catch (e: EntityMappingException) {
     Timber.w(e)

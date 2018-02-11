@@ -21,10 +21,18 @@ class ConferencesViewModel @Inject constructor(
     val conferences: Flowable<Resource<List<Conference>>>
         get() = repository.loadedConferences(conferenceGroup.name)
                 .map<Resource<List<Conference>>> {
-                    if (it is Resource.Success)
-                        Resource.Success(it.data.sortedByDescending { it.title })
-                    else
+                    if (it is Resource.Success) {
+                        Resource.Success(
+                                when (conferenceGroup) {
+                                    ConferenceGroup.MRMCD, ConferenceGroup.OTHER_CONFERENCES, ConferenceGroup.OTHER -> it.data
+                                            .sortedByDescending { it.eventLastReleasedAt }
+                                    else -> it.data
+                                            .sortedByDescending { it.title }
+                                }
+                        )
+                    } else {
                         it
+                    }
                 }
 
 }
