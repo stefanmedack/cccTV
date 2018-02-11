@@ -1,20 +1,22 @@
 package de.stefanmedack.ccctv
 
+import de.stefanmedack.ccctv.model.ConferenceGroup
 import de.stefanmedack.ccctv.persistence.entities.Conference
 import de.stefanmedack.ccctv.persistence.entities.Event
 import de.stefanmedack.ccctv.persistence.entities.LanguageList
-import de.stefanmedack.ccctv.repository.EventRemote
 import info.metadude.kotlin.library.c3media.models.AspectRatio
 import info.metadude.kotlin.library.c3media.models.Language
 import info.metadude.kotlin.library.c3media.models.MimeType
 import info.metadude.kotlin.library.c3media.models.Recording
 import org.threeten.bp.LocalDate
 import org.threeten.bp.OffsetDateTime
+import info.metadude.kotlin.library.c3media.models.Event as EventRemote
 
 val minimalConferenceEntity = Conference(
         id = 42,
         url = "url",
         slug = "slug",
+        group = ConferenceGroup.OTHER,
         title = "title",
         acronym = "acronym"
 )
@@ -23,6 +25,7 @@ val fullConferenceEntity = Conference(
         id = 42,
         url = "url",
         slug = "slug",
+        group = ConferenceGroup.OTHER,
         title = "title",
         acronym = "acronym",
         aspectRatio = AspectRatio._16_X_9,
