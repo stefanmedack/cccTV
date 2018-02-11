@@ -14,6 +14,8 @@ import io.reactivex.Flowable
 import io.reactivex.Single
 import javax.inject.Inject
 import javax.inject.Singleton
+import de.stefanmedack.ccctv.persistence.entities.Conference as ConferenceEntity
+import info.metadude.kotlin.library.c3media.models.Conference as ConferenceRemote
 
 @Singleton
 class ConferenceRepository @Inject constructor(

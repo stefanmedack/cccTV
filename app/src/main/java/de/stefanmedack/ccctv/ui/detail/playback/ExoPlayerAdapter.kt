@@ -6,7 +6,6 @@ import android.net.Uri
 import android.view.KeyEvent
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.SimpleExoPlayer
-import de.stefanmedack.ccctv.repository.EventRemote
 import de.stefanmedack.ccctv.util.bestRecording
 import de.stefanmedack.ccctv.util.switchAspectRatio
 import info.metadude.kotlin.library.c3media.models.Event
@@ -17,6 +16,7 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.subscribeBy
 import timber.log.Timber
 import java.util.*
+
 
 class ExoPlayerAdapter(context: Context) : BaseExoPlayerAdapter(context) {
 
@@ -33,7 +33,7 @@ class ExoPlayerAdapter(context: Context) : BaseExoPlayerAdapter(context) {
         super.onDetachedFromHost()
     }
 
-    fun bindRecordings(recordings: Single<EventRemote>) {
+    fun bindRecordings(recordings: Single<Event>) {
         disposables.add(recordings.subscribeBy(
                 onSuccess = {
                     event = it

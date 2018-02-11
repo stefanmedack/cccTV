@@ -5,14 +5,13 @@ import android.text.Html
 import de.stefanmedack.ccctv.BuildConfig.DEBUG
 import de.stefanmedack.ccctv.model.ConferenceGroup
 import de.stefanmedack.ccctv.persistence.entities.Conference
-import de.stefanmedack.ccctv.repository.ConferenceEntity
-import de.stefanmedack.ccctv.repository.ConferenceRemote
-import de.stefanmedack.ccctv.repository.EventRemote
-import info.metadude.kotlin.library.c3media.models.Event
 import info.metadude.kotlin.library.c3media.models.Language
 import info.metadude.kotlin.library.c3media.models.Recording
 import timber.log.Timber
 import java.util.*
+import de.stefanmedack.ccctv.persistence.entities.Conference as ConferenceEntity
+import info.metadude.kotlin.library.c3media.models.Conference as ConferenceRemote
+import info.metadude.kotlin.library.c3media.models.Event as EventRemote
 
 fun ConferenceRemote.id(): Int? = this.url?.substringAfterLast('/')?.toIntOrNull()
 
@@ -21,7 +20,7 @@ fun List<Conference>.groupConferences(): Map<ConferenceGroup, List<ConferenceEnt
 
 fun EventRemote.id(): Int? = this.url?.substringAfterLast('/')?.toIntOrNull()
 
-fun Event.bestRecording(favoriteLanguage: Language, isFavoriteQualityHigh: Boolean = true): Recording? {
+fun EventRemote.bestRecording(favoriteLanguage: Language, isFavoriteQualityHigh: Boolean = true): Recording? {
     val sortedRecordings = this.recordings
             ?.filter { it.mimeType in SUPPORTED_VIDEO_MIME_TYPE_SORTING }
             ?.sortedWith(Comparator { lhs, rhs ->

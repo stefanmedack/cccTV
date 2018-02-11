@@ -3,15 +3,15 @@ package de.stefanmedack.ccctv.persistence
 import de.stefanmedack.ccctv.model.ConferenceGroup
 import de.stefanmedack.ccctv.persistence.entities.ConferenceWithEvents
 import de.stefanmedack.ccctv.persistence.entities.LanguageList
-import de.stefanmedack.ccctv.repository.ConferenceEntity
-import de.stefanmedack.ccctv.repository.ConferenceRemote
-import de.stefanmedack.ccctv.repository.EventEntity
-import de.stefanmedack.ccctv.repository.EventRemote
 import de.stefanmedack.ccctv.util.EMPTY_STRING
 import de.stefanmedack.ccctv.util.id
 import info.metadude.kotlin.library.c3media.models.AspectRatio
 import info.metadude.kotlin.library.c3media.models.Conference
 import timber.log.Timber
+import de.stefanmedack.ccctv.persistence.entities.Conference as ConferenceEntity
+import de.stefanmedack.ccctv.persistence.entities.Event as EventEntity
+import info.metadude.kotlin.library.c3media.models.Conference as ConferenceRemote
+import info.metadude.kotlin.library.c3media.models.Event as EventRemote
 
 fun ConferenceRemote.toEntity() = try {
     ConferenceEntity(

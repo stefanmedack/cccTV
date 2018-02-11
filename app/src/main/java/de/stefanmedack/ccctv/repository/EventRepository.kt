@@ -9,6 +9,7 @@ import io.reactivex.Flowable
 import io.reactivex.Single
 import javax.inject.Inject
 import javax.inject.Singleton
+import info.metadude.kotlin.library.c3media.models.Event as EventRemote
 
 @Singleton
 class EventRepository @Inject constructor(

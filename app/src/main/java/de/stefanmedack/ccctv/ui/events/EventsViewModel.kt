@@ -10,7 +10,6 @@ import info.metadude.kotlin.library.c3media.RxC3MediaService
 import io.reactivex.Flowable
 import javax.inject.Inject
 
-
 class EventsViewModel @Inject constructor(
         private val c3MediaService: RxC3MediaService,
         private val repository: ConferenceRepository

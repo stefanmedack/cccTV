@@ -2,13 +2,14 @@ package de.stefanmedack.ccctv.ui.detail
 
 import android.arch.lifecycle.ViewModel
 import de.stefanmedack.ccctv.persistence.entities.Event
-import de.stefanmedack.ccctv.repository.EventRemote
 import de.stefanmedack.ccctv.repository.EventRepository
 import de.stefanmedack.ccctv.ui.detail.uiModels.DetailUiModel
 import de.stefanmedack.ccctv.ui.detail.uiModels.SpeakerUiModel
 import io.reactivex.Flowable
 import io.reactivex.Single
 import javax.inject.Inject
+import info.metadude.kotlin.library.c3media.models.Event as EventRemote
+
 
 class DetailViewModel @Inject constructor(
         private val repository: EventRepository
