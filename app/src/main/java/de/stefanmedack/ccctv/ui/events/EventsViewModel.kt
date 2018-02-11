@@ -16,28 +16,28 @@ class EventsViewModel @Inject constructor(
         private val repository: ConferenceRepository
 ) : ViewModel() {
 
+    private var searchQuery: String? = null
+    private var conferenceId: Int = -1
+
     lateinit var events: Flowable<Resource<List<Event>>>
-    var searchQuery: String = "UNSET"
-    var conferenceId: Int = -1
 
     fun initWithSearchString(searchQuery: String) {
         this.searchQuery = searchQuery
         this.events = c3MediaService.searchEvents(searchQuery)
                 .applySchedulers()
-                .map<Resource<List<Event>>> {
-                    Resource.Success<List<Event>>(it.events.mapNotNull { it.toEntity(-1) })
-                }
+                .map<Resource<List<Event>>> { Resource.Success(it.events.mapNotNull { it.toEntity(-1) }) }
                 .toFlowable()
     }
 
     fun initWithConferenceId(conferenceId: Int) {
         this.conferenceId = conferenceId
-        this.events = repository.conferenceWithEvents(conferenceId).map<Resource<List<Event>>>{
-            when(it) {
-                is Resource.Success -> Resource.Success(it.data.events)
-                is Resource.Loading -> Resource.Loading()
-                is Resource.Error -> Resource.Error(it.msg, it.data?.events)
-            }
-        }
+        this.events = repository.conferenceWithEvents(conferenceId)
+                .map<Resource<List<Event>>> {
+                    when (it) {
+                        is Resource.Success -> Resource.Success(it.data.events.sortedByDescending { it.date })
+                        is Resource.Loading -> Resource.Loading()
+                        is Resource.Error -> Resource.Error(it.msg, it.data?.events)
+                    }
+                }
     }
 }
