@@ -50,13 +50,14 @@ class EventsFragment : VerticalGridSupportFragment() {
             }
         }
     }
+
     private val disposables = CompositeDisposable()
+    private var backgroundManager: BackgroundManager? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         setupUi()
-        prepareBackground()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -64,6 +65,12 @@ class EventsFragment : VerticalGridSupportFragment() {
         super.onViewCreated(view, savedInstanceState)
 
         bindViewModel()
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        prepareBackground()
     }
 
     override fun onDestroy() {
@@ -94,24 +101,31 @@ class EventsFragment : VerticalGridSupportFragment() {
 
     private fun prepareBackground() {
         activity?.let { activityContext ->
-            val backgroundManager = BackgroundManager.getInstance(activityContext)
-            backgroundManager.attach(activityContext.window)
+            if (backgroundManager == null) {
+                backgroundManager = BackgroundManager.getInstance(activityContext)
+                backgroundManager?.attach(activityContext.window)
+            }
 
             val metrics = DisplayMetrics()
             activityContext.windowManager.defaultDisplay.getMetrics(metrics)
             val width = metrics.widthPixels
             val height = metrics.heightPixels
 
-            Glide.with(activityContext)
-                    .load(arguments?.getString(CONFERENCE_LOGO_URL))
-                    .asBitmap()
-                    .override(width, height)
-                    .fitCenter()
-                    .into<SimpleTarget<Bitmap>>(object : SimpleTarget<Bitmap>(width, height) {
-                        override fun onResourceReady(resource: Bitmap, glideAnimation: GlideAnimation<in Bitmap>) {
-                            backgroundManager?.setBitmap(darkenBitMap(resource))
-                        }
-                    })
+            val logoUrl = arguments?.getString(CONFERENCE_LOGO_URL)
+            if (logoUrl != null) {
+                Glide.with(activityContext)
+                        .load(logoUrl)
+                        .asBitmap()
+                        .override(width, height)
+                        .fitCenter()
+                        .into<SimpleTarget<Bitmap>>(object : SimpleTarget<Bitmap>(width, height) {
+                            override fun onResourceReady(resource: Bitmap, glideAnimation: GlideAnimation<in Bitmap>) {
+                                backgroundManager?.setBitmap(darkenBitMap(resource))
+                            }
+                        })
+            } else {
+                backgroundManager?.clearDrawable()
+            }
         }
     }
 
