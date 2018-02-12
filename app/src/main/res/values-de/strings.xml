@@ -1,4 +1,5 @@
 <resources>
+
     <string name="app_name">cccTV</string>
     <string name="main_streams_header">Gerade Live</string>
     <string name="main_videos_header">Mediathek</string>
@@ -11,13 +12,12 @@
     <string name="header_speaker">Vortragende</string>
     <string name="header_related">Ähnliche Videos</string>
     <string name="about_description">\ncccTV ist ein Open Source Projekt entwickelt von Stefan Medack.
-        Sämtlicher Source Code ist unter der Apache License 2.0 auf https://github.com/stefanmedack/cccTV zu finden.
+        Sämtlicher Source Code ist unter der Apache License 2.0 auf github.com/stefanmedack/cccTV zu finden.
         \n\nDas Video Material wird freundlicherweise von media.ccc.de bereitgestellt.
         \n\nEin Großes Dankeschön an den Chaos Computer Club e.V. (CCC) für das Hosten dieser Videos,
         an alle Personen die an der Produktion beteiligt waren,
         so wie an alle Personen in den Aufzeichnungen, die ihr Wissen mit uns teilen.
-        \n\nSollte Dir diese App gefallen, dann bewerte sie doch bitte auf Google Play (scanne den QR-Code oder gehe auf
-        https://goo.gl/Dradno).
+        \n\nSollte Dir diese App gefallen, dann bewerte sie bitte.
         Solltest Du noch gute Ideen für Features haben oder Bugs finden, lass es mich wissen!
         Für Fragen oder Verbesserungsvorschläge an den Videos selbst, kontaktiere den Chaos Computer Club e.V.
         \n\nDie Open Source Bibliotheken und Lizenzen für diese App findest Du weiter unten.
@@ -27,6 +27,28 @@
     <string name="voctocat_toast">Dieses kleine Kerlchen ist von Sebastian Morr entworfen worden
         und verfügbar unter der CC BY-NC-SA 4.0 Lizenz (https://morr.cc/voctocat/)</string>
     <string name="search_result_header">%1$s Videos gefunden für \"%2$s\"</string>
+    <string name="events_view_search_result_header">Suchergebnisse für \"%1$s\"</string>
+
+    <!-- ConferenceGroups -->
+    <string name="cg_congress">Congress</string>
+    <string name="cg_camp">Camp</string>
+    <string name="cg_cryptocon">CryptoCon</string>
+    <string name="cg_datenspuren">Datenspuren</string>
+    <string name="cg_denog">DENOG</string>
+    <string name="cg_eh">Easterhegg</string>
+    <string name="cg_fiffkon">FIfFKon</string>
+    <string name="cg_froscon">FrOSCon</string>
+    <string name="cg_gpn">GPN</string>
+    <string name="cg_hackover">Hackover</string>
+    <string name="cg_jugendhackt">Jugend Hackt</string>
+    <string name="cg_mrmcd">MRMCD</string>
+    <string name="cg_netzpolitik">Netzpolitik</string>
+    <string name="cg_osc">openSUSE</string>
+    <string name="cg_sigint">sigint</string>
+    <string name="cg_vcfb">Vintage Computing Festival Berlin</string>
+    <string name="cg_other_conferences">Weitere Konferenzen</string>
+    <string name="cg_other">Noch mehr…</string>
 
     <string name="implement_me_toast">Uups, under construction. Beim nächsten Mal ist hier aber bestimmt etwas.</string>
+
 </resources>

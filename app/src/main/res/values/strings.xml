@@ -1,4 +1,5 @@
 <resources>
+
     <string name="app_name">cccTV</string>
     <string name="main_streams_header">Live Streaming</string>
     <string name="main_videos_header">Library</string>
@@ -11,12 +12,12 @@
     <string name="header_speaker">Speaker</string>
     <string name="header_related">Related Videos</string>
     <string name="about_description">\ncccTV is an Open Source project developed by Stefan Medack.
-        All sources are available under the Apache License 2.0 on https://github.com/stefanmedack/cccTV.
+        All sources are available under the Apache License 2.0 on github.com/stefanmedack/cccTV.
         \n\nThe video material is kindly provided by media.ccc.de
         \n\nSpecial thanks to Chaos Computer Club e.V. (CCC) for hosting the content and
         everybody involved in its production,
         as well as to everybody participating in the videos and sharing their knowledge.
-        \n\nIf you like this App, rate it on Google Play (scan the QR-Code or visit https://goo.gl/Dradno).
+        \n\nIf you like this App, please give it a rating.
         In case you are missing some features or found a Bug, let me know.
         To improve the content of the Videos, contact or join the Chaos Computer Club e.V.
         \n\nFor the list of Open Source Libraries and Licenses, please have a look below.
@@ -26,6 +27,28 @@
     <string name="voctocat_toast">This little fella is designed by Sebastian Morr and distributed under CC BY-NC-SA 4.0 License
         (https://morr.cc/voctocat/)</string>
     <string name="search_result_header">%1$s videos found for \"%2$s\"</string>
+    <string name="events_view_search_result_header">Search results for \"%1$s\"</string>
+
+    <!-- ConferenceGroups -->
+    <string name="cg_congress">Congress</string>
+    <string name="cg_camp">Camp</string>
+    <string name="cg_cryptocon">CryptoCon</string>
+    <string name="cg_datenspuren">Datenspuren</string>
+    <string name="cg_denog">DENOG</string>
+    <string name="cg_eh">Easterhegg</string>
+    <string name="cg_fiffkon">FIfFKon</string>
+    <string name="cg_froscon">FrOSCon</string>
+    <string name="cg_gpn">GPN</string>
+    <string name="cg_hackover">Hackover</string>
+    <string name="cg_jugendhackt">Jugend Hackt</string>
+    <string name="cg_mrmcd">MRMCD</string>
+    <string name="cg_netzpolitik">Netzpolitik</string>
+    <string name="cg_osc">openSUSE</string>
+    <string name="cg_sigint">sigint</string>
+    <string name="cg_vcfb">Vintage Computing Festival Berlin</string>
+    <string name="cg_other_conferences">More Conferences</string>
+    <string name="cg_other">Even More…</string>
 
     <string name="implement_me_toast">Uups, this feature is still missing - check back later</string>
+
 </resources>

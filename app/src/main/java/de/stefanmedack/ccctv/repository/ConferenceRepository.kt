@@ -14,6 +14,8 @@ import io.reactivex.Flowable
 import io.reactivex.Single
 import javax.inject.Inject
 import javax.inject.Singleton
+import de.stefanmedack.ccctv.persistence.entities.Conference as ConferenceEntity
+import info.metadude.kotlin.library.c3media.models.Conference as ConferenceRemote
 
 @Singleton
 class ConferenceRepository @Inject constructor(
@@ -27,12 +29,15 @@ class ConferenceRepository @Inject constructor(
 
             override fun fetchLocal(): Flowable<List<ConferenceEntity>> = conferenceDao.getConferences()
 
-            override fun saveLocal(data: List<ConferenceEntity>) = conferenceDao.insertAll(data)
+            override fun saveLocal(data: List<ConferenceEntity>) {
+                conferenceDao.insertAll(data)
+                preferences.updateLatestDataFetchDate()
+            }
 
             override fun isStale(localResource: Resource<List<ConferenceEntity>>) = when (localResource) {
                 is Resource.Error -> true
                 is Resource.Loading -> false
-                is Resource.Success -> localResource.data.isEmpty()
+                is Resource.Success -> preferences.isFetchedDataStale() || localResource.data.isEmpty()
             }
 
             override fun fetchNetwork(): Single<List<ConferenceRemote>> = mediaService
@@ -115,7 +120,7 @@ class ConferenceRepository @Inject constructor(
         }.resource
 
     fun loadedConferences(conferenceGroup: String): Flowable<Resource<List<ConferenceEntity>>> = conferenceDao
-            .getConferences(conferenceGroup.toLowerCase())
+            .getConferences(conferenceGroup)
             .map<Resource<List<ConferenceEntity>>> { Resource.Success(it) }
             .applySchedulers()
 

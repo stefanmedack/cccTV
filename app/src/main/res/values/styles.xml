@@ -8,15 +8,15 @@
         <item name="detailsDescriptionSubtitleStyle">@style/CCCDescriptionSubtitleStyle</item>
     </style>
 
-    <style name="EventsActivityTheme" parent="Theme.Leanback.VerticalGrid">
-        <!--<item name="android:windowBackground">@drawable/voctocat</item>-->
-    </style>
-
     <style name="CCCDescriptionSubtitleStyle" parent="Widget.Leanback.DetailsDescriptionSubtitleStyle">
         <item name="android:maxLines">20</item>
     </style>
 
     <style name="TitleOnlyStyle" parent="Widget.Leanback.ImageCardViewStyle">
+        <item name="lbImageCardViewType">Title</item>
+    </style>
+
+    <style name="TitleAndDescriptionStyle" parent="Widget.Leanback.ImageCardViewStyle">
         <item name="lbImageCardViewType">Title|Content</item>
     </style>
 
@@ -44,16 +44,17 @@
         <item name="android:layout_height">@dimen/grid_card_height</item>
     </style>
 
-    <style name="GridCardTheme" parent="Theme.Leanback">
-        <item name="imageCardViewStyle">@style/GridCardStyle</item>
+    <style name="ConferenceCardStyle" parent="Theme.Leanback">
+        <item name="imageCardViewStyle">@style/TitleOnlyStyle</item>
+        <item name="imageCardViewTitleStyle">@style/MultiLineTitleStyle</item>
         <item name="imageCardViewImageStyle">@style/GridCardImageStyle</item>
     </style>
 
     <style name="EventCardStyle" parent="Theme.Leanback">
-        <item name="imageCardViewStyle">@style/TitleOnlyStyle</item>
-        <item name="imageCardViewImageStyle">@style/EventCardImageStyle</item>
+        <item name="imageCardViewStyle">@style/TitleAndDescriptionStyle</item>
         <item name="imageCardViewTitleStyle">@style/MultiLineTitleStyle</item>
         <item name="imageCardViewContentStyle">@style/MultiLineContentStyle</item>
+        <item name="imageCardViewImageStyle">@style/EventCardImageStyle</item>
     </style>
 
     <style name="SpeakerCardStyle" parent="Widget.Leanback.BaseCardViewStyle">

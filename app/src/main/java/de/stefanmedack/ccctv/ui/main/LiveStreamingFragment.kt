@@ -72,7 +72,7 @@ class LiveStreamingFragment : RowsSupportFragment() {
         val adapter = ArrayObjectAdapter(StreamCardPresenter(room.thumb))
         adapter += room.streams
 
-        val headerItem = HeaderItem(room.scheduleName)
+        val headerItem = HeaderItem(room.display)
         return ListRow(headerItem, adapter)
     }
 

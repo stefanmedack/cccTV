@@ -1,10 +1,10 @@
 package de.stefanmedack.ccctv.ui.main
 
 import android.arch.lifecycle.ViewModel
+import de.stefanmedack.ccctv.model.ConferenceGroup
 import de.stefanmedack.ccctv.model.Resource
 import de.stefanmedack.ccctv.repository.ConferenceRepository
 import de.stefanmedack.ccctv.repository.StreamingRepository
-import de.stefanmedack.ccctv.util.ConferenceGroup
 import de.stefanmedack.ccctv.util.groupConferences
 import info.metadude.java.library.brockman.models.Offer
 import io.reactivex.Flowable
@@ -41,7 +41,8 @@ class MainViewModel @Inject constructor(
                         is Resource.Success -> Resource.Success(it.data
                                 .groupConferences()
                                 .keys
-                                .toList())
+                                .toList()
+                        )
                         is Resource.Loading -> Resource.Loading()
                         is Resource.Error -> Resource.Error(it.msg)
                     }

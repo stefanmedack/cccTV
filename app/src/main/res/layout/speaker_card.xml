@@ -26,6 +26,7 @@
         android:layout_marginTop="7dp"
         android:fontFamily="sans-serif-condensed"
         android:gravity="center"
+        android:minLines="2"
         android:textColor="@color/unfocused_speaker"
         tools:text="Stefan Medack"
         />

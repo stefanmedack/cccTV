@@ -15,9 +15,11 @@ import android.view.View
 import android.widget.Toast
 import dagger.android.support.AndroidSupportInjection
 import de.stefanmedack.ccctv.R
+import de.stefanmedack.ccctv.model.ConferenceGroup
 import de.stefanmedack.ccctv.model.Resource
 import de.stefanmedack.ccctv.ui.about.AboutFragment
 import de.stefanmedack.ccctv.ui.search.SearchActivity
+import de.stefanmedack.ccctv.util.CONFERENCE_GROUP_TRANSLATIONS
 import de.stefanmedack.ccctv.util.plusAssign
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.subscribeBy
@@ -76,12 +78,17 @@ class MainFragment : BrowseSupportFragment() {
             is Resource.Success -> {
                 adapter = ArrayObjectAdapter(ListRowPresenter())
                 (adapter as? ArrayObjectAdapter)?.let {
-                    if(mainUiModel.offersResource is Resource.Success && mainUiModel.offersResource.data.isNotEmpty()) {
+                    if (mainUiModel.offersResource is Resource.Success && mainUiModel.offersResource.data.isNotEmpty()) {
                         it += SectionRow(HeaderItem(1L, getString(R.string.main_streams_header)))
                         it += mainUiModel.offersResource.data.map { PageRow(HeaderItem(2L, it.conference)) }
                     }
                     it += SectionRow(HeaderItem(3L, getString(R.string.main_videos_header)))
-                    it += mainUiModel.conferenceGroupResource.data.map { PageRow(HeaderItem(4L, it)) }
+                    it += mainUiModel.conferenceGroupResource.data.map {
+                        PageRow(HeaderItem(
+                                CONFERENCE_GROUP_TRANSLATIONS[it]?.toLong() ?: 4L,
+                                getString(CONFERENCE_GROUP_TRANSLATIONS[it] ?: R.string.cg_other)
+                        ))
+                    }
                     it += DividerRow()
                     it += SectionRow(HeaderItem(5L, getString(R.string.main_more_header)))
                     it += PageRow(HeaderItem(6L, getString(R.string.main_about_app)))
@@ -119,7 +126,10 @@ class MainFragment : BrowseSupportFragment() {
             return when ((rowObj as Row).headerItem.id) {
                 6L -> AboutFragment()
                 2L -> LiveStreamingFragment.create(rowObj.headerItem.name)
-                else -> ConferencesFragment.create(rowObj.headerItem.name)
+                else -> ConferencesFragment.create(
+                        // reverse lookup of ConferenceGroup by StringResourceId
+                        CONFERENCE_GROUP_TRANSLATIONS.filterValues { it == rowObj.id.toInt() }.keys.firstOrNull() ?: ConferenceGroup.OTHER
+                )
             }
         }
     }

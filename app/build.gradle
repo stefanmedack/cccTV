@@ -36,13 +36,13 @@ ext {
 android {
 
     compileSdkVersion 27
-    buildToolsVersion '27.0.1'
+    buildToolsVersion '27.0.3'
     defaultConfig {
         applicationId "de.stefanmedack.ccctv"
         minSdkVersion 21
         targetSdkVersion 27
-        versionCode 10
-        versionName "2.1.0"
+        versionCode 11
+        versionName "2.2.0"
         resConfigs "en", "de"
         multiDexEnabled true
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -75,19 +75,23 @@ android {
         }
     }
 
-    // TODO think about reworking the dimensions/configs for streaming
-    flavorDimensions "default"
+    flavorDimensions "streaming"
     productFlavors {
-        dev {
+        devStreaming {
             buildConfigField "String", "STREAMING_API_BASE_URL", "\"http://gist.githubusercontent.com\""
             buildConfigField "String", "STREAMING_API_OFFERS_PATH",
                     "\"/MaZderMind/a91f242efb2f446a2237d4596896efd6/raw/7ab4e206f19ed4d63a67917fe6e3a15a96218ac9/streams-v2.json\""
 //                    "\"/johnjohndoe/617bbfa2ac36f5148a049548b419e299/raw/7ab4e206f19ed4d63a67917fe6e3a15a96218ac9/streams-v2.json\""
         }
-        live {
+        liveStreaming {
             buildConfigField "String", "STREAMING_API_BASE_URL", "\"http://streaming.media.ccc.de\""
             buildConfigField "String", "STREAMING_API_OFFERS_PATH", "\"/streams/v2.json\""
         }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
 
     sourceSets {
@@ -123,7 +127,9 @@ dependencies {
     kapt "com.google.dagger:dagger-compiler:$daggerVersion"
 
     // c3media library
-    implementation "info.metadude.kotlin.library.c3media:c3media-rx-java-2:${c3mediaVersion}"
+    implementation "com.github.stefanmedack:c3media-base:adds_eventLastReleasedAt-SNAPSHOT"
+    // TODO change c3media-base to latest release, when it is stable again
+//    implementation "info.metadude.kotlin.library.c3media:c3media-rx-java-2:$c3mediaVersion"
     // c3media streaming
     implementation "com.github.johnjohndoe:Brockman:1886e90a92029ceba978e3326202383c63ed8efd"
 

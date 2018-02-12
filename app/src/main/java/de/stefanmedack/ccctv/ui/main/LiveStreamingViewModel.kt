@@ -1,6 +1,5 @@
 package de.stefanmedack.ccctv.ui.main
 
-import android.arch.lifecycle.BuildConfig
 import android.arch.lifecycle.ViewModel
 import de.stefanmedack.ccctv.repository.StreamingRepository
 import info.metadude.java.library.brockman.models.Room
@@ -11,29 +10,32 @@ class LiveStreamingViewModel @Inject constructor(
         private val streamingRepository: StreamingRepository
 ) : ViewModel() {
 
-    lateinit var conferenceName: String
+    private lateinit var conferenceName: String
 
     fun init(streamName: String) {
         this.conferenceName = streamName
     }
 
     val roomsForConference: Flowable<List<Room>>
-        get() = Flowable.just(extractConference())
+        get() = Flowable.just(extractRooms())
 
-    @Suppress("ConstantConditionIf")
-    private fun extractConference(): List<Room> = streamingRepository.cachedStreams
+    private fun extractRooms(): List<Room> = streamingRepository.cachedStreams
             .find { it.conference == conferenceName }
             ?.groups
-            ?.find { it.group == if (BuildConfig.DEBUG) "Lecture Rooms" else "Live" }
-            ?.rooms ?: listOf()
-
-    //    val conferencesWithEvents: Flowable<Resource<List<ConferenceWithEvents>>>
-    //        get() = repository.loadedConferences(conferenceName)
-    //                .map<Resource<List<ConferenceWithEvents>>> {
-    //                    if (it is Resource.Success)
-    //                        Resource.Success(it.data.sortedByDescending { it.conference.title })
-    //                    else
-    //                        it
-    //                }
+            ?.flatMap { group ->
+                group.rooms.map { room ->
+                    if (group.group.isNotEmpty()) {
+                        Room(
+                                room.display + " [${group.group}]",
+                                room.link,
+                                room.scheduleName,
+                                room.slug,
+                                room.streams,
+                                room.thumb)
+                    } else {
+                        room
+                    }
+                }
+            } ?: listOf()
 
 }
