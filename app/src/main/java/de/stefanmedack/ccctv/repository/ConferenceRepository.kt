@@ -29,12 +29,15 @@ class ConferenceRepository @Inject constructor(
 
             override fun fetchLocal(): Flowable<List<ConferenceEntity>> = conferenceDao.getConferences()
 
-            override fun saveLocal(data: List<ConferenceEntity>) = conferenceDao.insertAll(data)
+            override fun saveLocal(data: List<ConferenceEntity>) {
+                conferenceDao.insertAll(data)
+                preferences.updateLatestDataFetchDate()
+            }
 
             override fun isStale(localResource: Resource<List<ConferenceEntity>>) = when (localResource) {
                 is Resource.Error -> true
                 is Resource.Loading -> false
-                is Resource.Success -> localResource.data.isEmpty()
+                is Resource.Success -> preferences.isFetchedDataStale() || localResource.data.isEmpty()
             }
 
             override fun fetchNetwork(): Single<List<ConferenceRemote>> = mediaService

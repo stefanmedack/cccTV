@@ -86,7 +86,7 @@ class MainFragment : BrowseSupportFragment() {
                     it += mainUiModel.conferenceGroupResource.data.map {
                         PageRow(HeaderItem(
                                 CONFERENCE_GROUP_TRANSLATIONS[it]?.toLong() ?: 4L,
-                                getString(CONFERENCE_GROUP_TRANSLATIONS.getOrDefault(it, R.string.cg_other))
+                                getString(CONFERENCE_GROUP_TRANSLATIONS[it] ?: R.string.cg_other)
                         ))
                     }
                     it += DividerRow()
