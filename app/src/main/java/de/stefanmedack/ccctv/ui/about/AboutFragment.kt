@@ -52,7 +52,7 @@ class AboutFragment : DetailsSupportFragment(), BrowseSupportFragment.MainFragme
                         description = getString(R.string.about_description)
                 )
         )
-        detailsOverview.imageDrawable = ContextCompat.getDrawable(context, R.drawable.store_qr)
+        detailsOverview.imageDrawable = ContextCompat.getDrawable(context, R.drawable.qr_github)
 
         adapter = ArrayObjectAdapter(
                 // Setup PresenterSelector to distinguish between the different rows.

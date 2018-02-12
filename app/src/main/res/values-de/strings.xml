@@ -12,13 +12,12 @@
     <string name="header_speaker">Vortragende</string>
     <string name="header_related">Ähnliche Videos</string>
     <string name="about_description">\ncccTV ist ein Open Source Projekt entwickelt von Stefan Medack.
-        Sämtlicher Source Code ist unter der Apache License 2.0 auf https://github.com/stefanmedack/cccTV zu finden.
+        Sämtlicher Source Code ist unter der Apache License 2.0 auf github.com/stefanmedack/cccTV zu finden.
         \n\nDas Video Material wird freundlicherweise von media.ccc.de bereitgestellt.
         \n\nEin Großes Dankeschön an den Chaos Computer Club e.V. (CCC) für das Hosten dieser Videos,
         an alle Personen die an der Produktion beteiligt waren,
         so wie an alle Personen in den Aufzeichnungen, die ihr Wissen mit uns teilen.
-        \n\nSollte Dir diese App gefallen, dann bewerte sie doch bitte auf Google Play (scanne den QR-Code oder gehe auf
-        https://goo.gl/Dradno).
+        \n\nSollte Dir diese App gefallen, dann bewerte sie bitte.
         Solltest Du noch gute Ideen für Features haben oder Bugs finden, lass es mich wissen!
         Für Fragen oder Verbesserungsvorschläge an den Videos selbst, kontaktiere den Chaos Computer Club e.V.
         \n\nDie Open Source Bibliotheken und Lizenzen für diese App findest Du weiter unten.
