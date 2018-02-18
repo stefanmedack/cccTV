@@ -91,16 +91,9 @@ class EventExtensionsTest {
     }
 
     @Test
-    fun `Related event-ids should be extracted from metadata and be weighted`() {
+    fun `Related event-ids should be extracted from metadata and be sorted by weight`() {
         val testEvent = minimalEventEntity.copy(metadata = Metadata(
-                related = mapOf(
-                        "1" to 23,
-                        "2" to 43,
-                        "3" to 13,
-                        "4" to 1,
-                        "5" to 42
-                )
-        ))
+                related = mapOf("1" to 23, "2" to 43, "3" to 13, "4" to 1, "5" to 42)))
 
         val related = testEvent.getRelatedEventIdsWeighted()
 
@@ -109,6 +102,5 @@ class EventExtensionsTest {
         related[2] shouldBe 1
         related[3] shouldBe 3
         related[4] shouldBe 4
-
     }
 }

@@ -33,7 +33,7 @@ class EventsViewModel @Inject constructor(
         this.events = repository.conferenceWithEvents(conferenceId)
                 .map<Resource<List<Event>>> {
                     when (it) {
-                        is Resource.Success -> Resource.Success(it.data.events.sortedByDescending { it.date })
+                        is Resource.Success -> Resource.Success(it.data.events.sortedByDescending { it.viewCount })
                         is Resource.Loading -> Resource.Loading()
                         is Resource.Error -> Resource.Error(it.msg, it.data?.events)
                     }
