@@ -7,6 +7,7 @@ import de.stefanmedack.ccctv.util.applySchedulers
 import info.metadude.kotlin.library.c3media.RxC3MediaService
 import io.reactivex.Flowable
 import io.reactivex.Single
+import io.reactivex.rxkotlin.toFlowable
 import javax.inject.Inject
 import javax.inject.Singleton
 import info.metadude.kotlin.library.c3media.models.Event as EventRemote
@@ -23,8 +24,10 @@ class EventRepository @Inject constructor(
                             .map { it.toEntity(-1)!! }
             ).toFlowable()
 
-    fun getEvents(ids: List<Int>): Flowable<List<Event>> = eventDao.getEvents(ids)
-            .applySchedulers()
+    fun getEvents(ids: List<Int>): Flowable<List<Event>> = ids.toFlowable()
+            .flatMap { getEvent(it) }
+            .toList()
+            .toFlowable()
 
     // TODO change to Resource<Single<EventRemote>>
     fun getEventWithRecordings(id: Int): Single<EventRemote> = mediaService.getEvent(id)

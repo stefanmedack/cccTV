@@ -5,6 +5,7 @@ import android.text.Html
 import de.stefanmedack.ccctv.BuildConfig.DEBUG
 import de.stefanmedack.ccctv.model.ConferenceGroup
 import de.stefanmedack.ccctv.persistence.entities.Conference
+import de.stefanmedack.ccctv.persistence.entities.Event
 import info.metadude.kotlin.library.c3media.models.Language
 import info.metadude.kotlin.library.c3media.models.Recording
 import timber.log.Timber
@@ -42,6 +43,14 @@ fun EventRemote.bestRecording(favoriteLanguage: Language, isFavoriteQualityHigh:
 
     return sortedRecordings?.firstOrNull()
 }
+
+fun Event.getRelatedEventIdsWeighted() : List<Int> =
+        this.metadata
+                ?.related
+                ?.toList()
+                ?.sortedByDescending { (_, value) -> value }
+                ?.mapNotNull { (key, _) -> key.toIntOrNull() }
+                ?: listOf()
 
 fun Recording.videoSortingIndex(): Int =
         if (SUPPORTED_VIDEO_MIME_TYPE_SORTING.contains(this.mimeType))
