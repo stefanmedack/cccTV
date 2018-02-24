@@ -11,7 +11,7 @@ apply plugin: 'com.google.gms.oss.licenses.plugin'
 ext {
     archComponentsVersion = "1.0.0"
     assertjVersion = "3.8.0"
-    c3mediaVersion = "2.0.0-SNAPSHOT"
+    c3mediaVersion = "1.1.0"
     crashlyticsVersion = "2.6.8"
     daggerVersion = "2.11"
     exoplayerVersion = "r2.5.3"
@@ -127,9 +127,7 @@ dependencies {
     kapt "com.google.dagger:dagger-compiler:$daggerVersion"
 
     // c3media library
-    implementation "com.github.stefanmedack:c3media-base:add_event_last_released_at-SNAPSHOT"
-    // TODO change c3media-base to latest release, when it is stable again
-//    implementation "info.metadude.kotlin.library.c3media:c3media-rx-java-2:$c3mediaVersion"
+    implementation "info.metadude.kotlin.library.c3media:c3media-rx-java-2:$c3mediaVersion"
     // c3media streaming
     implementation "com.github.johnjohndoe:Brockman:1886e90a92029ceba978e3326202383c63ed8efd"
 
