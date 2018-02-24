@@ -24,7 +24,7 @@ ext {
     rxJavaVersion = "2.1.10"
     rxKotlinVersion = "2.2.0"
     supportLibVersion = "27.0.2"
-    timberVersion = "4.5.1"
+    timberVersion = "4.6.1"
 
     // Test dependencies
     kluentVersion = "1.34"
