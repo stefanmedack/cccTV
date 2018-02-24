@@ -16,7 +16,7 @@ ext {
     crashlyticsVersion = "2.9.0"
     daggerVersion = "2.14.1"
     exoplayerVersion = "2.7.0"
-    glideVersion = "3.8.0"
+    glideVersion = "4.6.1"
     gsonVersion = "2.8.2"
     playServicesVersion = "11.4.0"
     rxAndroidVersion = "2.0.2"

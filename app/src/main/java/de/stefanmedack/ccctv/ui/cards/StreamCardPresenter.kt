@@ -6,6 +6,7 @@ import android.support.v4.content.ContextCompat
 import android.support.v7.view.ContextThemeWrapper
 import android.view.ViewGroup
 import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
 import de.stefanmedack.ccctv.R
 import info.metadude.java.library.brockman.models.Stream
 import kotlin.properties.Delegates
@@ -37,10 +38,12 @@ class StreamCardPresenter(val thumbPictureUrl: String) : Presenter() {
             (viewHolder.view as ImageCardView).let {
                 it.titleText = item.display
                 it.contentText = item.slug
-                Glide.with(viewHolder.view.context)
+                Glide.with(viewHolder.view)
                         .load(thumbPictureUrl)
-                        .centerCrop()
-                        .error(R.drawable.voctocat)
+                        .apply(RequestOptions()
+                                .error(R.drawable.voctocat)
+                                .centerCrop()
+                        )
                         .into(it.mainImageView)
             }
         }

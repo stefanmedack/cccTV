@@ -3,6 +3,7 @@ package de.stefanmedack.ccctv.ui.detail
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
+import android.graphics.drawable.Drawable
 import android.os.Build
 import android.os.Bundle
 import android.support.v17.leanback.app.DetailsSupportFragment
@@ -13,9 +14,9 @@ import android.view.KeyEvent
 import android.view.View
 import android.widget.Toast
 import com.bumptech.glide.Glide
-import com.bumptech.glide.load.resource.drawable.GlideDrawable
-import com.bumptech.glide.request.animation.GlideAnimation
+import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.SimpleTarget
+import com.bumptech.glide.request.transition.Transition
 import dagger.android.support.AndroidSupportInjection
 import de.stefanmedack.ccctv.R
 import de.stefanmedack.ccctv.persistence.entities.Event
@@ -113,15 +114,14 @@ class DetailFragment : DetailsSupportFragment() {
     private fun showPoster(context: Context, detailsOverview: DetailsOverviewRow) {
         detailsOverview.imageDrawable = ContextCompat.getDrawable(context, R.drawable.voctocat)
 
-        Glide.with(activity)
+        Glide.with(this)
                 .load(arguments?.getString(EVENT_PICTURE))
-                .centerCrop()
-                .error(R.drawable.voctocat)
-                .into<SimpleTarget<GlideDrawable>>(object : SimpleTarget<GlideDrawable>(
-                        resources.getDimensionPixelSize(R.dimen.event_card_width),
-                        resources.getDimensionPixelSize(R.dimen.event_card_height)) {
-                    override fun onResourceReady(resource: GlideDrawable,
-                                                 glideAnimation: GlideAnimation<in GlideDrawable>) {
+                .apply(RequestOptions()
+                        .error(R.drawable.voctocat)
+                        .centerCrop()
+                )
+                .into(object : SimpleTarget<Drawable>() {
+                    override fun onResourceReady(resource: Drawable, transition: Transition<in Drawable>?) {
                         detailsOverview.imageDrawable = resource
                     }
                 })
