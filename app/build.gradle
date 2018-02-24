@@ -10,6 +10,7 @@ apply plugin: 'com.google.gms.oss.licenses.plugin'
 
 ext {
     archComponentsVersion = "1.0.0"
+    archComponentsLifecycleVersion = "1.1.0"
     assertjVersion = "3.8.0"
     c3mediaVersion = "1.1.0"
     crashlyticsVersion = "2.6.8"
@@ -110,9 +111,9 @@ dependencies {
     implementation "com.android.support:leanback-v17:$supportLibVersion"
 
     // Architecture Components - View Model (+ Lifecycles, LiveData)
-    implementation "android.arch.lifecycle:runtime:$archComponentsVersion"
-    implementation "android.arch.lifecycle:extensions:$archComponentsVersion"
-    kapt "android.arch.lifecycle:compiler:$archComponentsVersion"
+    implementation "android.arch.lifecycle:runtime:$archComponentsLifecycleVersion"
+    implementation "android.arch.lifecycle:extensions:$archComponentsLifecycleVersion"
+    kapt "android.arch.lifecycle:compiler:$archComponentsLifecycleVersion"
 
     // Architecture Components - Room
     implementation "android.arch.persistence.room:runtime:$archComponentsVersion"
@@ -170,9 +171,6 @@ dependencies {
 
     // Android Instrumented Test
     androidTestImplementation "com.android.support.test:runner:$runnerVersion"
-
-    // Arch Component
-    androidTestImplementation "android.arch.core:core-testing:$archComponentsVersion"
 
 }
 
