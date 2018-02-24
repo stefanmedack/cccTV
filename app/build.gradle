@@ -27,7 +27,7 @@ ext {
     timberVersion = "4.5.1"
 
     // Test dependencies
-    kluentVersion = "1.29"
+    kluentVersion = "1.34"
     junitVersion = "4.12"
     runnerVersion = '1.0.1'
     rulesVersion = '1.0.1'
