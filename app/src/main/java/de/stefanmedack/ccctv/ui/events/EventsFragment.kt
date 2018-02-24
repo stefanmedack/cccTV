@@ -14,9 +14,11 @@ import android.util.DisplayMetrics
 import android.view.View
 import android.widget.Toast
 import com.bumptech.glide.Glide
-import com.bumptech.glide.request.animation.GlideAnimation
+import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.SimpleTarget
+import com.bumptech.glide.request.transition.Transition
 import dagger.android.support.AndroidSupportInjection
+import de.stefanmedack.ccctv.R
 import de.stefanmedack.ccctv.model.Resource
 import de.stefanmedack.ccctv.persistence.entities.Event
 import de.stefanmedack.ccctv.ui.cards.EventCardPresenter
@@ -113,13 +115,15 @@ class EventsFragment : VerticalGridSupportFragment() {
 
             val logoUrl = arguments?.getString(CONFERENCE_LOGO_URL)
             if (logoUrl != null) {
-                Glide.with(activityContext)
-                        .load(logoUrl)
+                Glide.with(this)
                         .asBitmap()
-                        .override(width, height)
-                        .fitCenter()
-                        .into<SimpleTarget<Bitmap>>(object : SimpleTarget<Bitmap>(width, height) {
-                            override fun onResourceReady(resource: Bitmap, glideAnimation: GlideAnimation<in Bitmap>) {
+                        .load(logoUrl)
+                        .apply(RequestOptions()
+                                .error(R.drawable.voctocat)
+                                .centerCrop()
+                        )
+                        .into(object : SimpleTarget<Bitmap>(width, height) {
+                            override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
                                 backgroundManager?.setBitmap(darkenBitMap(resource))
                             }
                         })

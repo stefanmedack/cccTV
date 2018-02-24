@@ -10,24 +10,24 @@ apply plugin: 'com.google.gms.oss.licenses.plugin'
 
 ext {
     archComponentsVersion = "1.0.0"
+    archComponentsLifecycleVersion = "1.1.0"
     assertjVersion = "3.8.0"
-    c3mediaVersion = "2.0.0-SNAPSHOT"
-    crashlyticsVersion = "2.6.8"
-    daggerVersion = "2.11"
-    exoplayerVersion = "r2.5.3"
-    glideVersion = "3.8.0"
+    c3mediaVersion = "1.1.0"
+    crashlyticsVersion = "2.9.0"
+    daggerVersion = "2.14.1"
+    exoplayerVersion = "2.7.0"
+    glideVersion = "4.6.1"
     gsonVersion = "2.8.2"
-    paperParcelVersion = "2.0.4"
     playServicesVersion = "11.4.0"
-    rxAndroidVersion = "2.0.1"
-    rxBindingVersion = "2.0.0"
-    rxJavaVersion = "2.1.4"
-    rxKotlinVersion = "2.1.0"
+    rxAndroidVersion = "2.0.2"
+    rxBindingVersion = "2.1.1"
+    rxJavaVersion = "2.1.10"
+    rxKotlinVersion = "2.2.0"
     supportLibVersion = "27.0.2"
-    timberVersion = "4.5.1"
+    timberVersion = "4.6.1"
 
     // Test dependencies
-    kluentVersion = "1.29"
+    kluentVersion = "1.34"
     junitVersion = "4.12"
     runnerVersion = '1.0.1'
     rulesVersion = '1.0.1'
@@ -41,8 +41,8 @@ android {
         applicationId "de.stefanmedack.ccctv"
         minSdkVersion 21
         targetSdkVersion 27
-        versionCode 11
-        versionName "2.2.0"
+        versionCode 12
+        versionName "2.3.0"
         resConfigs "en", "de"
         multiDexEnabled true
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -110,9 +110,9 @@ dependencies {
     implementation "com.android.support:leanback-v17:$supportLibVersion"
 
     // Architecture Components - View Model (+ Lifecycles, LiveData)
-    implementation "android.arch.lifecycle:runtime:$archComponentsVersion"
-    implementation "android.arch.lifecycle:extensions:$archComponentsVersion"
-    kapt "android.arch.lifecycle:compiler:$archComponentsVersion"
+    implementation "android.arch.lifecycle:runtime:$archComponentsLifecycleVersion"
+    implementation "android.arch.lifecycle:extensions:$archComponentsLifecycleVersion"
+    kapt "android.arch.lifecycle:compiler:$archComponentsLifecycleVersion"
 
     // Architecture Components - Room
     implementation "android.arch.persistence.room:runtime:$archComponentsVersion"
@@ -127,9 +127,7 @@ dependencies {
     kapt "com.google.dagger:dagger-compiler:$daggerVersion"
 
     // c3media library
-    implementation "com.github.stefanmedack:c3media-base:adds_eventLastReleasedAt-SNAPSHOT"
-    // TODO change c3media-base to latest release, when it is stable again
-//    implementation "info.metadude.kotlin.library.c3media:c3media-rx-java-2:$c3mediaVersion"
+    implementation "info.metadude.kotlin.library.c3media:c3media-rx-java-2:$c3mediaVersion"
     // c3media streaming
     implementation "com.github.johnjohndoe:Brockman:1886e90a92029ceba978e3326202383c63ed8efd"
 
@@ -155,11 +153,6 @@ dependencies {
         transitive = true
     }
 
-    // Paper Parcel
-    implementation "nz.bradcampbell:paperparcel:$paperParcelVersion"
-    implementation "nz.bradcampbell:paperparcel-kotlin:$paperParcelVersion" // Optional
-    kapt "nz.bradcampbell:paperparcel-compiler:$paperParcelVersion"
-
     // Gson
     implementation "com.google.code.gson:gson:$gsonVersion"
 
@@ -172,9 +165,6 @@ dependencies {
 
     // Android Instrumented Test
     androidTestImplementation "com.android.support.test:runner:$runnerVersion"
-
-    // Arch Component
-    androidTestImplementation "android.arch.core:core-testing:$archComponentsVersion"
 
 }
 

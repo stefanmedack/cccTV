@@ -25,6 +25,7 @@ import de.stefanmedack.ccctv.R
  * This implementation extends the [PlayerAdapter] with a [SimpleExoPlayer].
  */
 class StreamingPlayerAdapter(context: Context) : PlayerAdapter(), Player.EventListener {
+
     var context: Context
         internal set
     internal val mPlayer: SimpleExoPlayer
@@ -41,7 +42,8 @@ class StreamingPlayerAdapter(context: Context) : PlayerAdapter(), Player.EventLi
     internal var mMediaSourceUri: Uri? = null
     internal var mHasDisplay: Boolean = false
     internal var mBufferingStart: Boolean = false
-    @StreamType var audioStreamType: Int = 0
+    @StreamType
+    var audioStreamType: Int = 0
 
     init {
         this.context = context
@@ -207,16 +209,16 @@ class StreamingPlayerAdapter(context: Context) : PlayerAdapter(), Player.EventLi
 
 
         // HLS does not seem to work currently
-//        return HlsMediaSource(
-//                uri,
-//                DefaultHttpDataSourceFactory(
-//                        userAgent,
-//                        null,
-//                        DefaultHttpDataSource.DEFAULT_CONNECT_TIMEOUT_MILLIS,
-//                        DefaultHttpDataSource.DEFAULT_READ_TIMEOUT_MILLIS,
-//                        true),
-//                null,
-//                null)
+        //        return HlsMediaSource(
+        //                uri,
+        //                DefaultHttpDataSourceFactory(
+        //                        userAgent,
+        //                        null,
+        //                        DefaultHttpDataSource.DEFAULT_CONNECT_TIMEOUT_MILLIS,
+        //                        DefaultHttpDataSource.DEFAULT_READ_TIMEOUT_MILLIS,
+        //                        true),
+        //                null,
+        //                null)
 
     }
 
@@ -293,11 +295,15 @@ class StreamingPlayerAdapter(context: Context) : PlayerAdapter(), Player.EventLi
 
     override fun onLoadingChanged(isLoading: Boolean) {}
 
-    override fun onPositionDiscontinuity() {}
+    override fun onPositionDiscontinuity(reason: Int) {}
 
-    override fun onTimelineChanged(timeline: Timeline?, manifest: Any?) {}
+    override fun onTimelineChanged(timeline: Timeline?, manifest: Any?, reason: Int) {}
 
     override fun onPlaybackParametersChanged(playbackParameters: PlaybackParameters?) {}
 
     override fun onRepeatModeChanged(repeatMode: Int) {}
+
+    override fun onSeekProcessed() {}
+
+    override fun onShuffleModeEnabledChanged(shuffleModeEnabled: Boolean) {}
 }

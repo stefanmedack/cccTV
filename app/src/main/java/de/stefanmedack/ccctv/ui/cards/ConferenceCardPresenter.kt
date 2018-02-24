@@ -6,6 +6,7 @@ import android.support.v4.content.ContextCompat
 import android.support.v7.view.ContextThemeWrapper
 import android.view.ViewGroup
 import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
 import de.stefanmedack.ccctv.R
 import de.stefanmedack.ccctv.persistence.entities.Conference
 import kotlin.properties.Delegates
@@ -34,13 +35,18 @@ class ConferenceCardPresenter : Presenter() {
 
     override fun onBindViewHolder(viewHolder: Presenter.ViewHolder, item: Any) {
         if (item is Conference) {
+            val width = viewHolder.view.resources.getDimensionPixelSize(R.dimen.grid_card_width)
+            val height = viewHolder.view.resources.getDimensionPixelSize(R.dimen.grid_card_height)
             (viewHolder.view as ImageCardView).let {
                 it.titleText = item.title
                 it.contentText = item.acronym
-                Glide.with(viewHolder.view.context)
+                Glide.with(viewHolder.view)
                         .load(item.logoUrl)
-                        .fitCenter() // TODO check why fitCenter does not work
-                        .error(R.drawable.voctocat)
+                        .apply(RequestOptions()
+                                .error(R.drawable.voctocat)
+                                .override(width, height)
+                                .centerInside()
+                        )
                         .into(it.mainImageView)
             }
         }

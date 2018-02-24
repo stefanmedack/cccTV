@@ -6,6 +6,7 @@ import de.stefanmedack.ccctv.persistence.entities.Event
 import de.stefanmedack.ccctv.persistence.entities.LanguageList
 import info.metadude.kotlin.library.c3media.models.AspectRatio
 import info.metadude.kotlin.library.c3media.models.Language
+import info.metadude.kotlin.library.c3media.models.Metadata
 import info.metadude.kotlin.library.c3media.models.MimeType
 import info.metadude.kotlin.library.c3media.models.Recording
 import org.threeten.bp.LocalDate
@@ -57,7 +58,7 @@ val fullEventEntity = Event(
         viewCount = 8,
         promoted = true,
         tags = listOf("33c3", "fnord"),
-//        metadata = Metadata(listOf(0, 8, 15), 42), // TODO fix parsing of related events
+        metadata = Metadata(mapOf("0" to 8, "15" to 9), 42),
         releaseDate = LocalDate.now(),
         date = OffsetDateTime.now(),
         updatedAt = OffsetDateTime.now()

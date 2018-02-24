@@ -6,6 +6,7 @@ import android.support.v4.content.ContextCompat
 import android.support.v7.view.ContextThemeWrapper
 import android.view.ViewGroup
 import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
 import de.stefanmedack.ccctv.R
 import de.stefanmedack.ccctv.persistence.entities.Event
 import de.stefanmedack.ccctv.util.stripHtml
@@ -38,10 +39,12 @@ class EventCardPresenter : Presenter() {
             (viewHolder.view as ImageCardView).let {
                 it.titleText = item.title.stripHtml()
                 it.contentText = item.description.stripHtml()
-                Glide.with(viewHolder.view.context)
+                Glide.with(viewHolder.view)
                         .load(item.thumbUrl)
-                        .centerCrop()
-                        .error(R.drawable.voctocat)
+                        .apply(RequestOptions()
+                                .error(R.drawable.voctocat)
+                                .centerCrop()
+                        )
                         .into(it.mainImageView)
             }
         }
