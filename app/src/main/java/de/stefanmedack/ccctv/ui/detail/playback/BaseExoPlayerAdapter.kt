@@ -228,11 +228,15 @@ open class BaseExoPlayerAdapter(private val context: Context) : PlayerAdapter(),
 
     override fun onLoadingChanged(isLoading: Boolean) {}
 
-    override fun onPositionDiscontinuity() {}
+    override fun onPositionDiscontinuity(reason: Int) {}
 
-    override fun onTimelineChanged(timeline: Timeline?, manifest: Any?) {}
+    override fun onTimelineChanged(timeline: Timeline?, manifest: Any?, reason: Int) {}
 
     override fun onPlaybackParametersChanged(playbackParameters: PlaybackParameters?) {}
 
     override fun onRepeatModeChanged(repeatMode: Int) {}
+
+    override fun onSeekProcessed() {}
+
+    override fun onShuffleModeEnabledChanged(shuffleModeEnabled: Boolean) {}
 }

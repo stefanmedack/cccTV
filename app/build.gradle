@@ -15,7 +15,7 @@ ext {
     c3mediaVersion = "1.1.0"
     crashlyticsVersion = "2.9.0"
     daggerVersion = "2.14.1"
-    exoplayerVersion = "r2.5.3"
+    exoplayerVersion = "2.7.0"
     glideVersion = "3.8.0"
     gsonVersion = "2.8.2"
     paperParcelVersion = "2.0.4"
