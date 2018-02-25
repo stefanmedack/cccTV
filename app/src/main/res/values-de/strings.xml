@@ -5,8 +5,9 @@
     <string name="main_videos_header">Mediathek</string>
     <string name="main_more_header">Weiteres</string>
     <string name="main_about_app">Über cccTV</string>
-    <string name="action_watch">Anschauen</string>
-    <string name="action_bookmark">Merken</string>
+    <string name="action_watch">Ansehen</string>
+    <string name="action_add_bookmark">Zur Watchlist hinzufügen</string>
+    <string name="action_remove_bookmark">Von Watchlist entfernen</string>
     <string name="action_show_speaker">Vortragende</string>
     <string name="action_show_related">Ähnliches</string>
     <string name="header_speaker">Vortragende</string>

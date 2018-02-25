@@ -22,11 +22,9 @@ class SearchViewModel @Inject constructor(
                     Observable.just(SearchResultUiModel(showResults = false))
             }
 
-    private fun loadSearchResult(searchTerm: String): Observable<SearchResultUiModel>? {
-        return c3MediaService
-                .searchEvents(searchTerm)
-                .applySchedulers()
-                .map { SearchResultUiModel(searchTerm, it.events.mapNotNull { it.toEntity(-1) }) }
-                .toObservable()
-    }
+    private fun loadSearchResult(searchTerm: String): Observable<SearchResultUiModel>? = c3MediaService
+            .searchEvents(searchTerm)
+            .applySchedulers()
+            .map { SearchResultUiModel(searchTerm, it.events.mapNotNull { it.toEntity(-1) }) }
+            .toObservable()
 }
