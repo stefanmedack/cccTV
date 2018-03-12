@@ -2,7 +2,6 @@ package de.stefanmedack.ccctv.persistence
 
 import android.database.sqlite.SQLiteException
 import android.support.test.runner.AndroidJUnit4
-import de.stefanmedack.ccctv.minimalBookmarkEntity
 import de.stefanmedack.ccctv.minimalEventEntity
 import de.stefanmedack.ccctv.persistence.entities.Bookmark
 import org.amshove.kluent.shouldBeInstanceOf
@@ -29,9 +28,9 @@ class BookmarkDaoTest : BaseDbTest() {
     }
 
     @Test
-    fun insert_single_bookmark_without_matching_event_throws_exception() {
+    fun insert_bookmark_without_matching_event_throws_exception() {
         val exception = try {
-            db.bookmarkDao().insert(minimalBookmarkEntity)
+            db.bookmarkDao().insert(Bookmark(42))
         } catch (ex: SQLiteException) {
             ex
         }
@@ -41,7 +40,7 @@ class BookmarkDaoTest : BaseDbTest() {
     }
 
     @Test
-    fun insert_and_retrieve_minimal_bookmarked_event() {
+    fun insert_and_retrieve_bookmarked_event() {
         db.bookmarkDao().insert(Bookmark(8))
 
         val bookmarkedEvents = db.bookmarkDao().getBookmarkedEvents().getSingleTestResult()
@@ -94,12 +93,18 @@ class BookmarkDaoTest : BaseDbTest() {
     }
 
     @Test
-    fun remove_bookmark() {
+    fun delete_bookmark_removes_existing_bookmarks() {
         db.bookmarkDao().insert(Bookmark(8))
         db.bookmarkDao().isBookmarked(8).getSingleTestResult() shouldEqual true
 
         db.bookmarkDao().delete(Bookmark(8))
         db.bookmarkDao().isBookmarked(8).getSingleTestResult() shouldEqual false
+    }
+
+    @Test
+    fun delete_bookmark_without_matching_event_does_nothing() {
+        db.bookmarkDao().delete(Bookmark(42))
+        db.bookmarkDao().delete(Bookmark(43))
     }
 
     @Test

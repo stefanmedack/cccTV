@@ -1,7 +1,6 @@
 package de.stefanmedack.ccctv
 
 import de.stefanmedack.ccctv.model.ConferenceGroup
-import de.stefanmedack.ccctv.persistence.entities.Bookmark
 import de.stefanmedack.ccctv.persistence.entities.Conference
 import de.stefanmedack.ccctv.persistence.entities.Event
 import de.stefanmedack.ccctv.persistence.entities.LanguageList
@@ -90,8 +89,4 @@ val minimalRecording = Recording(
         highQuality = true,
         html5 = true,
         mimeType = MimeType.MP4
-)
-
-val minimalBookmarkEntity = Bookmark(
-        eventId = 43
 )
