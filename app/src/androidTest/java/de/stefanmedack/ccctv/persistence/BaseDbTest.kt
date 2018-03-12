@@ -4,6 +4,8 @@ import android.arch.core.executor.testing.InstantTaskExecutorRule
 import android.arch.persistence.room.Room
 import android.support.test.InstrumentationRegistry
 import de.stefanmedack.ccctv.minimalConferenceEntity
+import io.reactivex.Flowable
+import io.reactivex.Single
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
@@ -30,5 +32,11 @@ abstract class BaseDbTest {
     fun initDbWithConference(conferenceId : Int) {
         db.conferenceDao().insert(minimalConferenceEntity.copy(id = conferenceId))
     }
+
+    fun <T> Flowable<T>.getSingleTestResult() : T =
+            this.test().values()[0]
+
+    fun <T> Single<T>.getSingleTestResult() : T =
+            this.test().values()[0]
 
 }

@@ -165,6 +165,10 @@ dependencies {
 
     // Android Instrumented Test
     androidTestImplementation "com.android.support.test:runner:$runnerVersion"
+    androidTestImplementation "org.amshove.kluent:kluent-android:$kluentVersion"
+
+    // Arch Component
+    androidTestImplementation "android.arch.core:core-testing:$archComponentsVersion"
 
 }
 

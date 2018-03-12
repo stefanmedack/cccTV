@@ -16,10 +16,11 @@ class DatabaseModule {
     @Provides
     @Singleton
     fun provideDb(@ApplicationContext context: Context): C3Db = Room
-            .databaseBuilder(context, C3Db::class.java, "ccc.db")
-            .fallbackToDestructiveMigration()
+            //            .databaseBuilder(context, C3Db::class.java, "ccc.db")
+            //            .fallbackToDestructiveMigration()
+            // TODO switch back
+            .inMemoryDatabaseBuilder(context, C3Db::class.java)
             .build()
-    //            = Room.inMemoryDatabaseBuilder(context, C3Db::class.java).build()
 
     @Provides
     @Singleton
