@@ -1,6 +1,7 @@
 package de.stefanmedack.ccctv
 
 import de.stefanmedack.ccctv.model.ConferenceGroup
+import de.stefanmedack.ccctv.persistence.entities.Bookmark
 import de.stefanmedack.ccctv.persistence.entities.Conference
 import de.stefanmedack.ccctv.persistence.entities.Event
 import de.stefanmedack.ccctv.persistence.entities.LanguageList
@@ -78,10 +79,10 @@ val minimalEvent = EventRemote(
 )
 
 val minimalRecording = Recording(
-        id = 43,
+        id = 44,
         url = "url",
         conferenceUrl = "conferenceUrl",
-        eventId = 42,
+        eventId = 43,
         eventUrl = "eventUrl",
         filename = "filename",
         folder = "folder",
@@ -89,4 +90,8 @@ val minimalRecording = Recording(
         highQuality = true,
         html5 = true,
         mimeType = MimeType.MP4
+)
+
+val minimalBookmarkEntity = Bookmark(
+        eventId = 43
 )
