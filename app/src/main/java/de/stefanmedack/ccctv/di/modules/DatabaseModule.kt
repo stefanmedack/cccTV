@@ -6,6 +6,7 @@ import dagger.Module
 import dagger.Provides
 import de.stefanmedack.ccctv.di.Scopes.ApplicationContext
 import de.stefanmedack.ccctv.persistence.C3Db
+import de.stefanmedack.ccctv.persistence.daos.BookmarkDao
 import de.stefanmedack.ccctv.persistence.daos.ConferenceDao
 import de.stefanmedack.ccctv.persistence.daos.EventDao
 import javax.inject.Singleton
@@ -21,6 +22,10 @@ class DatabaseModule {
             // TODO switch back
             .inMemoryDatabaseBuilder(context, C3Db::class.java)
             .build()
+
+    @Provides
+    @Singleton
+    fun provideBookmarkDao(db: C3Db): BookmarkDao = db.bookmarkDao()
 
     @Provides
     @Singleton

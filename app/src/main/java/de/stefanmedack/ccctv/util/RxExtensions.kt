@@ -8,6 +8,8 @@ fun <T> Single<T>.applySchedulers(): Single<T> = subscribeOn(Schedulers.io()).ob
 
 fun <T> Flowable<T>.applySchedulers(): Flowable<T> = subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
 
+fun <T> Observable<T>.applySchedulers(): Observable<T> = subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+
 fun Completable.applySchedulers(): Completable = subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
 
 fun <T> createFlowable(strategy: BackpressureStrategy, onSubscribe: (Emitter<T>) -> Unit): Flowable<T>
