@@ -24,19 +24,19 @@ import org.mockito.MockitoAnnotations
 class ConferenceRepositoryTest {
 
     @Mock
-    internal lateinit var mediaService: RxC3MediaService
+    private lateinit var mediaService: RxC3MediaService
 
     @Mock
-    internal lateinit var conferenceDao: ConferenceDao
+    private lateinit var conferenceDao: ConferenceDao
 
     @Mock
-    internal lateinit var eventDao: EventDao
+    private lateinit var eventDao: EventDao
 
     @Mock
-    internal lateinit var preferences: C3SharedPreferences
+    private lateinit var preferences: C3SharedPreferences
 
     @InjectMocks
-    internal lateinit var repositoy: ConferenceRepository
+    private lateinit var repositoy: ConferenceRepository
 
     @Before
     fun setup() {

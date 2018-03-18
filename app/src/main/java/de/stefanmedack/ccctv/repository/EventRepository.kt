@@ -18,8 +18,8 @@ import info.metadude.kotlin.library.c3media.models.Event as EventRemote
 @Singleton
 class EventRepository @Inject constructor(
         private val mediaService: RxC3MediaService,
-        private val bookmarkDao: BookmarkDao,
-        private val eventDao: EventDao
+        private val eventDao: EventDao,
+        private val bookmarkDao: BookmarkDao
 ) {
     fun getEvent(id: Int): Flowable<Event> = eventDao.getEventById(id)
             .onErrorResumeNext(
@@ -39,13 +39,13 @@ class EventRepository @Inject constructor(
 
     fun isBookmarked(eventId: Int): Flowable<Boolean> = bookmarkDao.isBookmarked(eventId)
 
-    fun changeBookmarkState(eventId: Int, isBookmarked: Boolean): Observable<Boolean> =
+    fun changeBookmarkState(eventId: Int, shouldBeBookmarked: Boolean): Observable<Boolean> =
             Observable.create<Boolean> { emitter ->
-                if (isBookmarked) {
-                    bookmarkDao.delete(Bookmark(eventId))
+                if (shouldBeBookmarked) {
+                    bookmarkDao.insert(Bookmark(eventId))
                     emitter.onNext(true)
                 } else {
-                    bookmarkDao.insert(Bookmark(eventId))
+                    bookmarkDao.delete(Bookmark(eventId))
                     emitter.onNext(true)
                 }
             }.applySchedulers()

@@ -3,6 +3,7 @@ package de.stefanmedack.ccctv.persistence
 import android.database.sqlite.SQLiteException
 import android.support.test.runner.AndroidJUnit4
 import de.stefanmedack.ccctv.fullEventEntity
+import de.stefanmedack.ccctv.getSingleTestResult
 import de.stefanmedack.ccctv.minimalEventEntity
 import org.amshove.kluent.shouldBeInstanceOf
 import org.amshove.kluent.shouldEqual
@@ -16,7 +17,7 @@ class EventDaoTest : BaseDbTest() {
     @Test
     fun get_events_from_empty_table_returns_empty_list() {
 
-        val loadedEvents = db.eventDao().getEvents().getSingleTestResult()
+        val loadedEvents = eventDao.getEvents().getSingleTestResult()
 
         loadedEvents shouldEqual listOf()
     }
@@ -24,7 +25,7 @@ class EventDaoTest : BaseDbTest() {
     @Test
     fun insert_single_event_without_matching_conference_throws_exception() {
         val exception = try {
-            db.eventDao().insert(minimalEventEntity)
+            eventDao.insert(minimalEventEntity)
         } catch (ex: SQLiteException) {
             ex
         }
@@ -37,9 +38,9 @@ class EventDaoTest : BaseDbTest() {
     fun insert_and_retrieve_minimal_event() {
         initDbWithConference(3)
         val event = minimalEventEntity.copy(conferenceId = 3)
-        db.eventDao().insert(event)
+        eventDao.insert(event)
 
-        val loadedData = db.eventDao().getEventById(event.id).getSingleTestResult()
+        val loadedData = eventDao.getEventById(event.id).getSingleTestResult()
 
         loadedData shouldEqual event
     }
@@ -48,9 +49,9 @@ class EventDaoTest : BaseDbTest() {
     fun insert_and_retrieve_full_event() {
         initDbWithConference(3)
         val event = fullEventEntity.copy(conferenceId = 3)
-        db.eventDao().insert(event)
+        eventDao.insert(event)
 
-        val loadedData = db.eventDao().getEventById(event.id).getSingleTestResult()
+        val loadedData = eventDao.getEventById(event.id).getSingleTestResult()
 
         loadedData shouldEqual event
     }
@@ -62,9 +63,9 @@ class EventDaoTest : BaseDbTest() {
                 minimalEventEntity.copy(id = 1, conferenceId = 3),
                 fullEventEntity.copy(id = 2, conferenceId = 3)
         )
-        db.eventDao().insertAll(events)
+        eventDao.insertAll(events)
 
-        val loadedData = db.eventDao().getEvents().getSingleTestResult()
+        val loadedData = eventDao.getEvents().getSingleTestResult()
 
         loadedData shouldEqual events
     }
@@ -78,9 +79,9 @@ class EventDaoTest : BaseDbTest() {
                 minimalEventEntity.copy(id = 3, conferenceId = 3),
                 fullEventEntity.copy(id = 4, conferenceId = 3)
         )
-        db.eventDao().insertAll(events)
+        eventDao.insertAll(events)
 
-        val loadedData = db.eventDao().getEvents(listOf(1, 2, 3)).getSingleTestResult()
+        val loadedData = eventDao.getEvents(listOf(1, 2, 3)).getSingleTestResult()
 
         loadedData.size shouldEqual 3
         loadedData[0] shouldEqual events[0]
@@ -92,11 +93,11 @@ class EventDaoTest : BaseDbTest() {
     fun insert_an_event_with_same_id_should_override_old_event() {
         initDbWithConference(3)
         val oldEvent = minimalEventEntity.copy(conferenceId = 3)
-        db.eventDao().insert(oldEvent)
+        eventDao.insert(oldEvent)
         val newEvent = oldEvent.copy(title = "new_title", conferenceId = 3)
-        db.eventDao().insert(newEvent)
+        eventDao.insert(newEvent)
 
-        val loadedData = db.eventDao().getEvents().getSingleTestResult()
+        val loadedData = eventDao.getEvents().getSingleTestResult()
 
         loadedData[0] shouldNotEqual oldEvent
         loadedData[0] shouldEqual newEvent

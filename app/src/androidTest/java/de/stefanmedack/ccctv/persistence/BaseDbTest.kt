@@ -5,8 +5,6 @@ import android.arch.persistence.room.Room
 import android.support.test.InstrumentationRegistry
 import de.stefanmedack.ccctv.minimalConferenceEntity
 import de.stefanmedack.ccctv.minimalEventEntity
-import io.reactivex.Flowable
-import io.reactivex.Single
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
@@ -30,19 +28,17 @@ abstract class BaseDbTest {
         db.close()
     }
 
+    val bookmarkDao get() = db.bookmarkDao()
+    val conferenceDao get() = db.conferenceDao()
+    val eventDao get() = db.eventDao()
+
     fun initDbWithConference(conferenceId: Int) {
-        db.conferenceDao().insert(minimalConferenceEntity.copy(id = conferenceId))
+        conferenceDao.insert(minimalConferenceEntity.copy(id = conferenceId))
     }
 
     fun initDbWithConferenceAndEvent(conferenceId: Int, eventId: Int) {
-        db.conferenceDao().insert(minimalConferenceEntity.copy(id = conferenceId))
-        db.eventDao().insert(minimalEventEntity.copy(id = eventId, conferenceId = conferenceId))
+        conferenceDao.insert(minimalConferenceEntity.copy(id = conferenceId))
+        eventDao.insert(minimalEventEntity.copy(id = eventId, conferenceId = conferenceId))
     }
-
-    fun <T> Flowable<T>.getSingleTestResult(): T =
-            this.test().values()[0]
-
-    fun <T> Single<T>.getSingleTestResult(): T =
-            this.test().values()[0]
 
 }

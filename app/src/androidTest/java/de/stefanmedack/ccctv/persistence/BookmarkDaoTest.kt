@@ -2,6 +2,7 @@ package de.stefanmedack.ccctv.persistence
 
 import android.database.sqlite.SQLiteException
 import android.support.test.runner.AndroidJUnit4
+import de.stefanmedack.ccctv.getSingleTestResult
 import de.stefanmedack.ccctv.minimalEventEntity
 import de.stefanmedack.ccctv.persistence.entities.Bookmark
 import org.amshove.kluent.shouldBeInstanceOf
@@ -22,7 +23,7 @@ class BookmarkDaoTest : BaseDbTest() {
     @Test
     fun get_bookmarked_events_from_empty_table_returns_empty_list() {
 
-        val emptyList = db.bookmarkDao().getBookmarkedEvents().getSingleTestResult()
+        val emptyList = bookmarkDao.getBookmarkedEvents().getSingleTestResult()
 
         emptyList shouldEqual listOf()
     }
@@ -30,7 +31,7 @@ class BookmarkDaoTest : BaseDbTest() {
     @Test
     fun insert_bookmark_without_matching_event_throws_exception() {
         val exception = try {
-            db.bookmarkDao().insert(Bookmark(42))
+            bookmarkDao.insert(Bookmark(42))
         } catch (ex: SQLiteException) {
             ex
         }
@@ -41,9 +42,9 @@ class BookmarkDaoTest : BaseDbTest() {
 
     @Test
     fun insert_and_retrieve_bookmarked_event() {
-        db.bookmarkDao().insert(Bookmark(8))
+        bookmarkDao.insert(Bookmark(8))
 
-        val bookmarkedEvents = db.bookmarkDao().getBookmarkedEvents().getSingleTestResult()
+        val bookmarkedEvents = bookmarkDao.getBookmarkedEvents().getSingleTestResult()
 
         bookmarkedEvents.size shouldEqual 1
         bookmarkedEvents.first().id shouldEqual 8
@@ -51,10 +52,10 @@ class BookmarkDaoTest : BaseDbTest() {
 
     @Test
     fun loading_bookmarked_events_does_not_load_not_bookmarked_events() {
-        db.eventDao().insert(minimalEventEntity.copy(conferenceId = 3, id = 42))
-        db.bookmarkDao().insert(Bookmark(42))
+        eventDao.insert(minimalEventEntity.copy(conferenceId = 3, id = 42))
+        bookmarkDao.insert(Bookmark(42))
 
-        val bookmarkedEvents = db.bookmarkDao().getBookmarkedEvents().getSingleTestResult()
+        val bookmarkedEvents = bookmarkDao.getBookmarkedEvents().getSingleTestResult()
 
         bookmarkedEvents.size shouldEqual 1
         bookmarkedEvents.first().id shouldEqual 42
@@ -63,26 +64,26 @@ class BookmarkDaoTest : BaseDbTest() {
     @Test
     fun not_bookmarked_events_are_not_bookmarked() {
 
-        val isBookmarked = db.bookmarkDao().isBookmarked(8).getSingleTestResult()
+        val isBookmarked = bookmarkDao.isBookmarked(8).getSingleTestResult()
 
         isBookmarked shouldEqual false
     }
 
     @Test
     fun bookmarked_events_are_bookmarked() {
-        db.bookmarkDao().insert(Bookmark(8))
+        bookmarkDao.insert(Bookmark(8))
 
-        val isBookmarked = db.bookmarkDao().isBookmarked(8).getSingleTestResult()
+        val isBookmarked = bookmarkDao.isBookmarked(8).getSingleTestResult()
 
         isBookmarked shouldEqual true
     }
 
     @Test
     fun changing_bookmarked_state_should_emit_events() {
-        val isBookmarkedStream = db.bookmarkDao().isBookmarked(8).test()
+        val isBookmarkedStream = bookmarkDao.isBookmarked(8).test()
 
-        db.bookmarkDao().insert(Bookmark(8))
-        db.bookmarkDao().delete(Bookmark(8))
+        bookmarkDao.insert(Bookmark(8))
+        bookmarkDao.delete(Bookmark(8))
 
         isBookmarkedStream.values().let { isBookmarkedValues ->
             isBookmarkedValues.size shouldEqual 3
@@ -94,26 +95,26 @@ class BookmarkDaoTest : BaseDbTest() {
 
     @Test
     fun delete_bookmark_removes_existing_bookmarks() {
-        db.bookmarkDao().insert(Bookmark(8))
-        db.bookmarkDao().isBookmarked(8).getSingleTestResult() shouldEqual true
+        bookmarkDao.insert(Bookmark(8))
+        bookmarkDao.isBookmarked(8).getSingleTestResult() shouldEqual true
 
-        db.bookmarkDao().delete(Bookmark(8))
-        db.bookmarkDao().isBookmarked(8).getSingleTestResult() shouldEqual false
+        bookmarkDao.delete(Bookmark(8))
+        bookmarkDao.isBookmarked(8).getSingleTestResult() shouldEqual false
     }
 
     @Test
     fun delete_bookmark_without_matching_event_does_nothing() {
-        db.bookmarkDao().delete(Bookmark(42))
-        db.bookmarkDao().delete(Bookmark(43))
+        bookmarkDao.delete(Bookmark(42))
+        bookmarkDao.delete(Bookmark(43))
     }
 
     @Test
     fun updating_a_bookmarked_event_does_not_change_bookmark_state() {
         val updatedEvent = minimalEventEntity.copy(conferenceId = 3, id = 8, title = "updated")
-        db.bookmarkDao().insert(Bookmark(8))
-        db.eventDao().insert(updatedEvent)
+        bookmarkDao.insert(Bookmark(8))
+        eventDao.insert(updatedEvent)
 
-        val bookmarkedEvents = db.bookmarkDao().getBookmarkedEvents().getSingleTestResult()
+        val bookmarkedEvents = bookmarkDao.getBookmarkedEvents().getSingleTestResult()
 
         bookmarkedEvents.size shouldEqual 1
         bookmarkedEvents.first() shouldEqual updatedEvent

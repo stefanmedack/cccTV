@@ -2,6 +2,7 @@ package de.stefanmedack.ccctv.persistence
 
 import android.support.test.runner.AndroidJUnit4
 import de.stefanmedack.ccctv.fullConferenceEntity
+import de.stefanmedack.ccctv.getSingleTestResult
 import de.stefanmedack.ccctv.minimalConferenceEntity
 import de.stefanmedack.ccctv.minimalEventEntity
 import de.stefanmedack.ccctv.model.ConferenceGroup
@@ -17,25 +18,25 @@ class ConferenceDaoTest : BaseDbTest() {
     @Test
     fun get_conferences_from_empty_table_returns_empty_list() {
 
-        val loadedConference = db.conferenceDao().getConferences().getSingleTestResult()
+        val loadedConference = conferenceDao.getConferences().getSingleTestResult()
 
         loadedConference shouldEqual listOf()
     }
 
     @Test
     fun insert_and_retrieve_minimal_conference() {
-        db.conferenceDao().insert(minimalConferenceEntity)
+        conferenceDao.insert(minimalConferenceEntity)
 
-        val loadedConference = db.conferenceDao().getConferenceById(minimalConferenceEntity.id).getSingleTestResult()
+        val loadedConference = conferenceDao.getConferenceById(minimalConferenceEntity.id).getSingleTestResult()
 
         loadedConference shouldEqual minimalConferenceEntity
     }
 
     @Test
     fun insert_and_retrieve_full_conference() {
-        db.conferenceDao().insert(fullConferenceEntity)
+        conferenceDao.insert(fullConferenceEntity)
 
-        val loadedConferences = db.conferenceDao().getConferenceById(fullConferenceEntity.id).getSingleTestResult()
+        val loadedConferences = conferenceDao.getConferenceById(fullConferenceEntity.id).getSingleTestResult()
 
         loadedConferences shouldEqual fullConferenceEntity
     }
@@ -46,9 +47,9 @@ class ConferenceDaoTest : BaseDbTest() {
                 minimalConferenceEntity.copy(id = 1),
                 fullConferenceEntity.copy(id = 2)
         )
-        db.conferenceDao().insertAll(conferences)
+        conferenceDao.insertAll(conferences)
 
-        val loadedConferences = db.conferenceDao().getConferences().getSingleTestResult()
+        val loadedConferences = conferenceDao.getConferences().getSingleTestResult()
 
         loadedConferences shouldEqual conferences
     }
@@ -56,12 +57,12 @@ class ConferenceDaoTest : BaseDbTest() {
     @Test
     fun insert_a_conference_with_same_id_should_override_old_conference() {
         val oldConference = minimalConferenceEntity
-        db.conferenceDao().insert(oldConference)
+        conferenceDao.insert(oldConference)
 
         val newConference = oldConference.copy(title = "new_title")
-        db.conferenceDao().insert(newConference)
+        conferenceDao.insert(newConference)
 
-        val loadedConferences = db.conferenceDao().getConferences().getSingleTestResult()
+        val loadedConferences = conferenceDao.getConferences().getSingleTestResult()
 
         loadedConferences[0] shouldNotEqual oldConference
         loadedConferences[0] shouldEqual newConference
@@ -74,8 +75,8 @@ class ConferenceDaoTest : BaseDbTest() {
                 fullConferenceEntity.copy(id = 2, group = ConferenceGroup.OTHER)
         )
 
-        db.conferenceDao().insertAll(conferences)
-        val loadedConferences = db.conferenceDao().getConferences("congress").getSingleTestResult()
+        conferenceDao.insertAll(conferences)
+        val loadedConferences = conferenceDao.getConferences("congress").getSingleTestResult()
 
         loadedConferences.size shouldEqual 1
         loadedConferences[0] shouldEqual conferences[0]
@@ -86,16 +87,16 @@ class ConferenceDaoTest : BaseDbTest() {
     @Test
     fun get_conferences_with_events_from_empty_table_returns_empty_list() {
 
-        val loadedConferences = db.conferenceDao().getConferencesWithEvents().getSingleTestResult()
+        val loadedConferences = conferenceDao.getConferencesWithEvents().getSingleTestResult()
 
         loadedConferences shouldEqual listOf()
     }
 
     @Test
     fun insert_and_retrieve_single_conference_without_event() {
-        db.conferenceDao().insert(minimalConferenceEntity)
+        conferenceDao.insert(minimalConferenceEntity)
 
-        val loadedConferences = db.conferenceDao().getConferencesWithEvents().getSingleTestResult()
+        val loadedConferences = conferenceDao.getConferencesWithEvents().getSingleTestResult()
 
         loadedConferences.size shouldEqual 1
         loadedConferences[0].conference shouldEqual minimalConferenceEntity
@@ -106,10 +107,10 @@ class ConferenceDaoTest : BaseDbTest() {
     fun insert_and_retrieve_multiple_conferences_with_events() {
         val conferences = listOf(minimalConferenceEntity.copy(id = 1), fullConferenceEntity.copy(id = 2))
         val eventForFirstConference = minimalEventEntity.copy(conferenceId = 1)
-        db.conferenceDao().insertAll(conferences)
-        db.eventDao().insert(eventForFirstConference)
+        conferenceDao.insertAll(conferences)
+        eventDao.insert(eventForFirstConference)
 
-        val loadedConferences = db.conferenceDao().getConferencesWithEvents().getSingleTestResult()
+        val loadedConferences = conferenceDao.getConferencesWithEvents().getSingleTestResult()
 
         loadedConferences.size shouldEqual 2
         loadedConferences[0].conference shouldEqual conferences[0]
@@ -132,9 +133,9 @@ class ConferenceDaoTest : BaseDbTest() {
             )
         }
 
-        db.conferenceDao().insertConferencesWithEvents(conferences, listOf(eventForConf1))
+        conferenceDao.insertConferencesWithEvents(conferences, listOf(eventForConf1))
 
-        val loadedConferences = db.conferenceDao().getConferencesWithEvents().getSingleTestResult()
+        val loadedConferences = conferenceDao.getConferencesWithEvents().getSingleTestResult()
 
         loadedConferences shouldEqual conferencesWithEvents
     }
@@ -146,8 +147,8 @@ class ConferenceDaoTest : BaseDbTest() {
                 fullConferenceEntity.copy(id = 2, group = ConferenceGroup.OTHER)
         )
 
-        db.conferenceDao().insertAll(conferences)
-        val loadedConferences = db.conferenceDao().getConferencesWithEvents(ConferenceGroup.CONGRESS.name).getSingleTestResult()
+        conferenceDao.insertAll(conferences)
+        val loadedConferences = conferenceDao.getConferencesWithEvents(ConferenceGroup.CONGRESS.name).getSingleTestResult()
 
         loadedConferences.size shouldEqual 1
         loadedConferences[0].conference shouldEqual conferences[0]
@@ -161,8 +162,8 @@ class ConferenceDaoTest : BaseDbTest() {
                 conferenceNum2
         )
 
-        db.conferenceDao().insertAll(conferences)
-        val loadedConference = db.conferenceDao().getConferenceWithEventsById(2).getSingleTestResult()
+        conferenceDao.insertAll(conferences)
+        val loadedConference = conferenceDao.getConferenceWithEventsById(2).getSingleTestResult()
 
         loadedConference shouldEqual ConferenceWithEvents(conferenceNum2, listOf())
     }
