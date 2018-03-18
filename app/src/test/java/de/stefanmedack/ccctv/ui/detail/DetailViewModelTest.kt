@@ -4,8 +4,8 @@ import com.nhaarman.mockito_kotlin.reset
 import com.nhaarman.mockito_kotlin.verify
 import com.nhaarman.mockito_kotlin.verifyNoMoreInteractions
 import de.stefanmedack.ccctv.repository.EventRepository
+import io.reactivex.Completable
 import io.reactivex.Flowable
-import io.reactivex.Observable
 import io.reactivex.android.plugins.RxAndroidPlugins
 import io.reactivex.schedulers.Schedulers
 import org.amshove.kluent.When
@@ -36,7 +36,7 @@ class DetailViewModelTest {
         val testEventId = 3
         val isBookmarked = false
         When calling repository.isBookmarked(testEventId) itReturns Flowable.just(isBookmarked)
-        When calling repository.changeBookmarkState(testEventId, isBookmarked) itReturns Observable.just(true)
+        When calling repository.changeBookmarkState(testEventId, isBookmarked) itReturns Completable.complete()
         detailViewModel.init(testEventId)
 
         detailViewModel.toggleBookmark()
@@ -49,7 +49,7 @@ class DetailViewModelTest {
         val testEventId = 3
         val isBookmarked = true
         When calling repository.isBookmarked(testEventId) itReturns Flowable.just(isBookmarked)
-        When calling repository.changeBookmarkState(testEventId, isBookmarked) itReturns Observable.just(true)
+        When calling repository.changeBookmarkState(testEventId, isBookmarked) itReturns Completable.complete()
         detailViewModel.init(testEventId)
 
         detailViewModel.toggleBookmark()
@@ -62,7 +62,7 @@ class DetailViewModelTest {
         val testEventId = 3
         val isBookmarked = true
         When calling repository.isBookmarked(testEventId) itReturns Flowable.just(isBookmarked)
-        When calling repository.changeBookmarkState(testEventId, isBookmarked) itReturns Observable.just(true)
+        When calling repository.changeBookmarkState(testEventId, isBookmarked) itReturns Completable.complete()
         detailViewModel.init(testEventId)
         reset(repository)
 

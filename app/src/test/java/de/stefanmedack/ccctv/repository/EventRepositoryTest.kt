@@ -19,6 +19,7 @@ import org.junit.Test
 import org.mockito.InjectMocks
 import org.mockito.Mock
 import org.mockito.MockitoAnnotations
+import java.util.concurrent.TimeUnit
 
 @Suppress("IllegalIdentifier")
 class EventRepositoryTest {
@@ -91,7 +92,7 @@ class EventRepositoryTest {
     fun `bookmarking an event should insert a bookmark into the DAO`() {
         val exampleId = 8
 
-        repositoy.changeBookmarkState(exampleId, shouldBeBookmarked = true).test()
+        repositoy.changeBookmarkState(exampleId, shouldBeBookmarked = true).test().await(100, TimeUnit.MILLISECONDS)
 
         verify(bookmarkDao).insert(Bookmark(exampleId))
     }
@@ -100,7 +101,7 @@ class EventRepositoryTest {
     fun `un-bookmarking an event should delete a bookmark in the DAO`() {
         val exampleId = 8
 
-        repositoy.changeBookmarkState(exampleId, shouldBeBookmarked = false).test()
+        repositoy.changeBookmarkState(exampleId, shouldBeBookmarked = false).test().await(100, TimeUnit.MILLISECONDS)
 
         verify(bookmarkDao).delete(Bookmark(exampleId))
     }

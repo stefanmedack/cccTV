@@ -6,8 +6,8 @@ import de.stefanmedack.ccctv.ui.base.BaseDisposableViewModel
 import de.stefanmedack.ccctv.ui.detail.uiModels.DetailUiModel
 import de.stefanmedack.ccctv.ui.detail.uiModels.SpeakerUiModel
 import de.stefanmedack.ccctv.util.getRelatedEventIdsWeighted
+import io.reactivex.Completable
 import io.reactivex.Flowable
-import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.rxkotlin.withLatestFrom
@@ -30,7 +30,6 @@ class DetailViewModel @Inject constructor(
 
         disposables.add(
                 doToggleBookmark.subscribeBy(
-                        onNext = { Timber.d("DetailViewModel - doToggleBookmark - onNext $it") },
                         onError = { Timber.w("DetailViewModel - doToggleBookmark - onError $it") })
         )
     }
@@ -61,10 +60,12 @@ class DetailViewModel @Inject constructor(
     private val bookmarkClickStream = PublishSubject.create<Int>()
 
     private val doToggleBookmark
-        get() = bookmarkClickStream.withLatestFrom(isBookmarked.toObservable(), { _, t2 -> t2 }).switchMap { updateBookmarkState(it) }
+        get() = bookmarkClickStream
+                .withLatestFrom(isBookmarked.toObservable(), { _, t2 -> t2 })
+                .flatMapCompletable { updateBookmarkState(it) }
 
     private fun getRelatedEvents(event: Event): Flowable<List<Event>> = repository.getEvents(event.getRelatedEventIdsWeighted())
 
-    private fun updateBookmarkState(isBookmarked: Boolean): Observable<Boolean> = repository.changeBookmarkState(eventId, !isBookmarked)
+    private fun updateBookmarkState(isBookmarked: Boolean): Completable = repository.changeBookmarkState(eventId, !isBookmarked)
 
 }
