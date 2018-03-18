@@ -37,6 +37,8 @@ class EventRepository @Inject constructor(
     fun getEventWithRecordings(id: Int): Single<EventRemote> = mediaService.getEvent(id)
             .applySchedulers()
 
+    fun getBookmarkedEvents() : Flowable<List<Event>> = bookmarkDao.getBookmarkedEvents()
+
     fun isBookmarked(eventId: Int): Flowable<Boolean> = bookmarkDao.isBookmarked(eventId)
 
     fun changeBookmarkState(eventId: Int, shouldBeBookmarked: Boolean): Observable<Boolean> =

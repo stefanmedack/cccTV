@@ -8,7 +8,7 @@ import io.reactivex.Flowable
 @Dao
 interface BookmarkDao {
 
-    @Query("SELECT * FROM Events INNER JOIN Bookmarks WHERE events.id = bookmarks.event_id")
+    @Query("SELECT events.* FROM Events INNER JOIN Bookmarks WHERE events.id = bookmarks.event_id")
     fun getBookmarkedEvents(): Flowable<List<Event>>
 
     @Query("SELECT COUNT(*) FROM Bookmarks WHERE event_id = :eventId")

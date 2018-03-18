@@ -78,6 +78,7 @@ class MainFragment : BrowseSupportFragment() {
             is Resource.Success -> {
                 adapter = ArrayObjectAdapter(ListRowPresenter())
                 (adapter as? ArrayObjectAdapter)?.let {
+                    it += PageRow(HeaderItem(0L, "Home")) // TODO
                     if (mainUiModel.offersResource is Resource.Success && mainUiModel.offersResource.data.isNotEmpty()) {
                         it += SectionRow(HeaderItem(1L, getString(R.string.main_streams_header)))
                         it += mainUiModel.offersResource.data.map { PageRow(HeaderItem(2L, it.conference)) }
@@ -126,6 +127,7 @@ class MainFragment : BrowseSupportFragment() {
             return when ((rowObj as Row).headerItem.id) {
                 6L -> AboutFragment()
                 2L -> LiveStreamingFragment.create(rowObj.headerItem.name)
+                0L -> BookmarksFragment()
                 else -> ConferencesFragment.create(
                         // reverse lookup of ConferenceGroup by StringResourceId
                         CONFERENCE_GROUP_TRANSLATIONS.filterValues { it == rowObj.id.toInt() }.keys.firstOrNull() ?: ConferenceGroup.OTHER

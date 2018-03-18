@@ -53,7 +53,7 @@ class EventRepositoryTest {
     }
 
     @Test
-    fun `fetch event by id from remote when local throws an error`() {
+    fun `fetch event by id from remote source when local source throws an error`() {
         val exampleId = 8
         val eventRemote = minimalEvent.copy(url = "https://api.media.ccc.de/public/events/8")
         When calling eventDao.getEventById(exampleId) itReturns Single.error(Exception("EventDao throw an error"))
@@ -62,6 +62,16 @@ class EventRepositoryTest {
         val result = repositoy.getEvent(exampleId).getSingleTestResult(waitUntilCompletion = true)
 
         result shouldEqual eventRemote.toEntity(-1)
+    }
+
+    @Test
+    fun `fetch bookmarked events from local source`() {
+        When calling bookmarkDao.getBookmarkedEvents() itReturns Flowable.just(listOf(minimalEventEntity))
+
+        val result = repositoy.getBookmarkedEvents().getSingleTestResult()
+
+        result.size shouldEqual 1
+        result[0] shouldEqual minimalEventEntity
     }
 
     @Test
@@ -83,7 +93,7 @@ class EventRepositoryTest {
 
         repositoy.changeBookmarkState(exampleId, shouldBeBookmarked = true).test()
 
-        verify(bookmarkDao).insert(Bookmark(8))
+        verify(bookmarkDao).insert(Bookmark(exampleId))
     }
 
     @Test
