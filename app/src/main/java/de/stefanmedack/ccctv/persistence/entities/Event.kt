@@ -1,22 +1,24 @@
 package de.stefanmedack.ccctv.persistence.entities
 
-import android.arch.persistence.room.ColumnInfo
-import android.arch.persistence.room.Entity
-import android.arch.persistence.room.ForeignKey
+import android.arch.persistence.room.*
 import android.arch.persistence.room.ForeignKey.CASCADE
-import android.arch.persistence.room.PrimaryKey
 import de.stefanmedack.ccctv.util.EMPTY_STRING
 import info.metadude.kotlin.library.c3media.models.Metadata
 import org.threeten.bp.LocalDate
 import org.threeten.bp.OffsetDateTime
 
 @Entity(tableName = "events",
-        foreignKeys = [ForeignKey(
-                entity = Conference::class,
-                parentColumns = arrayOf("id"),
-                childColumns = arrayOf("conference_id"),
-                onDelete = CASCADE
-        )])
+        foreignKeys = [
+            ForeignKey(
+                    entity = Conference::class,
+                    parentColumns = arrayOf("id"),
+                    childColumns = arrayOf("conference_id"),
+                    onDelete = CASCADE
+            )],
+        indices = [
+            Index(name = "conference_idx", value = ["conference_id"])
+        ]
+)
 data class Event(
 
         @PrimaryKey

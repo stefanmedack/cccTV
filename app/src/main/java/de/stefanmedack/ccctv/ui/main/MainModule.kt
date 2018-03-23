@@ -10,7 +10,10 @@ abstract class MainModule {
     abstract fun contributeMainFragment(): MainFragment
 
     @ContributesAndroidInjector
-    abstract fun contributeConferenceGroupDetailFragment(): ConferencesFragment
+    abstract fun contributeBookmarksFragment(): BookmarksFragment
+
+    @ContributesAndroidInjector
+    abstract fun contributeConferencesFragment(): ConferencesFragment
 
     @ContributesAndroidInjector
     abstract fun contributeLiveStreamingFragment(): LiveStreamingFragment

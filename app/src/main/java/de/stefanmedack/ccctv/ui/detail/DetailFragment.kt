@@ -49,6 +49,13 @@ class DetailFragment : DetailsSupportFragment() {
     private lateinit var detailsBackground: DetailsSupportFragmentBackgroundController
     private lateinit var detailsOverview: DetailsOverviewRow
 
+    private val bookmarkAction by lazy {
+        Action(
+                DETAIL_ACTION_BOOKMARK,
+                getString(R.string.action_add_bookmark),
+                getString(R.string.action_bookmark_second_line))
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         AndroidSupportInjection.inject(this)
         super.onCreate(savedInstanceState)
@@ -92,10 +99,7 @@ class DetailFragment : DetailsSupportFragment() {
         detailsOverview = DetailsOverviewRow(Any())
         showPoster(context, detailsOverview)
 
-        detailsOverview.actionsAdapter = ArrayObjectAdapter().apply {
-            add(Action(DETAIL_ACTION_PLAY, getString(R.string.action_watch)))
-            //            add(Action(DETAIL_ACTION_BOOKMARK, getString(R.string.action_bookmark))) TODO add back bookmarking when db is added
-        }
+        detailsOverview.actionsAdapter = ArrayObjectAdapter()
 
         adapter = ArrayObjectAdapter(
                 // Setup PresenterSelector to distinguish between the different rows.
@@ -127,53 +131,6 @@ class DetailFragment : DetailsSupportFragment() {
                 })
     }
 
-    private fun bindViewModel() {
-        disposables.add(viewModel.detailUi
-                .subscribeBy(
-                        onNext = { render(it) },
-                        // TODO proper error handling
-                        onError = { it.printStackTrace() }
-                ))
-    }
-
-    private fun render(result: DetailUiModel) {
-        detailsOverview.item = result.event
-
-        activity?.let { activityContext ->
-            val playerAdapter = ExoPlayerAdapter(activityContext)
-            playerAdapter.bindRecordings(viewModel.eventWithRecordings)
-
-            val mediaPlayerGlue = VideoMediaPlayerGlue(activityContext, playerAdapter)
-            mediaPlayerGlue.isSeekEnabled = true
-            mediaPlayerGlue.title = result.event.title
-            mediaPlayerGlue.subtitle = result.event.subtitle
-
-            detailsBackground.setupVideoPlayback(mediaPlayerGlue)
-        }
-
-        (adapter as ArrayObjectAdapter).apply {
-            // add speaker
-            if (!result.speaker.isEmpty()) {
-                val listRowAdapter = ArrayObjectAdapter(SpeakerCardPresenter())
-                listRowAdapter += result.speaker
-                add(ListRow(HeaderItem(0, getString(R.string.header_speaker)), listRowAdapter))
-
-                // add go-to-speaker-section-button to DetailOverviewRow on the very top
-                (detailsOverview.actionsAdapter as ArrayObjectAdapter).add(Action(DETAIL_ACTION_SPEAKER, getString(R.string.action_show_speaker)))
-
-            }
-            // add related
-            if (!result.related.isEmpty()) {
-                val listRowAdapter = ArrayObjectAdapter(EventCardPresenter())
-                listRowAdapter += result.related
-                add(ListRow(HeaderItem(1, getString(R.string.header_related)), listRowAdapter))
-
-                // add go-to-related-section-button to DetailOverviewRow on the very top
-                (detailsOverview.actionsAdapter as ArrayObjectAdapter).add(Action(DETAIL_ACTION_RELATED, getString(R.string.action_show_related)))
-            }
-        }
-    }
-
     private fun setupEventListeners() {
         onItemViewClickedListener = OnItemViewClickedListener { itemViewHolder, item, _, _ ->
             when (item) {
@@ -182,6 +139,10 @@ class DetailFragment : DetailsSupportFragment() {
                         detailsBackground.switchToVideo()
                     } catch (e: Exception) {
                         Timber.w(e, "Could not switch to video on detailsBackground - probably not initialized yet")
+                    }
+                    DETAIL_ACTION_BOOKMARK -> {
+                        // TODO this could be solved with RX. I don't see the benefit in it yet, but I would love to try it for fun =)
+                        viewModel.inputs.toggleBookmark()
                     }
                     DETAIL_ACTION_SPEAKER -> setSelectedPosition(1)
                     DETAIL_ACTION_RELATED -> setSelectedPosition(2)
@@ -199,6 +160,92 @@ class DetailFragment : DetailsSupportFragment() {
                 }
             }
         }
+    }
+
+    private fun bindViewModel() {
+        disposables.addAll(
+                viewModel.outputs.detailData.subscribeBy(
+                        onNext = ::render,
+                        // TODO proper error handling
+                        onError = { it.printStackTrace() }),
+                viewModel.outputs.isBookmarked.subscribeBy(
+                        onNext = ::updateBookmarkState,
+                        // TODO proper error handling
+                        onError = { it.printStackTrace() })
+        )
+    }
+
+    private fun render(result: DetailUiModel) {
+        detailsOverview.item = result.event
+
+        activity?.let { activityContext ->
+            val playerAdapter = ExoPlayerAdapter(activityContext)
+            playerAdapter.bindRecordings(viewModel.outputs.eventWithRecordings)
+
+            val mediaPlayerGlue = VideoMediaPlayerGlue(activityContext, playerAdapter)
+            mediaPlayerGlue.isSeekEnabled = true
+            mediaPlayerGlue.title = result.event.title
+            mediaPlayerGlue.subtitle = result.event.subtitle
+
+            detailsBackground.setupVideoPlayback(mediaPlayerGlue)
+        }
+
+        val detailsOverviewAdapter = detailsOverview.actionsAdapter as ArrayObjectAdapter
+        (adapter as ArrayObjectAdapter).apply {
+
+            // add play-button to DetailOverviewRow on the very top
+            detailsOverviewAdapter.add(Action(
+                    DETAIL_ACTION_PLAY,
+                    getString(R.string.action_watch),
+                    EMPTY_STRING,
+                    context?.getDrawable(R.drawable.ic_watch)
+            ))
+
+            // add bookmark-button to DetailOverviewRow on the very top
+            detailsOverviewAdapter.add(bookmarkAction)
+
+            // add speaker
+            if (!result.speaker.isEmpty()) {
+                val listRowAdapter = ArrayObjectAdapter(SpeakerCardPresenter())
+                listRowAdapter += result.speaker
+                add(ListRow(HeaderItem(0, getString(R.string.header_speaker)), listRowAdapter))
+
+                // add go-to-speaker-section-button to DetailOverviewRow on the very top
+                detailsOverviewAdapter.add(Action(
+                        DETAIL_ACTION_SPEAKER,
+                        getString(R.string.action_show_speaker),
+                        EMPTY_STRING,
+                        context?.getDrawable(R.drawable.ic_speaker)
+                ))
+            }
+            // add related
+            if (!result.related.isEmpty()) {
+                val listRowAdapter = ArrayObjectAdapter(EventCardPresenter())
+                listRowAdapter += result.related
+                add(ListRow(HeaderItem(1, getString(R.string.header_related)), listRowAdapter))
+
+                // add go-to-related-section-button to DetailOverviewRow on the very top
+                detailsOverviewAdapter.add(Action(
+                        DETAIL_ACTION_RELATED,
+                        getString(R.string.action_show_related),
+                        EMPTY_STRING,
+                        context?.getDrawable(R.drawable.ic_related)
+                ))
+            }
+        }
+    }
+
+    private fun updateBookmarkState(isBookmarked: Boolean) {
+        bookmarkAction.apply {
+            if (isBookmarked) {
+                label1 = getString(R.string.action_remove_bookmark)
+                icon = context?.getDrawable(R.drawable.ic_bookmark_check)
+            } else {
+                label1 = getString(R.string.action_add_bookmark)
+                icon = context?.getDrawable(R.drawable.ic_bookmark_plus)
+            }
+        }
+        detailsOverview.actionsAdapter.notifyItemRangeChanged(1, 1)
     }
 
     fun onKeyDown(keyCode: Int): Boolean =

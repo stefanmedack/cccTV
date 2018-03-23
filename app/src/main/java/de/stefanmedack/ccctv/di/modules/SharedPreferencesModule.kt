@@ -11,6 +11,6 @@ abstract class SharedPreferencesModule {
 
     @Binds
     @Singleton
-    abstract fun bindUltronPreferences(kitchenPreferences: C3SharedPreferencesImpl): C3SharedPreferences
+    abstract fun bindSharedPreferences(preferences: C3SharedPreferencesImpl): C3SharedPreferences
 
 }

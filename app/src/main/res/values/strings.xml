@@ -6,7 +6,9 @@
     <string name="main_more_header">More</string>
     <string name="main_about_app">About cccTV</string>
     <string name="action_watch">Watch</string>
-    <string name="action_bookmark">Bookmark</string>
+    <string name="action_add_bookmark">Add to</string>
+    <string name="action_remove_bookmark">Remove from</string>
+    <string name="action_bookmark_second_line">Watchlist</string>
     <string name="action_show_speaker">Speaker</string>
     <string name="action_show_related">Related</string>
     <string name="header_speaker">Speaker</string>

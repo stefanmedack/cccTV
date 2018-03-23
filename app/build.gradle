@@ -27,8 +27,9 @@ ext {
     timberVersion = "4.6.1"
 
     // Test dependencies
-    kluentVersion = "1.34"
     junitVersion = "4.12"
+    kluentVersion = "1.34"
+    mockitoVersion = "2.8.47"
     runnerVersion = '1.0.1'
     rulesVersion = '1.0.1'
 }
@@ -46,6 +47,12 @@ android {
         resConfigs "en", "de"
         multiDexEnabled true
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
+        kapt {
+            arguments {
+                arg("room.schemaLocation", "$projectDir/schemas".toString())
+            }
+        }
     }
 
     signingConfigs {
@@ -143,7 +150,7 @@ dependencies {
     implementation "io.reactivex.rxjava2:rxandroid:$rxAndroidVersion"
 
     // RXBinding
-    compile "com.jakewharton.rxbinding2:rxbinding-leanback-v17-kotlin:$rxBindingVersion"
+    implementation "com.jakewharton.rxbinding2:rxbinding-leanback-v17-kotlin:$rxBindingVersion"
 
     // timber - better logging
     implementation "com.jakewharton.timber:timber:$timberVersion"
@@ -161,10 +168,16 @@ dependencies {
 
     // Test dependencies
     testImplementation "junit:junit:$junitVersion"
+    testImplementation "org.mockito:mockito-core:$mockitoVersion"
+    testImplementation "org.mockito:mockito-inline:$mockitoVersion"
     testImplementation "org.amshove.kluent:kluent:$kluentVersion"
 
     // Android Instrumented Test
     androidTestImplementation "com.android.support.test:runner:$runnerVersion"
+    androidTestImplementation "org.amshove.kluent:kluent-android:$kluentVersion"
+
+    // Arch Component
+    androidTestImplementation "android.arch.core:core-testing:$archComponentsVersion"
 
 }
 

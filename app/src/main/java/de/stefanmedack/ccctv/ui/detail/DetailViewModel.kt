@@ -1,43 +1,71 @@
 package de.stefanmedack.ccctv.ui.detail
 
-import android.arch.lifecycle.ViewModel
 import de.stefanmedack.ccctv.persistence.entities.Event
 import de.stefanmedack.ccctv.repository.EventRepository
+import de.stefanmedack.ccctv.ui.base.BaseDisposableViewModel
 import de.stefanmedack.ccctv.ui.detail.uiModels.DetailUiModel
 import de.stefanmedack.ccctv.ui.detail.uiModels.SpeakerUiModel
 import de.stefanmedack.ccctv.util.getRelatedEventIdsWeighted
+import io.reactivex.Completable
 import io.reactivex.Flowable
 import io.reactivex.Single
+import io.reactivex.rxkotlin.subscribeBy
+import io.reactivex.rxkotlin.withLatestFrom
+import io.reactivex.subjects.PublishSubject
+import timber.log.Timber
 import javax.inject.Inject
 import info.metadude.kotlin.library.c3media.models.Event as EventRemote
 
-
 class DetailViewModel @Inject constructor(
         private val repository: EventRepository
-) : ViewModel() {
+) : BaseDisposableViewModel(), Inputs, Outputs {
+
+    val inputs: Inputs = this
+    val outputs: Outputs = this
 
     private var eventId: Int = -1
 
     fun init(eventId: Int) {
         this.eventId = eventId
+
+        disposables.add(
+                doToggleBookmark.subscribeBy(
+                        onError = { Timber.w("DetailViewModel - doToggleBookmark - onError $it") })
+        )
     }
 
-    val detailUi: Flowable<DetailUiModel>
-        get() = repository.getEvent(eventId)
-                .flatMap { event: Event ->
-                    getRelatedEvents(event.getRelatedEventIdsWeighted()).map {
-                        DetailUiModel(
-                                event = event,
-                                speaker = event.persons.map { SpeakerUiModel(it) },
-                                related = it
-                        )
-                    }
-                }
+    //<editor-fold desc="Inputs">
 
-    private fun getRelatedEvents(relatedIds: List<Int>): Flowable<List<Event>> = repository
-            .getEvents(relatedIds)
+    override fun toggleBookmark() {
+        this.bookmarkClickStream.onNext(0)
+    }
 
-    val eventWithRecordings: Single<EventRemote>
+    //</editor-fold>
+
+    //<editor-fold desc="Outputs">
+
+    override val detailData: Flowable<DetailUiModel>
+        get() = repository.getEvent(eventId).flatMap { event ->
+            getRelatedEvents(event).map { DetailUiModel(event = event, speaker = event.persons.map { SpeakerUiModel(it) }, related = it) }
+        }
+
+    override val eventWithRecordings: Single<EventRemote>
         get() = repository.getEventWithRecordings(eventId)
+
+    override val isBookmarked: Flowable<Boolean>
+        get() = repository.isBookmarked(eventId)
+
+    //</editor-fold>
+
+    private val bookmarkClickStream = PublishSubject.create<Int>()
+
+    private val doToggleBookmark
+        get() = bookmarkClickStream
+                .withLatestFrom(isBookmarked.toObservable(), { _, t2 -> t2 })
+                .flatMapCompletable { updateBookmarkState(it) }
+
+    private fun getRelatedEvents(event: Event): Flowable<List<Event>> = repository.getEvents(event.getRelatedEventIdsWeighted())
+
+    private fun updateBookmarkState(isBookmarked: Boolean): Completable = repository.changeBookmarkState(eventId, !isBookmarked)
 
 }

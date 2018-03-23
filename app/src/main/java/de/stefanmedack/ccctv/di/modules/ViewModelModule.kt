@@ -9,6 +9,7 @@ import de.stefanmedack.ccctv.di.C3ViewModelFactory
 import de.stefanmedack.ccctv.di.Scopes.ViewModelKey
 import de.stefanmedack.ccctv.ui.detail.DetailViewModel
 import de.stefanmedack.ccctv.ui.events.EventsViewModel
+import de.stefanmedack.ccctv.ui.main.BookmarksViewModel
 import de.stefanmedack.ccctv.ui.main.ConferencesViewModel
 import de.stefanmedack.ccctv.ui.main.LiveStreamingViewModel
 import de.stefanmedack.ccctv.ui.main.MainViewModel
@@ -21,6 +22,11 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(MainViewModel::class)
     abstract fun bindMainViewModel(viewModel: MainViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(BookmarksViewModel::class)
+    abstract fun bindBookmarksViewModel(viewModel: BookmarksViewModel): ViewModel
 
     @Binds
     @IntoMap
