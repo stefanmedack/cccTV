@@ -140,24 +140,13 @@ class DetailFragment : DetailsSupportFragment() {
                     } catch (e: Exception) {
                         Timber.w(e, "Could not switch to video on detailsBackground - probably not initialized yet")
                     }
-                    DETAIL_ACTION_BOOKMARK -> {
-                        // TODO this could be solved with RX. I don't see the benefit in it yet, but I would love to try it for fun =)
-                        viewModel.inputs.toggleBookmark()
-                    }
+                    DETAIL_ACTION_BOOKMARK -> viewModel.inputs.toggleBookmark()
                     DETAIL_ACTION_SPEAKER -> setSelectedPosition(1)
                     DETAIL_ACTION_RELATED -> setSelectedPosition(2)
                     else -> Toast.makeText(activity, R.string.implement_me_toast, Toast.LENGTH_LONG).show()
                 }
-                is SpeakerUiModel -> {
-                    activity?.let {
-                        EventsActivity.startWithSearch(it, item.name)
-                    }
-                }
-                is Event -> {
-                    activity?.let {
-                        DetailActivity.start(it, item, (itemViewHolder.view as ImageCardView).mainImageView)
-                    }
-                }
+                is SpeakerUiModel -> activity?.let { EventsActivity.startWithSearch(it, item.name) }
+                is Event -> activity?.let { DetailActivity.start(it, item, (itemViewHolder.view as ImageCardView).mainImageView) }
             }
         }
     }

@@ -78,7 +78,8 @@ class MainFragment : BrowseSupportFragment() {
             is Resource.Success -> {
                 adapter = ArrayObjectAdapter(ListRowPresenter())
                 (adapter as? ArrayObjectAdapter)?.let {
-                    it += PageRow(HeaderItem(0L, "Home")) // TODO
+                    // TODO WIP - probably should be only displayed if there are bookmarks + label + etc
+                    it += PageRow(HeaderItem(0L, "Home"))
                     if (mainUiModel.offersResource is Resource.Success && mainUiModel.offersResource.data.isNotEmpty()) {
                         it += SectionRow(HeaderItem(1L, getString(R.string.main_streams_header)))
                         it += mainUiModel.offersResource.data.map { PageRow(HeaderItem(2L, it.conference)) }
