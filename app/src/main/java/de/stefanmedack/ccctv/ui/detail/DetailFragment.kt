@@ -52,7 +52,8 @@ class DetailFragment : DetailsSupportFragment() {
     private val bookmarkAction by lazy {
         Action(
                 DETAIL_ACTION_BOOKMARK,
-                getString(R.string.action_add_bookmark)) // TODO check out the icons + test 2 line versions
+                getString(R.string.action_add_bookmark),
+                getString(R.string.action_bookmark_second_line))
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -193,7 +194,12 @@ class DetailFragment : DetailsSupportFragment() {
         (adapter as ArrayObjectAdapter).apply {
 
             // add play-button to DetailOverviewRow on the very top
-            detailsOverviewAdapter.add(Action(DETAIL_ACTION_PLAY, getString(R.string.action_watch)))
+            detailsOverviewAdapter.add(Action(
+                    DETAIL_ACTION_PLAY,
+                    getString(R.string.action_watch),
+                    EMPTY_STRING,
+                    context?.getDrawable(R.drawable.ic_watch)
+            ))
 
             // add bookmark-button to DetailOverviewRow on the very top
             detailsOverviewAdapter.add(bookmarkAction)
@@ -205,7 +211,12 @@ class DetailFragment : DetailsSupportFragment() {
                 add(ListRow(HeaderItem(0, getString(R.string.header_speaker)), listRowAdapter))
 
                 // add go-to-speaker-section-button to DetailOverviewRow on the very top
-                detailsOverviewAdapter.add(Action(DETAIL_ACTION_SPEAKER, getString(R.string.action_show_speaker)))
+                detailsOverviewAdapter.add(Action(
+                        DETAIL_ACTION_SPEAKER,
+                        getString(R.string.action_show_speaker),
+                        EMPTY_STRING,
+                        context?.getDrawable(R.drawable.ic_speaker)
+                ))
             }
             // add related
             if (!result.related.isEmpty()) {
@@ -214,13 +225,26 @@ class DetailFragment : DetailsSupportFragment() {
                 add(ListRow(HeaderItem(1, getString(R.string.header_related)), listRowAdapter))
 
                 // add go-to-related-section-button to DetailOverviewRow on the very top
-                detailsOverviewAdapter.add(Action(DETAIL_ACTION_RELATED, getString(R.string.action_show_related)))
+                detailsOverviewAdapter.add(Action(
+                        DETAIL_ACTION_RELATED,
+                        getString(R.string.action_show_related),
+                        EMPTY_STRING,
+                        context?.getDrawable(R.drawable.ic_related)
+                ))
             }
         }
     }
 
     private fun updateBookmarkState(isBookmarked: Boolean) {
-        bookmarkAction.label1 = getString(if (isBookmarked) R.string.action_remove_bookmark else R.string.action_add_bookmark)
+        bookmarkAction.apply {
+            if (isBookmarked) {
+                label1 = getString(R.string.action_remove_bookmark)
+                icon = context?.getDrawable(R.drawable.ic_bookmark_check)
+            } else {
+                label1 = getString(R.string.action_add_bookmark)
+                icon = context?.getDrawable(R.drawable.ic_bookmark_plus)
+            }
+        }
         detailsOverview.actionsAdapter.notifyItemRangeChanged(1, 1)
     }
 
