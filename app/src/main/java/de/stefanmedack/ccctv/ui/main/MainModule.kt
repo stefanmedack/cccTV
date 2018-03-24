@@ -2,6 +2,7 @@ package de.stefanmedack.ccctv.ui.main
 
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
+import de.stefanmedack.ccctv.ui.main.home.HomeFragment
 
 @Module
 abstract class MainModule {
@@ -10,7 +11,7 @@ abstract class MainModule {
     abstract fun contributeMainFragment(): MainFragment
 
     @ContributesAndroidInjector
-    abstract fun contributeBookmarksFragment(): BookmarksFragment
+    abstract fun contributeHomeFragment(): HomeFragment
 
     @ContributesAndroidInjector
     abstract fun contributeConferencesFragment(): ConferencesFragment

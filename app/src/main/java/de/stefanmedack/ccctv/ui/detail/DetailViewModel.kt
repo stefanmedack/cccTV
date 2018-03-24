@@ -20,8 +20,8 @@ class DetailViewModel @Inject constructor(
         private val repository: EventRepository
 ) : BaseDisposableViewModel(), Inputs, Outputs {
 
-    val inputs: Inputs = this
-    val outputs: Outputs = this
+    internal val inputs: Inputs = this
+    internal val outputs: Outputs = this
 
     private var eventId: Int = -1
 

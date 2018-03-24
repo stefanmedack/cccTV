@@ -18,6 +18,7 @@ import de.stefanmedack.ccctv.R
 import de.stefanmedack.ccctv.model.ConferenceGroup
 import de.stefanmedack.ccctv.model.Resource
 import de.stefanmedack.ccctv.ui.about.AboutFragment
+import de.stefanmedack.ccctv.ui.main.home.HomeFragment
 import de.stefanmedack.ccctv.ui.search.SearchActivity
 import de.stefanmedack.ccctv.util.CONFERENCE_GROUP_TRANSLATIONS
 import de.stefanmedack.ccctv.util.plusAssign
@@ -128,7 +129,7 @@ class MainFragment : BrowseSupportFragment() {
             return when ((rowObj as Row).headerItem.id) {
                 6L -> AboutFragment()
                 2L -> LiveStreamingFragment.create(rowObj.headerItem.name)
-                0L -> BookmarksFragment()
+                0L -> HomeFragment()
                 else -> ConferencesFragment.create(
                         // reverse lookup of ConferenceGroup by StringResourceId
                         CONFERENCE_GROUP_TRANSLATIONS.filterValues { it == rowObj.id.toInt() }.keys.firstOrNull() ?: ConferenceGroup.OTHER

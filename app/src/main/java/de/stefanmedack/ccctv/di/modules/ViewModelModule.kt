@@ -9,8 +9,8 @@ import de.stefanmedack.ccctv.di.C3ViewModelFactory
 import de.stefanmedack.ccctv.di.Scopes.ViewModelKey
 import de.stefanmedack.ccctv.ui.detail.DetailViewModel
 import de.stefanmedack.ccctv.ui.events.EventsViewModel
-import de.stefanmedack.ccctv.ui.main.BookmarksViewModel
 import de.stefanmedack.ccctv.ui.main.ConferencesViewModel
+import de.stefanmedack.ccctv.ui.main.home.HomeViewModel
 import de.stefanmedack.ccctv.ui.main.LiveStreamingViewModel
 import de.stefanmedack.ccctv.ui.main.MainViewModel
 import de.stefanmedack.ccctv.ui.search.SearchViewModel
@@ -25,8 +25,8 @@ abstract class ViewModelModule {
 
     @Binds
     @IntoMap
-    @ViewModelKey(BookmarksViewModel::class)
-    abstract fun bindBookmarksViewModel(viewModel: BookmarksViewModel): ViewModel
+    @ViewModelKey(HomeViewModel::class)
+    abstract fun bindHomeViewModel(viewModel: HomeViewModel): ViewModel
 
     @Binds
     @IntoMap
