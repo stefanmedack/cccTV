@@ -1,5 +1,6 @@
 package de.stefanmedack.ccctv.persistence.preferences
 
+// TODO delete me
 interface C3SharedPreferences {
 
     fun updateLatestDataFetchDate()

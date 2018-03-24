@@ -4,7 +4,10 @@ import android.database.sqlite.SQLiteException
 import android.support.test.runner.AndroidJUnit4
 import de.stefanmedack.ccctv.fullEventEntity
 import de.stefanmedack.ccctv.getSingleTestResult
+import de.stefanmedack.ccctv.minimalConferenceEntity
 import de.stefanmedack.ccctv.minimalEventEntity
+import de.stefanmedack.ccctv.model.ConferenceGroup
+import org.amshove.kluent.shouldBe
 import org.amshove.kluent.shouldBeInstanceOf
 import org.amshove.kluent.shouldEqual
 import org.amshove.kluent.shouldNotEqual
@@ -99,8 +102,23 @@ class EventDaoTest : BaseDbTest() {
 
         val loadedData = eventDao.getEvents().getSingleTestResult()
 
+        loadedData.size shouldBe 1
         loadedData[0] shouldNotEqual oldEvent
         loadedData[0] shouldEqual newEvent
+    }
+
+    @Test
+    fun updating_a_conference_should_not_delete_events() {
+        val conference = minimalConferenceEntity.copy(id = 1, group = ConferenceGroup.CONGRESS)
+        val eventForConf = minimalEventEntity.copy(conferenceId = 1)
+        conferenceDao.insertConferencesWithEvents(listOf(conference), listOf(eventForConf))
+
+        conferenceDao.insert(conference.copy(title = "new Title"))
+
+        val loadedConferences = conferenceDao.getConferencesWithEvents().getSingleTestResult()
+        loadedConferences.size shouldEqual 1
+        loadedConferences[0].events.size shouldEqual 1
+        loadedConferences[0].events[0] shouldEqual eventForConf
     }
 
 }

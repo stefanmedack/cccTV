@@ -6,6 +6,7 @@ import java.util.*
 import javax.inject.Inject
 import javax.inject.Singleton
 
+// TODO delete me
 @Singleton
 class C3SharedPreferencesImpl @Inject constructor(@ApplicationContext context: Context)
     : C3SharedPreferences {
@@ -14,7 +15,7 @@ class C3SharedPreferencesImpl @Inject constructor(@ApplicationContext context: C
 
     private val KEY_LATEST_FETCH_TIME = "latest_fetch_time"
 
-    private val ONE_DAY = 24 * 60 * 60 * 1000
+    private val ONE_DAY = 24 * 60 * 60 * 1000 // TODO should probably be decreased to 1h after sql-caching-logic improvements
 
     private val prefs: android.content.SharedPreferences = context.getSharedPreferences(PREFERENCES_FILE, Context.MODE_PRIVATE)
 
