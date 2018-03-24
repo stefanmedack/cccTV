@@ -1,10 +1,8 @@
 package de.stefanmedack.ccctv.ui.main
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.KeyEvent
 import de.stefanmedack.ccctv.R
-import de.stefanmedack.ccctv.service.ContentUpdateService
 import de.stefanmedack.ccctv.ui.base.BaseInjectableActivity
 import de.stefanmedack.ccctv.util.replaceFragmentInTransaction
 
@@ -22,9 +20,6 @@ class MainActivity : BaseInjectableActivity() {
         fragment?.let { frag ->
             replaceFragmentInTransaction(frag, R.id.fragment, MAIN_TAG)
         }
-
-        // TODO change to package update broadcast receiver instead
-        startService(Intent(this, ContentUpdateService::class.java))
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent): Boolean {
