@@ -2,7 +2,9 @@ package de.stefanmedack.ccctv.ui.main
 
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
+import de.stefanmedack.ccctv.ui.main.conferences.ConferencesFragment
 import de.stefanmedack.ccctv.ui.main.home.HomeFragment
+import de.stefanmedack.ccctv.ui.main.streaming.LiveStreamingFragment
 
 @Module
 abstract class MainModule {

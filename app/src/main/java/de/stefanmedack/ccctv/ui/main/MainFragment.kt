@@ -18,7 +18,9 @@ import de.stefanmedack.ccctv.R
 import de.stefanmedack.ccctv.model.ConferenceGroup
 import de.stefanmedack.ccctv.model.Resource
 import de.stefanmedack.ccctv.ui.about.AboutFragment
+import de.stefanmedack.ccctv.ui.main.conferences.ConferencesFragment
 import de.stefanmedack.ccctv.ui.main.home.HomeFragment
+import de.stefanmedack.ccctv.ui.main.streaming.LiveStreamingFragment
 import de.stefanmedack.ccctv.ui.search.SearchActivity
 import de.stefanmedack.ccctv.util.CONFERENCE_GROUP_TRANSLATIONS
 import de.stefanmedack.ccctv.util.plusAssign

@@ -9,10 +9,10 @@ import de.stefanmedack.ccctv.di.C3ViewModelFactory
 import de.stefanmedack.ccctv.di.Scopes.ViewModelKey
 import de.stefanmedack.ccctv.ui.detail.DetailViewModel
 import de.stefanmedack.ccctv.ui.events.EventsViewModel
-import de.stefanmedack.ccctv.ui.main.ConferencesViewModel
-import de.stefanmedack.ccctv.ui.main.home.HomeViewModel
-import de.stefanmedack.ccctv.ui.main.LiveStreamingViewModel
 import de.stefanmedack.ccctv.ui.main.MainViewModel
+import de.stefanmedack.ccctv.ui.main.conferences.ConferencesViewModel
+import de.stefanmedack.ccctv.ui.main.home.HomeViewModel
+import de.stefanmedack.ccctv.ui.main.streaming.LiveStreamingViewModel
 import de.stefanmedack.ccctv.ui.search.SearchViewModel
 
 @Module

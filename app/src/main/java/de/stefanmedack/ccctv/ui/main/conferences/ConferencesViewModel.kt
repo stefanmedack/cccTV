@@ -1,4 +1,4 @@
-package de.stefanmedack.ccctv.ui.main
+package de.stefanmedack.ccctv.ui.main.conferences
 
 import android.arch.lifecycle.ViewModel
 import de.stefanmedack.ccctv.model.ConferenceGroup
