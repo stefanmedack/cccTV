@@ -7,7 +7,7 @@
     <uses-permission android:name="android.permission.INTERNET"/>
     <!--<uses-permission android:name="android.permission.RECORD_AUDIO"/>-->
 
-    <!--Note: this permission is used to start the [ContentUpdateBroadcastReceiver] -->
+    <!--Note: this permission is used to start the [BootUpBroadcastReceiver] to schedule content updates in the background -->
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
 
     <uses-feature
@@ -109,8 +109,13 @@
             android:supportsPictureInPicture="true"
             />
 
+        <service
+            android:name=".service.ContentUpdateService"
+            android:enabled="true"
+            />
+
         <receiver
-            android:name=".service.ContentUpdateBroadcastReceiver"
+            android:name=".service.BootUpBroadcastReceiver"
             android:enabled="true"
             android:exported="false"
             >

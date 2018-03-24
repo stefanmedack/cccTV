@@ -31,17 +31,15 @@ class ConferenceRepository @Inject constructor(
             .map<Resource<List<ConferenceEntity>>> { Resource.Success(it) }
             .applySchedulers()
 
-    fun updateContent() {
-        conferenceResource(forceUpdate = true)
-                .filter { it is Resource.Success }
-                .flatMapIterable { it.data }
-                .switchMap {
-                    conferenceWithEventsResource(conferenceId = it.id, forceUpdate = true)
-                            .filter { it is Resource.Success }
-                }
-                .toList()
-                .blockingGet()
-    }
+    fun updateContent(): Single<List<Resource<ConferenceWithEvents>>> = conferenceResource(forceUpdate = true)
+            .filter { it is Resource.Success }
+            .firstOrError()
+            .flattenAsFlowable { it.data }
+            .flatMap {
+                conferenceWithEventsResource(conferenceId = it.id, forceUpdate = true)
+                        .filter { it is Resource.Success }
+            }
+            .toList()
 
     private fun conferenceResource(forceUpdate: Boolean): Flowable<Resource<List<ConferenceEntity>>> = object
         : NetworkBoundResource<List<ConferenceEntity>, List<ConferenceRemote>>() {

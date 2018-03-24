@@ -2,7 +2,7 @@ package de.stefanmedack.ccctv.di.modules
 
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
-import de.stefanmedack.ccctv.service.ContentUpdateBroadcastReceiver
+import de.stefanmedack.ccctv.service.ContentUpdateService
 import de.stefanmedack.ccctv.ui.detail.DetailActivity
 import de.stefanmedack.ccctv.ui.detail.DetailModule
 import de.stefanmedack.ccctv.ui.events.EventsActivity
@@ -30,6 +30,6 @@ abstract class ActivityBuilderModule {
     abstract fun contributeSearch(): SearchActivity
 
     @ContributesAndroidInjector
-    abstract fun contributeContentUpdateBroadcastReceiver(): ContentUpdateBroadcastReceiver
+    abstract fun contributeContentUpdateService(): ContentUpdateService
 
 }
