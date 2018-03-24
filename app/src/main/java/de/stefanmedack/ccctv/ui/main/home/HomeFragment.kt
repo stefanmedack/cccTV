@@ -63,8 +63,12 @@ class HomeFragment : RowsSupportFragment() {
     private fun render(data: HomeUiModel) {
         mainFragmentAdapter.fragmentHost.notifyDataReady(mainFragmentAdapter)
         (adapter as ArrayObjectAdapter).let { adapter ->
-            adapter += createEventsRow("Bookmarks", data.bookmarks)
-            adapter += createEventsRow("Latest Events", data.latestEvents)
+            if (data.bookmarks.isNotEmpty()) {
+                adapter += createEventsRow("Bookmarks", data.bookmarks)
+            }
+            if (data.latestEvents.isNotEmpty()) {
+                adapter += createEventsRow("Latest Events", data.latestEvents)
+            }
         }
     }
 

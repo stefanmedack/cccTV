@@ -22,6 +22,6 @@ class HomeViewModel @Inject constructor(
         get() = eventRepository.getBookmarkedEvents()
 
     private val latestEvents: Flowable<List<Event>>
-        get() = eventRepository.getBookmarkedEvents() // TODO
+        get() = eventRepository.getLatestEvents()
 
 }
