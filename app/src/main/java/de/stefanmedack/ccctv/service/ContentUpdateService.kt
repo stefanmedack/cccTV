@@ -35,8 +35,9 @@ class ContentUpdateService : DaggerIntentService("ContentUpdateService") {
             val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
             val scheduleIntent = Intent(context, ContentUpdateService::class.java)
-            val alarmIntent = PendingIntent.getService(context, 0, scheduleIntent, 0)
+            context.startService(scheduleIntent)
 
+            val alarmIntent = PendingIntent.getService(context, 0, scheduleIntent, 0)
             alarmManager.cancel(alarmIntent)
             alarmManager.setInexactRepeating(ELAPSED_REALTIME_WAKEUP, INITIAL_DELAY, INTERVAL_HALF_HOUR, alarmIntent)
         }
