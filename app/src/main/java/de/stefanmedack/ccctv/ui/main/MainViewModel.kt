@@ -8,8 +8,7 @@ import de.stefanmedack.ccctv.repository.StreamingRepository
 import de.stefanmedack.ccctv.util.groupConferences
 import info.metadude.java.library.brockman.models.Offer
 import io.reactivex.Flowable
-import io.reactivex.Flowable.combineLatest
-import io.reactivex.functions.BiFunction
+import io.reactivex.rxkotlin.Flowables
 import javax.inject.Inject
 
 class MainViewModel @Inject constructor(
@@ -23,15 +22,7 @@ class MainViewModel @Inject constructor(
     )
 
     val data: Flowable<MainUiModel>
-        get() = combineLatest(
-                conferences,
-                streams,
-                BiFunction { u: Resource<List<ConferenceGroup>>,
-                             p: Resource<List<Offer>>
-                    ->
-                    MainUiModel(u, p)
-                }
-        )
+        get() = Flowables.combineLatest(conferences, streams, { conferences, streams -> MainUiModel(conferences, streams) })
 
     private val conferences: Flowable<Resource<List<ConferenceGroup>>>
         get() = conferenceRepository.conferences

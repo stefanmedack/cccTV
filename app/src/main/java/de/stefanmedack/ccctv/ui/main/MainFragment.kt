@@ -8,16 +8,20 @@ import android.os.Bundle
 import android.support.v17.leanback.app.BrowseFragment
 import android.support.v17.leanback.app.BrowseSupportFragment
 import android.support.v17.leanback.widget.*
-import android.support.v4.app.Fragment
 import android.support.v4.content.ContextCompat
 import android.view.KeyEvent
 import android.view.View
 import android.widget.Toast
 import dagger.android.support.AndroidSupportInjection
 import de.stefanmedack.ccctv.R
-import de.stefanmedack.ccctv.model.ConferenceGroup
 import de.stefanmedack.ccctv.model.Resource
 import de.stefanmedack.ccctv.ui.about.AboutFragment
+import de.stefanmedack.ccctv.ui.main.MainFragmentFactory.Companion.KEY_ABOUT_PAGE
+import de.stefanmedack.ccctv.ui.main.MainFragmentFactory.Companion.KEY_ABOUT_SECTION
+import de.stefanmedack.ccctv.ui.main.MainFragmentFactory.Companion.KEY_LIBRARY_SECTION
+import de.stefanmedack.ccctv.ui.main.MainFragmentFactory.Companion.KEY_LIBRARY_PAGE
+import de.stefanmedack.ccctv.ui.main.MainFragmentFactory.Companion.KEY_STREAMING_PAGE
+import de.stefanmedack.ccctv.ui.main.MainFragmentFactory.Companion.KEY_STREAMING_SECTION
 import de.stefanmedack.ccctv.ui.search.SearchActivity
 import de.stefanmedack.ccctv.util.CONFERENCE_GROUP_TRANSLATIONS
 import de.stefanmedack.ccctv.util.plusAssign
@@ -62,7 +66,7 @@ class MainFragment : BrowseSupportFragment() {
 
         setOnSearchClickedListener { activity?.startActivity(Intent(activity, SearchActivity::class.java)) }
 
-        mainFragmentRegistry.registerFragment(PageRow::class.java, PageRowFragmentFactory())
+        mainFragmentRegistry.registerFragment(PageRow::class.java, MainFragmentFactory())
     }
 
     private fun bindViewModel() {
@@ -78,33 +82,32 @@ class MainFragment : BrowseSupportFragment() {
             is Resource.Success -> {
                 adapter = ArrayObjectAdapter(ListRowPresenter())
                 (adapter as? ArrayObjectAdapter)?.let {
-                    // TODO WIP - probably should be only displayed if there are bookmarks + label + etc
-                    it += PageRow(HeaderItem(0L, "Home"))
+                    it += SectionRow(HeaderItem(MainFragmentFactory.KEY_HOME_SECTION, getString(R.string.main_home_header)))
+                    it += PageRow(HeaderItem(MainFragmentFactory.KEY_HOME_PAGE, getString(R.string.main_home_header)))
                     if (mainUiModel.offersResource is Resource.Success && mainUiModel.offersResource.data.isNotEmpty()) {
-                        it += SectionRow(HeaderItem(1L, getString(R.string.main_streams_header)))
-                        it += mainUiModel.offersResource.data.map { PageRow(HeaderItem(2L, it.conference)) }
+                        it += SectionRow(HeaderItem(KEY_STREAMING_SECTION, getString(R.string.main_streams_header)))
+                        it += mainUiModel.offersResource.data.map { PageRow(HeaderItem(KEY_STREAMING_PAGE, it.conference)) }
                     }
-                    it += SectionRow(HeaderItem(3L, getString(R.string.main_videos_header)))
+                    it += SectionRow(HeaderItem(KEY_LIBRARY_SECTION, getString(R.string.main_library_header)))
                     it += mainUiModel.conferenceGroupResource.data.map {
                         PageRow(HeaderItem(
-                                CONFERENCE_GROUP_TRANSLATIONS[it]?.toLong() ?: 4L,
+                                CONFERENCE_GROUP_TRANSLATIONS[it]?.toLong() ?: KEY_LIBRARY_PAGE,
                                 getString(CONFERENCE_GROUP_TRANSLATIONS[it] ?: R.string.cg_other)
                         ))
                     }
                     it += DividerRow()
-                    it += SectionRow(HeaderItem(5L, getString(R.string.main_more_header)))
-                    it += PageRow(HeaderItem(6L, getString(R.string.main_about_app)))
+                    it += SectionRow(HeaderItem(KEY_ABOUT_SECTION, getString(R.string.main_more_header)))
+                    it += PageRow(HeaderItem(KEY_ABOUT_PAGE, getString(R.string.main_about_app)))
                 }
             }
-        //            is Resource.Loading -> adapter = null
             is Resource.Error -> Toast.makeText(activity, mainUiModel.conferenceGroupResource.msg, Toast.LENGTH_LONG).show()
         }
 
         startEntranceTransition()
     }
 
+    // enable the main menu animation when clicking KEYCODE_DPAD_LEFT or KEYCODE_DPAD_UP on the about page
     fun onKeyDown(keyCode: Int): Boolean =
-            // enable the main menu animation when clicking KEYCODE_DPAD_LEFT or KEYCODE_DPAD_UP on the about page
             shouldScrollToHeadersOnKeyDown(keyCode).also {
                 if (it) startHeadersTransition(true)
             }
@@ -123,17 +126,4 @@ class MainFragment : BrowseSupportFragment() {
     private fun checkUpKey(keyCode: Int) =
             keyCode == KeyEvent.KEYCODE_DPAD_UP && (mainFragment as AboutFragment).shouldKeyUpEventTriggerBackAnimation
 
-    private class PageRowFragmentFactory internal constructor() : BrowseSupportFragment.FragmentFactory<Fragment>() {
-        override fun createFragment(rowObj: Any): Fragment {
-            return when ((rowObj as Row).headerItem.id) {
-                6L -> AboutFragment()
-                2L -> LiveStreamingFragment.create(rowObj.headerItem.name)
-                0L -> BookmarksFragment()
-                else -> ConferencesFragment.create(
-                        // reverse lookup of ConferenceGroup by StringResourceId
-                        CONFERENCE_GROUP_TRANSLATIONS.filterValues { it == rowObj.id.toInt() }.keys.firstOrNull() ?: ConferenceGroup.OTHER
-                )
-            }
-        }
-    }
 }

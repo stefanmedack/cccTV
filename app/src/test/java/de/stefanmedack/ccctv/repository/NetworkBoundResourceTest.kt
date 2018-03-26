@@ -26,7 +26,7 @@ class NetworkBoundResourceTest {
         val unchanged = TestData("should be unchanged")
         val toTest = TestableNetworkBoundResource(
                 localFetcher = Flowable.just(exampleTestData),
-                remoteFetcher = Single.just(TestData("network")).throttle(),
+                remoteFetcher = Single.just(TestData("network")).slowDown(),
                 localData = unchanged
         )
 
@@ -42,7 +42,7 @@ class NetworkBoundResourceTest {
         val exampleTestData = TestData("local")
         val unchanged = TestData("should be unchanged")
         val toTest = TestableNetworkBoundResource(
-                localFetcher = Flowable.just(exampleTestData).throttle(),
+                localFetcher = Flowable.just(exampleTestData).slowDown(),
                 remoteFetcher = Single.just(TestData("network")),
                 localData = unchanged
         )
@@ -59,7 +59,7 @@ class NetworkBoundResourceTest {
         val exampleTestData = TestData("network")
         val toTest = TestableNetworkBoundResource(
                 localFetcher = Flowable.empty<TestData>(),
-                remoteFetcher = Single.just(exampleTestData).throttle(),
+                remoteFetcher = Single.just(exampleTestData).slowDown(),
                 localData = null
         )
 
@@ -85,10 +85,10 @@ class NetworkBoundResourceTest {
         toTest.localData.shouldBeNull()
     }
 
-    private fun <T> Flowable<T>.throttle() =
+    private fun <T> Flowable<T>.slowDown() =
             Flowable.timer(1, TimeUnit.SECONDS).flatMap { this }
 
-    private fun <T> Single<T>.throttle() =
+    private fun <T> Single<T>.slowDown() =
             Single.timer(1, TimeUnit.SECONDS).flatMap { this }
 
     data class TestData(val name: String?)

@@ -1,4 +1,4 @@
-package de.stefanmedack.ccctv.ui.main
+package de.stefanmedack.ccctv.ui.main.home
 
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
@@ -10,18 +10,19 @@ import dagger.android.support.AndroidSupportInjection
 import de.stefanmedack.ccctv.persistence.entities.Event
 import de.stefanmedack.ccctv.ui.cards.EventCardPresenter
 import de.stefanmedack.ccctv.ui.detail.DetailActivity
+import de.stefanmedack.ccctv.ui.main.home.uiModel.HomeUiModel
 import de.stefanmedack.ccctv.util.plusAssign
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.subscribeBy
 import javax.inject.Inject
 
-class BookmarksFragment : RowsSupportFragment() {
+class HomeFragment : RowsSupportFragment() {
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
 
-    private val viewModel: BookmarksViewModel by lazy {
-        ViewModelProviders.of(this, viewModelFactory).get(BookmarksViewModel::class.java)
+    private val viewModel: HomeViewModel by lazy {
+        ViewModelProviders.of(this, viewModelFactory).get(HomeViewModel::class.java)
     }
 
     private val disposables = CompositeDisposable()
@@ -51,7 +52,7 @@ class BookmarksFragment : RowsSupportFragment() {
     }
 
     private fun bindViewModel() {
-        disposables.add(viewModel.bookmarks
+        disposables.add(viewModel.outputs.data
                 .subscribeBy(
                         onNext = { render(it) },
                         onError = { it.printStackTrace() }
@@ -59,16 +60,24 @@ class BookmarksFragment : RowsSupportFragment() {
         )
     }
 
-    private fun render(events: List<Event>) {
+    private fun render(data: HomeUiModel) {
         mainFragmentAdapter.fragmentHost.notifyDataReady(mainFragmentAdapter)
-        (adapter as ArrayObjectAdapter) += createEventRow(events)
+        (adapter as ArrayObjectAdapter).let { adapter ->
+            adapter.clear()
+            if (data.bookmarks.isNotEmpty()) {
+                adapter += createEventsRow("Bookmarks", data.bookmarks)
+            }
+            if (data.recentEvents.isNotEmpty()) {
+                adapter += createEventsRow("Recent Events", data.recentEvents)
+            }
+        }
     }
 
-    private fun createEventRow(events: List<Event>): Row {
+    private fun createEventsRow(title: String, events: List<Event>): Row {
         val adapter = ArrayObjectAdapter(EventCardPresenter())
         adapter += events
 
-        val headerItem = HeaderItem("Bookmarks")
+        val headerItem = HeaderItem(title)
         return ListRow(headerItem, adapter)
     }
 

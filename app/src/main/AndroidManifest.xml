@@ -7,6 +7,9 @@
     <uses-permission android:name="android.permission.INTERNET"/>
     <!--<uses-permission android:name="android.permission.RECORD_AUDIO"/>-->
 
+    <!--Note: this permission is used to start the [C3BroadcastReceiver] to schedule content updates in the background -->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+
     <uses-feature
         android:name="android.hardware.touchscreen"
         android:required="false"
@@ -105,6 +108,22 @@
             android:resizeableActivity="true"
             android:supportsPictureInPicture="true"
             />
+
+        <service
+            android:name=".service.ContentUpdateService"
+            android:enabled="true"
+            />
+
+        <receiver
+            android:name=".service.C3BroadcastReceiver"
+            android:enabled="true"
+            android:exported="false"
+            >
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED"/>
+            </intent-filter>
+        </receiver>
 
         <meta-data
             android:name="io.fabric.ApiKey"

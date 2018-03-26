@@ -2,15 +2,16 @@ package de.stefanmedack.ccctv
 
 import android.util.Log
 import com.crashlytics.android.Crashlytics
-import dagger.android.AndroidInjector
 import dagger.android.DaggerApplication
 import de.stefanmedack.ccctv.di.DaggerAppComponent
+import de.stefanmedack.ccctv.service.ContentUpdateService
 import io.fabric.sdk.android.Fabric
 import timber.log.Timber
 import timber.log.Timber.DebugTree
 
 class C3TVApp : DaggerApplication() {
-    override fun applicationInjector(): AndroidInjector<out DaggerApplication> = DaggerAppComponent.builder()
+
+    override fun applicationInjector() = DaggerAppComponent.builder()
             .application(this)
             .build()
 
@@ -24,6 +25,7 @@ class C3TVApp : DaggerApplication() {
         Fabric.with(this, Crashlytics())
         Timber.plant(CrashlyticsTree())
 
+        ContentUpdateService.schedulePeriodicContentUpdates(this)
     }
 
     private class CrashlyticsTree : Timber.Tree() {

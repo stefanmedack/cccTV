@@ -11,7 +11,6 @@ import de.stefanmedack.ccctv.di.Scopes.ApplicationContext
 import de.stefanmedack.ccctv.di.modules.ActivityBuilderModule
 import de.stefanmedack.ccctv.di.modules.C3MediaModule
 import de.stefanmedack.ccctv.di.modules.DatabaseModule
-import de.stefanmedack.ccctv.di.modules.SharedPreferencesModule
 import javax.inject.Singleton
 
 @Singleton
@@ -20,7 +19,6 @@ import javax.inject.Singleton
             AndroidSupportInjectionModule::class,
             C3MediaModule::class,
             DatabaseModule::class,
-            SharedPreferencesModule::class,
             ActivityBuilderModule::class
         ]
 )

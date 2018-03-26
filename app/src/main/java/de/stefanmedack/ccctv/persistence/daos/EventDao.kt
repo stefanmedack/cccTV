@@ -17,6 +17,9 @@ interface EventDao {
     @Query("SELECT * FROM Events WHERE id in (:ids)")
     fun getEvents(ids: List<Int>): Flowable<List<Event>>
 
+    @Query("SELECT * FROM Events ORDER BY date(date) DESC Limit 25")
+    fun getRecentEvents(): Flowable<List<Event>>
+
     @Query("SELECT * FROM Events WHERE id = :id")
     fun getEventById(id: Int): Single<Event>
 

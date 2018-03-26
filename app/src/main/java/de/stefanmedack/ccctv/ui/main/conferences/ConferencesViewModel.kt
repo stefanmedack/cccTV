@@ -1,4 +1,4 @@
-package de.stefanmedack.ccctv.ui.main
+package de.stefanmedack.ccctv.ui.main.conferences
 
 import android.arch.lifecycle.ViewModel
 import de.stefanmedack.ccctv.model.ConferenceGroup
@@ -20,7 +20,7 @@ class ConferencesViewModel @Inject constructor(
 
     val conferences: Flowable<Resource<List<Conference>>>
         get() = repository.loadedConferences(conferenceGroup.name)
-                .map<Resource<List<Conference>>> {
+                .map {
                     if (it is Resource.Success) {
                         Resource.Success(
                                 when (conferenceGroup) {

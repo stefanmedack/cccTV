@@ -11,6 +11,7 @@ import info.metadude.kotlin.library.c3media.models.MimeType
 import info.metadude.kotlin.library.c3media.models.Recording
 import org.threeten.bp.LocalDate
 import org.threeten.bp.OffsetDateTime
+import info.metadude.kotlin.library.c3media.models.Conference as ConferenceRemote
 import info.metadude.kotlin.library.c3media.models.Event as EventRemote
 
 val minimalConferenceEntity = Conference(
@@ -64,8 +65,16 @@ val fullEventEntity = Event(
         updatedAt = OffsetDateTime.now()
 )
 
+val minimalConference = ConferenceRemote(
+        url = "url/42",
+        slug = "slug",
+        title = "title",
+        acronym = "acronym"
+)
+
 val minimalEvent = EventRemote(
         conferenceId = 42,
+        url = "url/43",
         slug = "slug",
         guid = "guid",
         title = "title",

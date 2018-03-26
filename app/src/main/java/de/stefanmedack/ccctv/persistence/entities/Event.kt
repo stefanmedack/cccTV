@@ -1,7 +1,7 @@
 package de.stefanmedack.ccctv.persistence.entities
 
 import android.arch.persistence.room.*
-import android.arch.persistence.room.ForeignKey.CASCADE
+import android.arch.persistence.room.ForeignKey.NO_ACTION
 import de.stefanmedack.ccctv.util.EMPTY_STRING
 import info.metadude.kotlin.library.c3media.models.Metadata
 import org.threeten.bp.LocalDate
@@ -13,7 +13,8 @@ import org.threeten.bp.OffsetDateTime
                     entity = Conference::class,
                     parentColumns = arrayOf("id"),
                     childColumns = arrayOf("conference_id"),
-                    onDelete = CASCADE
+                    onUpdate = NO_ACTION,
+                    onDelete = NO_ACTION
             )],
         indices = [
             Index(name = "conference_idx", value = ["conference_id"])
