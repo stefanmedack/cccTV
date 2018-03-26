@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.support.v17.leanback.app.RowsSupportFragment
 import android.support.v17.leanback.widget.*
 import android.view.View
+import androidx.os.bundleOf
 import dagger.android.support.AndroidSupportInjection
 import de.stefanmedack.ccctv.ui.cards.StreamCardPresenter
 import de.stefanmedack.ccctv.ui.streaming.StreamingPlayerActivity
@@ -77,12 +78,8 @@ class LiveStreamingFragment : RowsSupportFragment() {
     }
 
     companion object {
-        fun create(streamId: String): LiveStreamingFragment {
-            val fragment = LiveStreamingFragment()
-            fragment.arguments = Bundle(1).apply {
-                putString(STREAM_ID, streamId)
-            }
-            return fragment
+        fun create(streamId: String): LiveStreamingFragment = LiveStreamingFragment().also { fragment ->
+            fragment.arguments = bundleOf(STREAM_ID to streamId)
         }
     }
 }

@@ -13,6 +13,7 @@ import android.support.v17.leanback.widget.*
 import android.util.DisplayMetrics
 import android.view.View
 import android.widget.Toast
+import androidx.os.bundleOf
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.SimpleTarget
@@ -160,17 +161,16 @@ class EventsFragment : VerticalGridSupportFragment() {
 
     companion object {
 
-        fun getBundleForConference(conferenceId: Int, title: String, conferenceLogoUrl: String?): Bundle =
-                Bundle(3).apply {
-                    putInt(CONFERENCE_ID, conferenceId)
-                    putString(EVENTS_VIEW_TITLE, title)
-                    putString(CONFERENCE_LOGO_URL, conferenceLogoUrl)
-                }
+        fun getBundleForConference(conferenceId: Int, title: String, conferenceLogoUrl: String?) = bundleOf(
+                CONFERENCE_ID to conferenceId,
+                EVENTS_VIEW_TITLE to title,
+                CONFERENCE_LOGO_URL to conferenceLogoUrl
+        )
 
-        fun getBundleForSearch(searchQuery: String, title: String): Bundle =
-                Bundle(2).apply {
-                    putString(EVENTS_VIEW_TITLE, title)
-                    putString(SEARCH_QUERY, searchQuery)
-                }
+        fun getBundleForSearch(searchQuery: String, title: String) = bundleOf(
+                EVENTS_VIEW_TITLE to title,
+                SEARCH_QUERY to searchQuery
+        )
+
     }
 }

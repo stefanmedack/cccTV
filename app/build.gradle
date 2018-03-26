@@ -9,6 +9,7 @@ apply plugin: 'io.fabric'
 apply plugin: 'com.google.gms.oss.licenses.plugin'
 
 ext {
+    androidKtx = "0.2"
     archComponentsVersion = "1.0.0"
     archComponentsLifecycleVersion = "1.1.0"
     assertjVersion = "3.8.0"
@@ -125,6 +126,8 @@ dependencies {
     implementation "android.arch.persistence.room:runtime:$archComponentsVersion"
     implementation "android.arch.persistence.room:rxjava2:$archComponentsVersion"
     kapt "android.arch.persistence.room:compiler:$archComponentsVersion"
+
+    implementation "androidx.core:core-ktx:$androidKtx"
 
     //Dagger 2 dependencies
     implementation "com.google.dagger:dagger:$daggerVersion"

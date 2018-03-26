@@ -10,8 +10,7 @@ import android.widget.ImageView
 import de.stefanmedack.ccctv.R
 import de.stefanmedack.ccctv.persistence.entities.Event
 import de.stefanmedack.ccctv.ui.base.BaseInjectableActivity
-import de.stefanmedack.ccctv.util.EVENT_ID
-import de.stefanmedack.ccctv.util.EVENT_PICTURE
+import de.stefanmedack.ccctv.util.FRAGMENT_ARGUMENTS
 import de.stefanmedack.ccctv.util.SHARED_DETAIL_TRANSITION
 import de.stefanmedack.ccctv.util.replaceFragmentInTransaction
 
@@ -30,10 +29,7 @@ class DetailActivity : BaseInjectableActivity() {
 
         fragment = DetailFragment()
         fragment?.let { frag ->
-            frag.arguments = Bundle(2).apply {
-                putInt(EVENT_ID, intent.getIntExtra(EVENT_ID, -1))
-                putString(EVENT_PICTURE, intent.getStringExtra(EVENT_PICTURE))
-            }
+            frag.arguments = intent.getBundleExtra(FRAGMENT_ARGUMENTS)
             replaceFragmentInTransaction(frag, R.id.fragment, DETAIL_TAG)
         }
     }
@@ -45,8 +41,7 @@ class DetailActivity : BaseInjectableActivity() {
     companion object {
         fun start(activity: Activity, event: Event, sharedImage: ImageView? = null) {
             val intent = Intent(activity, DetailActivity::class.java)
-            intent.putExtra(EVENT_ID, event.id)
-            intent.putExtra(EVENT_PICTURE, event.thumbUrl)
+            intent.putExtra(FRAGMENT_ARGUMENTS, DetailFragment.getBundle(eventId = event.id, eventThumbUrl = event.thumbUrl))
 
             if (sharedImage != null) {
                 val bundle = ActivityOptionsCompat.makeSceneTransitionAnimation(

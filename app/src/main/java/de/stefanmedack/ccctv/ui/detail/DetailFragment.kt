@@ -13,6 +13,7 @@ import android.support.v4.content.ContextCompat
 import android.view.KeyEvent
 import android.view.View
 import android.widget.Toast
+import androidx.os.bundleOf
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.SimpleTarget
@@ -249,6 +250,10 @@ class DetailFragment : DetailsSupportFragment() {
         val playbackFragmentView = detailsBackground.findOrCreateVideoSupportFragment().view
         val progressBarView = playbackFragmentView?.findViewById<View>(R.id.playback_progress)
         return (playbackFragmentView?.hasFocus() == true && progressBarView?.hasFocus() == true)
+    }
+
+    companion object {
+        fun getBundle(eventId: Int, eventThumbUrl: String?) = bundleOf(EVENT_ID to eventId, EVENT_PICTURE to eventThumbUrl)
     }
 
 }

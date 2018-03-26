@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.FragmentActivity
 import android.view.WindowManager
+import androidx.os.bundleOf
 import de.stefanmedack.ccctv.R
 import de.stefanmedack.ccctv.util.STREAM_URL
 import de.stefanmedack.ccctv.util.addFragmentInTransaction
@@ -20,9 +21,7 @@ class StreamingPlayerActivity : FragmentActivity() {
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
         val fragment = StreamingPlayerFragment().apply {
-            arguments = Bundle(1).also {
-                it.putString(STREAM_URL, intent.getStringExtra(STREAM_URL))
-            }
+            arguments = bundleOf(STREAM_URL to intent.getStringExtra(STREAM_URL))
         }
         addFragmentInTransaction(fragment, R.id.videoFragment, StreamingPlayerFragment.TAG)
     }

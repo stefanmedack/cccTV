@@ -3,17 +3,20 @@ package de.stefanmedack.ccctv.ui.main.conferences
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
+import android.support.v17.leanback.app.BrowseSupportFragment
+import android.support.v17.leanback.app.BrowseSupportFragment.MainFragmentAdapterProvider
+import android.support.v17.leanback.app.VerticalGridSupportFragment
 import android.support.v17.leanback.widget.ArrayObjectAdapter
 import android.support.v17.leanback.widget.FocusHighlight
 import android.support.v17.leanback.widget.OnItemViewClickedListener
 import android.support.v17.leanback.widget.VerticalGridPresenter
 import android.view.View
 import android.widget.Toast
+import androidx.os.bundleOf
 import dagger.android.support.AndroidSupportInjection
 import de.stefanmedack.ccctv.model.ConferenceGroup
 import de.stefanmedack.ccctv.model.Resource
 import de.stefanmedack.ccctv.persistence.entities.Conference
-import de.stefanmedack.ccctv.ui.base.GridFragment
 import de.stefanmedack.ccctv.ui.cards.ConferenceCardPresenter
 import de.stefanmedack.ccctv.ui.events.EventsActivity
 import de.stefanmedack.ccctv.util.CONFERENCE_GROUP
@@ -22,7 +25,7 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.subscribeBy
 import javax.inject.Inject
 
-class ConferencesFragment : GridFragment() {
+class ConferencesFragment : VerticalGridSupportFragment(), MainFragmentAdapterProvider {
 
     private val COLUMNS = 4
     private val ZOOM_FACTOR = FocusHighlight.ZOOM_FACTOR_SMALL
@@ -37,6 +40,12 @@ class ConferencesFragment : GridFragment() {
     }
 
     private val disposables = CompositeDisposable()
+
+    private val mainFragmentAdapter = BrowseSupportFragment.MainFragmentAdapter(this)
+
+    override fun getMainFragmentAdapter(): BrowseSupportFragment.MainFragmentAdapter<*> {
+        return mainFragmentAdapter
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -91,12 +100,10 @@ class ConferencesFragment : GridFragment() {
     }
 
     companion object {
-        fun create(conferenceGroup: ConferenceGroup): ConferencesFragment {
-            val fragment = ConferencesFragment()
-            fragment.arguments = Bundle(1).apply {
-                putSerializable(CONFERENCE_GROUP, conferenceGroup)
-            }
-            return fragment
+
+        fun create(conferenceGroup: ConferenceGroup): ConferencesFragment = ConferencesFragment().also { fragment ->
+            fragment.arguments = bundleOf(CONFERENCE_GROUP to conferenceGroup)
         }
+
     }
 }

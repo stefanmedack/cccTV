@@ -16,10 +16,10 @@ class MainFragmentFactory : BrowseSupportFragment.FragmentFactory<Fragment>() {
             KEY_ABOUT_PAGE -> AboutFragment()
             KEY_STREAMING_PAGE -> LiveStreamingFragment.create(rowObj.headerItem.name)
             KEY_HOME_PAGE -> HomeFragment()
-            else -> ConferencesFragment.create(
-                    // reverse lookup of ConferenceGroup by StringResourceId
-                    CONFERENCE_GROUP_TRANSLATIONS.filterValues { it == rowObj.id.toInt() }.keys.firstOrNull() ?: ConferenceGroup.OTHER
-            )
+            else -> ConferencesFragment.create(CONFERENCE_GROUP_TRANSLATIONS // reverse lookup of ConferenceGroup by StringResourceId
+                    .filterValues { it == rowObj.id.toInt() }
+                    .keys
+                    .firstOrNull() ?: ConferenceGroup.OTHER)
         }
     }
 

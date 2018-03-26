@@ -43,7 +43,6 @@ class EventsActivity : BaseInjectableActivity() {
                     searchQuery = searchQuery,
                     title = activity.getString(R.string.events_view_search_result_header, searchQuery)
             ))
-
             activity.startActivity(intent, ActivityOptionsCompat.makeSceneTransitionAnimation(activity).toBundle())
         }
     }
