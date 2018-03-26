@@ -72,7 +72,7 @@ class ConferenceRepositoryTest {
         verify(conferenceDao).insertAll(conferenceEntityList)
     }
 
-    // TODO conference with events
+    // TODO implement conference with events tests
 
     @Test
     fun `update content should fetch remote data and save it locally`() {
