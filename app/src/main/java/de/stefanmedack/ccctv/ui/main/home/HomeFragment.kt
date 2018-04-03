@@ -12,7 +12,6 @@ import de.stefanmedack.ccctv.persistence.entities.Event
 import de.stefanmedack.ccctv.ui.cards.EventCardPresenter
 import de.stefanmedack.ccctv.ui.detail.DetailActivity
 import de.stefanmedack.ccctv.ui.main.home.uiModel.HomeUiModel
-import de.stefanmedack.ccctv.util.plusAssign
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.subscribeBy
 import javax.inject.Inject
@@ -28,8 +27,12 @@ class HomeFragment : RowsSupportFragment() {
 
     private val disposables = CompositeDisposable()
 
-    private val eventAdapterMap = mutableMapOf<String, ArrayObjectAdapter>()
+    private val bookmarkHeaderString by lazy { getString(R.string.home_header_bookmarked) }
+    private val trendingHeaderString by lazy { getString(R.string.home_header_trending) }
+    private val popularHeaderString by lazy { getString(R.string.home_header_popular) }
+    private val recentHeaderString by lazy { getString(R.string.home_header_recent) }
 
+    private val eventAdapterMap = mutableMapOf<String, ArrayObjectAdapter>()
     private val eventDiffCallback: DiffCallback<Event> = object : DiffCallback<Event>() {
         override fun areItemsTheSame(oldItem: Event, newItem: Event) = oldItem.id == newItem.id
         override fun areContentsTheSame(oldItem: Event, newItem: Event) = oldItem == newItem
@@ -71,10 +74,10 @@ class HomeFragment : RowsSupportFragment() {
     private fun render(data: HomeUiModel) {
         mainFragmentAdapter.fragmentHost.notifyDataReady(mainFragmentAdapter)
         (adapter as ArrayObjectAdapter).let { adapter ->
-            adapter.updateEventsRow(getString(R.string.home_header_bookmarked), data.bookmarks)
-            adapter.updateEventsRow(getString(R.string.home_header_trending), data.trending)
-            adapter.updateEventsRow(getString(R.string.home_header_popular), data.popularEvents)
-            adapter.updateEventsRow(getString(R.string.home_header_recent), data.recentEvents)
+            adapter.updateEventsRow(bookmarkHeaderString, data.bookmarks)
+            adapter.updateEventsRow(trendingHeaderString, data.trending)
+            adapter.updateEventsRow(popularHeaderString, data.popularEvents)
+            adapter.updateEventsRow(recentHeaderString, data.recentEvents)
         }
     }
 
@@ -82,10 +85,25 @@ class HomeFragment : RowsSupportFragment() {
         if (events.isNotEmpty()) {
             eventAdapterMap.getOrPut(title, {
                 ArrayObjectAdapter(EventCardPresenter()).also { eventsAdapter ->
-                    this@updateEventsRow += ListRow(HeaderItem(title), eventsAdapter)
+                    this@updateEventsRow.add(ListRow(title.hashCode().toLong(), HeaderItem(title), eventsAdapter))
                 }
             }).setItems(events, eventDiffCallback)
+        } else if (this.size() > 0) {
+            this@updateEventsRow.getListRowForTitle(title)?.let { listRow ->
+                this.remove(listRow)
+                eventAdapterMap.remove(title)
+            }
         }
+    }
+
+    private fun ArrayObjectAdapter.getListRowForTitle(title: String): ListRow? {
+        for (index in 0..this.size()) {
+            val listRow = this.get(index) as? ListRow
+            if (listRow?.id == title.hashCode().toLong()) {
+                return listRow
+            }
+        }
+        return null
     }
 
 }
