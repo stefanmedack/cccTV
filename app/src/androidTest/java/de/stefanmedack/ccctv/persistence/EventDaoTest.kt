@@ -7,10 +7,7 @@ import de.stefanmedack.ccctv.getSingleTestResult
 import de.stefanmedack.ccctv.minimalConferenceEntity
 import de.stefanmedack.ccctv.minimalEventEntity
 import de.stefanmedack.ccctv.model.ConferenceGroup
-import org.amshove.kluent.shouldBe
-import org.amshove.kluent.shouldBeInstanceOf
-import org.amshove.kluent.shouldEqual
-import org.amshove.kluent.shouldNotEqual
+import org.amshove.kluent.*
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.threeten.bp.OffsetDateTime
@@ -126,6 +123,43 @@ class EventDaoTest : BaseDbTest() {
         loadedData[0] shouldEqual events[1] // id = 2
         loadedData[1] shouldEqual events[0] // id = 1
         loadedData[2] shouldEqual events[2] // id = 3
+    }
+
+    @Test
+    fun get_popular_events_younger_than_sorts_by_view_count() {
+        initDbWithConference(minimalEventEntity.conferenceId)
+        val twoDaysAgoLimit = OffsetDateTime.now().minusDays(2)
+        val events = listOf(
+                minimalEventEntity.copy(id = 1, viewCount = 42, date = OffsetDateTime.now()),
+                minimalEventEntity.copy(id = 2, viewCount = 43, date = OffsetDateTime.now()),
+                minimalEventEntity.copy(id = 3, viewCount = 41, date = OffsetDateTime.now())
+        )
+        eventDao.insertAll(events)
+
+        val loadedData = eventDao.getPopularEventsYoungerThan(twoDaysAgoLimit).getSingleTestResult()
+
+        loadedData.size shouldEqual 3
+        loadedData[0] shouldEqual events[1] // id = 2
+        loadedData[1] shouldEqual events[0] // id = 1
+        loadedData[2] shouldEqual events[2] // id = 3
+    }
+
+    @Test
+    fun get_popular_events_younger_than_two_days_filters_events_older_than_two_days() {
+        initDbWithConference(minimalEventEntity.conferenceId)
+        val twoDaysAgoDate = OffsetDateTime.now().minusDays(2)
+        val events = listOf(
+                minimalEventEntity.copy(id = 1, date = OffsetDateTime.now()),
+                minimalEventEntity.copy(id = 2, date = OffsetDateTime.now().minusDays(3)),
+                minimalEventEntity.copy(id = 3, date = OffsetDateTime.now().minusDays(1))
+        )
+        eventDao.insertAll(events)
+
+        val loadedData = eventDao.getPopularEventsYoungerThan(twoDaysAgoDate).getSingleTestResult()
+
+        loadedData.size shouldEqual 2
+        loadedData.map { it.id } shouldContainAll listOf(1, 3)
+        loadedData.map { it.id } shouldNotContain 2
     }
 
     @Test

@@ -7,6 +7,7 @@ import android.arch.persistence.room.Query
 import de.stefanmedack.ccctv.persistence.entities.Event
 import io.reactivex.Flowable
 import io.reactivex.Single
+import org.threeten.bp.OffsetDateTime
 
 @Dao
 interface EventDao {
@@ -22,6 +23,9 @@ interface EventDao {
 
     @Query("SELECT * FROM Events ORDER BY view_count DESC Limit 25")
     fun getPopularEvents(): Flowable<List<Event>>
+
+    @Query("SELECT * FROM Events WHERE date > :date ORDER BY view_count DESC Limit 25")
+    fun getPopularEventsYoungerThan(date: OffsetDateTime): Flowable<List<Event>>
 
     @Query("SELECT * FROM Events WHERE id = :id")
     fun getEventById(id: Int): Single<Event>

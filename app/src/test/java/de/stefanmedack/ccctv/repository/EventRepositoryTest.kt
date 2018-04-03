@@ -88,6 +88,16 @@ class EventRepositoryTest {
     }
 
     @Test
+    fun `fetch trending events loads popular events younger than 30 days`() {
+        When calling eventDao.getPopularEventsYoungerThan(any()) itReturns Flowable.just(listOf(minimalEventEntity))
+
+        val result = repositoy.getTrendingEvents().getSingleTestResult()
+
+        result.size shouldBe 1
+        result[0] shouldBe minimalEventEntity
+    }
+
+    @Test
     fun `fetch bookmarked events from local source`() {
         When calling bookmarkDao.getBookmarkedEvents() itReturns Flowable.just(listOf(minimalEventEntity))
 

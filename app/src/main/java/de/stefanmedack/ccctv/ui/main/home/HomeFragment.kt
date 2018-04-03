@@ -68,11 +68,14 @@ class HomeFragment : RowsSupportFragment() {
             if (data.bookmarks.isNotEmpty()) {
                 adapter += createEventsRow(getString(R.string.home_header_bookmarked), data.bookmarks)
             }
-            if (data.recentEvents.isNotEmpty()) {
-                adapter += createEventsRow(getString(R.string.home_header_recent), data.recentEvents)
+            if (data.trending.isNotEmpty()) {
+                adapter += createEventsRow(getString(R.string.home_header_trending), data.trending)
             }
             if (data.popularEvents.isNotEmpty()) {
                 adapter += createEventsRow(getString(R.string.home_header_popular), data.popularEvents)
+            }
+            if (data.recentEvents.isNotEmpty()) {
+                adapter += createEventsRow(getString(R.string.home_header_recent), data.recentEvents)
             }
         }
     }

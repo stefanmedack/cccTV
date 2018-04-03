@@ -11,6 +11,7 @@ import io.reactivex.Completable
 import io.reactivex.Flowable
 import io.reactivex.Single
 import io.reactivex.rxkotlin.toFlowable
+import org.threeten.bp.OffsetDateTime
 import javax.inject.Inject
 import javax.inject.Singleton
 import info.metadude.kotlin.library.c3media.models.Event as EventRemote
@@ -36,6 +37,8 @@ class EventRepository @Inject constructor(
     fun getRecentEvents(): Flowable<List<Event>> = eventDao.getRecentEvents()
 
     fun getPopularEvents(): Flowable<List<Event>> = eventDao.getPopularEvents()
+
+    fun getTrendingEvents(): Flowable<List<Event>> = eventDao.getPopularEventsYoungerThan(OffsetDateTime.now().minusDays(90))
 
     // TODO change to Resource<Single<EventRemote>>
     fun getEventWithRecordings(id: Int): Single<EventRemote> = mediaService.getEvent(id)
