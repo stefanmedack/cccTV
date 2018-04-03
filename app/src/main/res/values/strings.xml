@@ -1,11 +1,17 @@
 <resources>
 
     <string name="app_name">cccTV</string>
+
     <string name="main_home_header">Home</string>
     <string name="main_streams_header">Live Stream</string>
     <string name="main_library_header">Library</string>
     <string name="main_more_header">More</string>
     <string name="main_about_app">About cccTV</string>
+
+    <string name="home_header_bookmarked">On Your Watchlist</string>
+    <string name="home_header_recent">Most Recent Videos</string>
+    <string name="home_header_popular">Most Popular Videos</string>
+
     <string name="action_watch">Watch</string>
     <string name="action_add_bookmark">Add to</string>
     <string name="action_remove_bookmark">Remove from</string>
@@ -14,6 +20,7 @@
     <string name="action_show_related">Related</string>
     <string name="header_speaker">Speaker</string>
     <string name="header_related">Related Videos</string>
+
     <string name="about_description">\ncccTV is an Open Source project developed by Stefan Medack.
         All sources are available under the Apache License 2.0 on github.com/stefanmedack/cccTV.
         \n\nThe video material is kindly provided by media.ccc.de
@@ -29,6 +36,7 @@
     <string name="voctocat">Voctocat</string>
     <string name="voctocat_toast">This little fella is designed by Sebastian Morr and distributed under CC BY-NC-SA 4.0 License
         (https://morr.cc/voctocat/)</string>
+
     <string name="search_result_header">%1$s videos found for \"%2$s\"</string>
     <string name="events_view_search_result_header">Search results for \"%1$s\"</string>
 

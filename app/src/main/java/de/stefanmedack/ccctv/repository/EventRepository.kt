@@ -35,6 +35,8 @@ class EventRepository @Inject constructor(
 
     fun getRecentEvents(): Flowable<List<Event>> = eventDao.getRecentEvents()
 
+    fun getPopularEvents(): Flowable<List<Event>> = eventDao.getPopularEvents()
+
     // TODO change to Resource<Single<EventRemote>>
     fun getEventWithRecordings(id: Int): Single<EventRemote> = mediaService.getEvent(id)
             .applySchedulers()
