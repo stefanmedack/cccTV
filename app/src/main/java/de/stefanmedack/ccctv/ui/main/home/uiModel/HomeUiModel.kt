@@ -4,5 +4,7 @@ import de.stefanmedack.ccctv.persistence.entities.Event
 
 data class HomeUiModel(
         val bookmarks: List<Event>,
+        val trending: List<Event>,
+        val popularEvents: List<Event>,
         val recentEvents: List<Event>
 )

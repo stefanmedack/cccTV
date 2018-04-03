@@ -7,6 +7,7 @@ import android.support.v17.leanback.app.RowsSupportFragment
 import android.support.v17.leanback.widget.*
 import android.view.View
 import dagger.android.support.AndroidSupportInjection
+import de.stefanmedack.ccctv.R
 import de.stefanmedack.ccctv.persistence.entities.Event
 import de.stefanmedack.ccctv.ui.cards.EventCardPresenter
 import de.stefanmedack.ccctv.ui.detail.DetailActivity
@@ -65,10 +66,16 @@ class HomeFragment : RowsSupportFragment() {
         (adapter as ArrayObjectAdapter).let { adapter ->
             adapter.clear()
             if (data.bookmarks.isNotEmpty()) {
-                adapter += createEventsRow("Bookmarks", data.bookmarks)
+                adapter += createEventsRow(getString(R.string.home_header_bookmarked), data.bookmarks)
+            }
+            if (data.trending.isNotEmpty()) {
+                adapter += createEventsRow(getString(R.string.home_header_trending), data.trending)
+            }
+            if (data.popularEvents.isNotEmpty()) {
+                adapter += createEventsRow(getString(R.string.home_header_popular), data.popularEvents)
             }
             if (data.recentEvents.isNotEmpty()) {
-                adapter += createEventsRow("Recent Events", data.recentEvents)
+                adapter += createEventsRow(getString(R.string.home_header_recent), data.recentEvents)
             }
         }
     }

@@ -65,6 +65,38 @@ class EventRepositoryTest {
         result shouldEqual eventRemote.toEntity(-1)
     }
 
+    // TODO test for getEvents missing
+
+    @Test
+    fun `fetch recent events loads from local source`() {
+        When calling eventDao.getRecentEvents() itReturns Flowable.just(listOf(minimalEventEntity))
+
+        val result = repositoy.getRecentEvents().getSingleTestResult()
+
+        result.size shouldBe 1
+        result[0] shouldBe minimalEventEntity
+    }
+
+    @Test
+    fun `fetch popular events loads from local source`() {
+        When calling eventDao.getPopularEvents() itReturns Flowable.just(listOf(minimalEventEntity))
+
+        val result = repositoy.getPopularEvents().getSingleTestResult()
+
+        result.size shouldBe 1
+        result[0] shouldBe minimalEventEntity
+    }
+
+    @Test
+    fun `fetch trending events loads popular events younger than 30 days`() {
+        When calling eventDao.getPopularEventsYoungerThan(any()) itReturns Flowable.just(listOf(minimalEventEntity))
+
+        val result = repositoy.getTrendingEvents().getSingleTestResult()
+
+        result.size shouldBe 1
+        result[0] shouldBe minimalEventEntity
+    }
+
     @Test
     fun `fetch bookmarked events from local source`() {
         When calling bookmarkDao.getBookmarkedEvents() itReturns Flowable.just(listOf(minimalEventEntity))

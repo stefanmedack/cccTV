@@ -17,13 +17,24 @@ class HomeViewModel @Inject constructor(
     internal val outputs: Outputs = this
 
     override val data: Flowable<HomeUiModel>
-        get() = Flowables.combineLatest(bookmarks, recentEvents, { bookmarks, recentEvents -> HomeUiModel(bookmarks, recentEvents) })
+        get() = Flowables.combineLatest(
+                bookmarks,
+                trendingEvents,
+                popularEvents,
+                recentEvents,
+                { bookmarked, trending, popular, recent -> HomeUiModel(bookmarked, trending, popular, recent) })
                 .applySchedulers()
 
     private val bookmarks: Flowable<List<Event>>
         get() = eventRepository.getBookmarkedEvents()
 
+    private val trendingEvents: Flowable<List<Event>>
+        get() = eventRepository.getTrendingEvents()
+
     private val recentEvents: Flowable<List<Event>>
         get() = eventRepository.getRecentEvents()
+
+    private val popularEvents: Flowable<List<Event>>
+        get() = eventRepository.getPopularEvents()
 
 }
