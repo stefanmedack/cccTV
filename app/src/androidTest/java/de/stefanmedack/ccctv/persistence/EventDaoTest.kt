@@ -88,7 +88,6 @@ class EventDaoTest : BaseDbTest() {
         loadedData[2] shouldEqual events[2]
     }
 
-
     @Test
     fun get_recent_events_sorts_results_by_date() {
         initDbWithConference(minimalEventEntity.conferenceId)
@@ -126,17 +125,16 @@ class EventDaoTest : BaseDbTest() {
     }
 
     @Test
-    fun get_popular_events_younger_than_sorts_by_view_count() {
-        initDbWithConference(minimalEventEntity.conferenceId)
-        val twoDaysAgoLimit = OffsetDateTime.now().minusDays(2)
+    fun get_popular_events_younger_than_some_date_sorts_by_view_count() {
+        initDbWithConference(fullEventEntity.conferenceId)
         val events = listOf(
-                minimalEventEntity.copy(id = 1, viewCount = 42, date = OffsetDateTime.now()),
-                minimalEventEntity.copy(id = 2, viewCount = 43, date = OffsetDateTime.now()),
-                minimalEventEntity.copy(id = 3, viewCount = 41, date = OffsetDateTime.now())
+                fullEventEntity.copy(id = 1, viewCount = 42),
+                fullEventEntity.copy(id = 2, viewCount = 43),
+                fullEventEntity.copy(id = 3, viewCount = 41)
         )
         eventDao.insertAll(events)
 
-        val loadedData = eventDao.getPopularEventsYoungerThan(twoDaysAgoLimit).getSingleTestResult()
+        val loadedData = eventDao.getPopularEventsYoungerThan(OffsetDateTime.MIN).getSingleTestResult()
 
         loadedData.size shouldEqual 3
         loadedData[0] shouldEqual events[1] // id = 2
