@@ -83,24 +83,24 @@ class HomeFragment : RowsSupportFragment() {
 
     private fun ArrayObjectAdapter.updateEventsRow(title: String, events: List<Event>) {
         if (events.isNotEmpty()) {
-            eventAdapterMap.getOrPut(title, {
-                ArrayObjectAdapter(EventCardPresenter()).also { eventsAdapter ->
-                    this@updateEventsRow.add(ListRow(title.hashCode().toLong(), HeaderItem(title), eventsAdapter))
-                }
-            }).setItems(events, eventDiffCallback)
-        } else if (this.size() > 0) {
-            this@updateEventsRow.getListRowForTitle(title)?.let { listRow ->
-                this.remove(listRow)
-                eventAdapterMap.remove(title)
-            }
+            // get or create adapter for this title and update its events
+            eventAdapterMap.getOrPut(title, { addNewEventListAdapter(title) }).setItems(events, eventDiffCallback)
+        } else {
+            getListRow(title)?.let { listRow -> remove(listRow) }
+            eventAdapterMap.remove(title)
         }
     }
 
-    private fun ArrayObjectAdapter.getListRowForTitle(title: String): ListRow? {
-        for (index in 0..this.size()) {
-            val listRow = this.get(index) as? ListRow
-            if (listRow?.id == title.hashCode().toLong()) {
-                return listRow
+    private fun ArrayObjectAdapter.addNewEventListAdapter(title: String): ArrayObjectAdapter = ArrayObjectAdapter(EventCardPresenter())
+            .also { eventsAdapter -> add(ListRow(title.hashCode().toLong(), HeaderItem(title), eventsAdapter)) }
+
+    private fun ArrayObjectAdapter.getListRow(title: String): ListRow? {
+        if (size() > 0) {
+            for (index in 0..size()) {
+                val listRow = get(index) as? ListRow
+                if (listRow?.id == title.hashCode().toLong()) {
+                    return listRow
+                }
             }
         }
         return null
