@@ -107,6 +107,23 @@ class EventDaoTest : BaseDbTest() {
     }
 
     @Test
+    fun get_promoted_events_loads_only_promoted_events() {
+        initDbWithConference(minimalEventEntity.conferenceId)
+        val events = listOf(
+                minimalEventEntity.copy(id = 1, promoted = true),
+                minimalEventEntity.copy(id = 2, promoted = false),
+                minimalEventEntity.copy(id = 3, promoted = true)
+        )
+        eventDao.insertAll(events)
+
+        val loadedData = eventDao.getPromotedEvents().getSingleTestResult()
+
+        loadedData.size shouldEqual 2
+        loadedData.map { it.id } shouldContainAll listOf(1, 3)
+        loadedData.map { it.id } shouldNotContain 2
+    }
+
+    @Test
     fun get_popular_events_sorts_results_by_view_count() {
         initDbWithConference(minimalEventEntity.conferenceId)
         val events = listOf(

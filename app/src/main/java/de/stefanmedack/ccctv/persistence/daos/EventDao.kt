@@ -21,6 +21,9 @@ interface EventDao {
     @Query("SELECT * FROM Events ORDER BY date(date) DESC Limit 25")
     fun getRecentEvents(): Flowable<List<Event>>
 
+    @Query("SELECT * FROM Events WHERE promoted = 1 Limit 25")
+    fun getPromotedEvents(): Flowable<List<Event>>
+
     @Query("SELECT * FROM Events ORDER BY view_count DESC Limit 25")
     fun getPopularEvents(): Flowable<List<Event>>
 

@@ -28,11 +28,13 @@ class HomeFragment : RowsSupportFragment() {
     private val disposables = CompositeDisposable()
 
     private val bookmarkHeaderString by lazy { getString(R.string.home_header_bookmarked) }
+    private val promotedHeaderString by lazy { getString(R.string.home_header_promoted) }
     private val trendingHeaderString by lazy { getString(R.string.home_header_trending) }
     private val popularHeaderString by lazy { getString(R.string.home_header_popular) }
     private val recentHeaderString by lazy { getString(R.string.home_header_recent) }
 
     private val eventAdapterMap = mutableMapOf<String, ArrayObjectAdapter>()
+
     private val eventDiffCallback: DiffCallback<Event> = object : DiffCallback<Event>() {
         override fun areItemsTheSame(oldItem: Event, newItem: Event) = oldItem.id == newItem.id
         override fun areContentsTheSame(oldItem: Event, newItem: Event) = oldItem == newItem
@@ -75,6 +77,8 @@ class HomeFragment : RowsSupportFragment() {
         mainFragmentAdapter.fragmentHost.notifyDataReady(mainFragmentAdapter)
         (adapter as ArrayObjectAdapter).let { adapter ->
             adapter.updateEventsRow(bookmarkHeaderString, data.bookmarks)
+            // TODO promoted and trending are pretty similar - decide on one
+            // adapter.updateEventsRow(promotedHeaderString, data.promoted)
             adapter.updateEventsRow(trendingHeaderString, data.trending)
             adapter.updateEventsRow(popularHeaderString, data.popularEvents)
             adapter.updateEventsRow(recentHeaderString, data.recentEvents)

@@ -38,6 +38,8 @@ class EventRepository @Inject constructor(
 
     fun getPopularEvents(): Flowable<List<Event>> = eventDao.getPopularEvents()
 
+    fun getPromotedEvents(): Flowable<List<Event>> = eventDao.getPromotedEvents()
+
     fun getTrendingEvents(): Flowable<List<Event>> = eventDao.getPopularEventsYoungerThan(OffsetDateTime.now().minusDays(90))
 
     // TODO change to Resource<Single<EventRemote>>
