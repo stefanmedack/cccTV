@@ -12,7 +12,6 @@ import de.stefanmedack.ccctv.persistence.entities.Event
 import de.stefanmedack.ccctv.ui.cards.EventCardPresenter
 import de.stefanmedack.ccctv.ui.detail.DetailActivity
 import de.stefanmedack.ccctv.ui.main.home.uiModel.HomeUiModel
-import de.stefanmedack.ccctv.util.plusAssign
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.subscribeBy
 import javax.inject.Inject
@@ -27,6 +26,17 @@ class HomeFragment : RowsSupportFragment() {
     }
 
     private val disposables = CompositeDisposable()
+
+    private val bookmarkHeaderString by lazy { getString(R.string.home_header_bookmarked) }
+    private val trendingHeaderString by lazy { getString(R.string.home_header_trending) }
+    private val popularHeaderString by lazy { getString(R.string.home_header_popular) }
+    private val recentHeaderString by lazy { getString(R.string.home_header_recent) }
+
+    private val eventAdapterMap = mutableMapOf<String, ArrayObjectAdapter>()
+    private val eventDiffCallback: DiffCallback<Event> = object : DiffCallback<Event>() {
+        override fun areItemsTheSame(oldItem: Event, newItem: Event) = oldItem.id == newItem.id
+        override fun areContentsTheSame(oldItem: Event, newItem: Event) = oldItem == newItem
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         AndroidSupportInjection.inject(this)
@@ -64,28 +74,36 @@ class HomeFragment : RowsSupportFragment() {
     private fun render(data: HomeUiModel) {
         mainFragmentAdapter.fragmentHost.notifyDataReady(mainFragmentAdapter)
         (adapter as ArrayObjectAdapter).let { adapter ->
-            adapter.clear()
-            if (data.bookmarks.isNotEmpty()) {
-                adapter += createEventsRow(getString(R.string.home_header_bookmarked), data.bookmarks)
-            }
-            if (data.trending.isNotEmpty()) {
-                adapter += createEventsRow(getString(R.string.home_header_trending), data.trending)
-            }
-            if (data.popularEvents.isNotEmpty()) {
-                adapter += createEventsRow(getString(R.string.home_header_popular), data.popularEvents)
-            }
-            if (data.recentEvents.isNotEmpty()) {
-                adapter += createEventsRow(getString(R.string.home_header_recent), data.recentEvents)
-            }
+            adapter.updateEventsRow(bookmarkHeaderString, data.bookmarks)
+            adapter.updateEventsRow(trendingHeaderString, data.trending)
+            adapter.updateEventsRow(popularHeaderString, data.popularEvents)
+            adapter.updateEventsRow(recentHeaderString, data.recentEvents)
         }
     }
 
-    private fun createEventsRow(title: String, events: List<Event>): Row {
-        val adapter = ArrayObjectAdapter(EventCardPresenter())
-        adapter += events
+    private fun ArrayObjectAdapter.updateEventsRow(title: String, events: List<Event>) {
+        if (events.isNotEmpty()) {
+            // get or create adapter for this title and update its events
+            eventAdapterMap.getOrPut(title, { addNewEventListAdapter(title) }).setItems(events, eventDiffCallback)
+        } else {
+            getListRow(title)?.let { listRow -> remove(listRow) }
+            eventAdapterMap.remove(title)
+        }
+    }
 
-        val headerItem = HeaderItem(title)
-        return ListRow(headerItem, adapter)
+    private fun ArrayObjectAdapter.addNewEventListAdapter(title: String): ArrayObjectAdapter = ArrayObjectAdapter(EventCardPresenter())
+            .also { eventsAdapter -> add(ListRow(title.hashCode().toLong(), HeaderItem(title), eventsAdapter)) }
+
+    private fun ArrayObjectAdapter.getListRow(title: String): ListRow? {
+        if (size() > 0) {
+            for (index in 0..size()) {
+                val listRow = get(index) as? ListRow
+                if (listRow?.id == title.hashCode().toLong()) {
+                    return listRow
+                }
+            }
+        }
+        return null
     }
 
 }
