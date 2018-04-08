@@ -5,6 +5,7 @@ import android.arch.persistence.room.Entity
 import android.arch.persistence.room.ForeignKey
 import android.arch.persistence.room.ForeignKey.NO_ACTION
 import android.arch.persistence.room.Index
+import org.threeten.bp.OffsetDateTime
 
 @Entity(tableName = "bookmarks",
         primaryKeys = ["event_id"],
@@ -24,6 +25,9 @@ import android.arch.persistence.room.Index
 data class Bookmark(
 
         @ColumnInfo(name = "event_id")
-        val eventId: Int
+        val eventId: Int,
+
+        @ColumnInfo(name = "created_at")
+        val createdAt: OffsetDateTime = OffsetDateTime.now()
 
 )

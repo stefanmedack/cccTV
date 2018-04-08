@@ -6,7 +6,6 @@ import de.stefanmedack.ccctv.minimalEvent
 import de.stefanmedack.ccctv.minimalEventEntity
 import de.stefanmedack.ccctv.persistence.daos.BookmarkDao
 import de.stefanmedack.ccctv.persistence.daos.EventDao
-import de.stefanmedack.ccctv.persistence.entities.Bookmark
 import de.stefanmedack.ccctv.persistence.toEntity
 import info.metadude.kotlin.library.c3media.RxC3MediaService
 import io.reactivex.Flowable
@@ -34,7 +33,7 @@ class EventRepositoryTest {
     private lateinit var bookmarkDao: BookmarkDao
 
     @InjectMocks
-    private lateinit var repositoy: EventRepository
+    private lateinit var repository: EventRepository
 
     @Before
     fun setup() {
@@ -48,7 +47,7 @@ class EventRepositoryTest {
         When calling eventDao.getEventById(id) itReturns Single.just(minimalEventEntity)
         When calling mediaService.getEvent(id) itReturns Single.error(Exception("MediaService throw an error"))
 
-        val result = repositoy.getEvent(id).getSingleTestResult()
+        val result = repository.getEvent(id).getSingleTestResult()
 
         result shouldBe minimalEventEntity
     }
@@ -60,7 +59,7 @@ class EventRepositoryTest {
         When calling eventDao.getEventById(exampleId) itReturns Single.error(Exception("EventDao throw an error"))
         When calling mediaService.getEvent(exampleId) itReturns Single.just(eventRemote)
 
-        val result = repositoy.getEvent(exampleId).getSingleTestResult(waitUntilCompletion = true)
+        val result = repository.getEvent(exampleId).getSingleTestResult(waitUntilCompletion = true)
 
         result shouldEqual eventRemote.toEntity(-1)
     }
@@ -71,7 +70,7 @@ class EventRepositoryTest {
     fun `fetch recent events loads from local source`() {
         When calling eventDao.getRecentEvents() itReturns Flowable.just(listOf(minimalEventEntity))
 
-        val result = repositoy.getRecentEvents().getSingleTestResult()
+        val result = repository.getRecentEvents().getSingleTestResult()
 
         result.size shouldBe 1
         result[0] shouldBe minimalEventEntity
@@ -81,7 +80,7 @@ class EventRepositoryTest {
     fun `fetch popular events loads from local source`() {
         When calling eventDao.getPopularEvents() itReturns Flowable.just(listOf(minimalEventEntity))
 
-        val result = repositoy.getPopularEvents().getSingleTestResult()
+        val result = repository.getPopularEvents().getSingleTestResult()
 
         result.size shouldBe 1
         result[0] shouldBe minimalEventEntity
@@ -91,7 +90,7 @@ class EventRepositoryTest {
     fun `fetch promoted events loads from local source`() {
         When calling eventDao.getPromotedEvents() itReturns Flowable.just(listOf(minimalEventEntity))
 
-        val result = repositoy.getPromotedEvents().getSingleTestResult()
+        val result = repository.getPromotedEvents().getSingleTestResult()
 
         result.size shouldBe 1
         result[0] shouldBe minimalEventEntity
@@ -101,7 +100,7 @@ class EventRepositoryTest {
     fun `fetch trending events loads popular events younger than 30 days`() {
         When calling eventDao.getPopularEventsYoungerThan(any()) itReturns Flowable.just(listOf(minimalEventEntity))
 
-        val result = repositoy.getTrendingEvents().getSingleTestResult()
+        val result = repository.getTrendingEvents().getSingleTestResult()
 
         result.size shouldBe 1
         result[0] shouldBe minimalEventEntity
@@ -111,7 +110,7 @@ class EventRepositoryTest {
     fun `fetch bookmarked events from local source`() {
         When calling bookmarkDao.getBookmarkedEvents() itReturns Flowable.just(listOf(minimalEventEntity))
 
-        val result = repositoy.getBookmarkedEvents().getSingleTestResult()
+        val result = repository.getBookmarkedEvents().getSingleTestResult()
 
         result.size shouldEqual 1
         result[0] shouldEqual minimalEventEntity
@@ -122,7 +121,7 @@ class EventRepositoryTest {
         val exampleId = 8
         When calling bookmarkDao.isBookmarked(exampleId) itReturns Flowable.just(true, false, true)
 
-        val results = repositoy.isBookmarked(exampleId).test().values()
+        val results = repository.isBookmarked(exampleId).test().values()
 
         results.size shouldBe 3
         results[0] shouldBe true
@@ -134,18 +133,18 @@ class EventRepositoryTest {
     fun `bookmarking an event should insert a bookmark into the DAO`() {
         val exampleId = 8
 
-        repositoy.changeBookmarkState(exampleId, shouldBeBookmarked = true).test().await(100, TimeUnit.MILLISECONDS)
+        repository.changeBookmarkState(exampleId, shouldBeBookmarked = true).test().await(100, TimeUnit.MILLISECONDS)
 
-        verify(bookmarkDao).insert(Bookmark(exampleId))
+        verify(bookmarkDao).insert(any())
     }
 
     @Test
     fun `un-bookmarking an event should delete a bookmark in the DAO`() {
         val exampleId = 8
 
-        repositoy.changeBookmarkState(exampleId, shouldBeBookmarked = false).test().await(100, TimeUnit.MILLISECONDS)
+        repository.changeBookmarkState(exampleId, shouldBeBookmarked = false).test().await(100, TimeUnit.MILLISECONDS)
 
-        verify(bookmarkDao).delete(Bookmark(exampleId))
+        verify(bookmarkDao).delete(any())
     }
 
 }

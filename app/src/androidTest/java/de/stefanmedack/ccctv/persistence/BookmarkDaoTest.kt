@@ -11,6 +11,7 @@ import org.amshove.kluent.shouldNotEqual
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.threeten.bp.OffsetDateTime
 
 @RunWith(AndroidJUnit4::class)
 class BookmarkDaoTest : BaseDbTest() {
@@ -59,6 +60,22 @@ class BookmarkDaoTest : BaseDbTest() {
 
         bookmarkedEvents.size shouldEqual 1
         bookmarkedEvents.first().id shouldEqual 42
+    }
+
+    @Test
+    fun loading_bookmarked_events_should_deliver_the_latest_bookmarks_first() {
+        for (i in 42..44) {
+            eventDao.insert(minimalEventEntity.copy(conferenceId = 3, id = i))
+        }
+        bookmarkDao.insert(Bookmark(eventId = 42, createdAt = OffsetDateTime.now().minusDays(1)))
+        bookmarkDao.insert(Bookmark(eventId = 43, createdAt = OffsetDateTime.now()))
+        bookmarkDao.insert(Bookmark(eventId = 44, createdAt = OffsetDateTime.now().minusDays(2)))
+
+        val bookmarkedEvents = bookmarkDao.getBookmarkedEvents().getSingleTestResult()
+
+        bookmarkedEvents[0].id shouldEqual 43
+        bookmarkedEvents[1].id shouldEqual 42
+        bookmarkedEvents[2].id shouldEqual 44
     }
 
     @Test
