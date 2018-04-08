@@ -1,11 +1,13 @@
 package de.stefanmedack.ccctv.repository
 
+import android.arch.persistence.room.EmptyResultSetException
 import com.nhaarman.mockito_kotlin.verify
 import de.stefanmedack.ccctv.getSingleTestResult
 import de.stefanmedack.ccctv.minimalEvent
 import de.stefanmedack.ccctv.minimalEventEntity
 import de.stefanmedack.ccctv.persistence.daos.BookmarkDao
 import de.stefanmedack.ccctv.persistence.daos.EventDao
+import de.stefanmedack.ccctv.persistence.daos.PlayPositionDao
 import de.stefanmedack.ccctv.persistence.toEntity
 import info.metadude.kotlin.library.c3media.RxC3MediaService
 import io.reactivex.Flowable
@@ -31,6 +33,9 @@ class EventRepositoryTest {
 
     @Mock
     private lateinit var bookmarkDao: BookmarkDao
+
+    @Mock
+    private lateinit var playPositionDao: PlayPositionDao
 
     @InjectMocks
     private lateinit var repository: EventRepository
@@ -145,6 +150,63 @@ class EventRepositoryTest {
         repository.changeBookmarkState(exampleId, shouldBeBookmarked = false).test().await(100, TimeUnit.MILLISECONDS)
 
         verify(bookmarkDao).delete(any())
+    }
+
+    @Test
+    fun `fetch played events from local source`() {
+        When calling playPositionDao.getPlayedEvents() itReturns Flowable.just(listOf(minimalEventEntity))
+
+        val result = repository.getPlayedEvents().getSingleTestResult()
+
+        result.size shouldEqual 1
+        result[0] shouldEqual minimalEventEntity
+    }
+
+    @Test
+    fun `fetch played seconds from local source`() {
+        val exampleId = 8
+        When calling playPositionDao.getPlaybackSeconds(8) itReturns Single.just(48)
+
+        val results = repository.getPlayedSeconds(exampleId).getSingleTestResult()
+
+        results shouldBe 48
+    }
+
+    @Test
+    fun `fetching played seconds returns 0 instead of an error for videos without a saved play position`() {
+        val exampleId = 8
+        When calling playPositionDao.getPlaybackSeconds(8) itReturns Single.error(EmptyResultSetException("no PPS"))
+
+        val results = repository.getPlayedSeconds(exampleId).getSingleTestResult()
+
+        results shouldBe 0
+    }
+
+    @Test
+    fun `saving played seconds should call an insert into the DAO`() {
+        val exampleId = 8
+
+        repository.savePlayedSeconds(exampleId, 48).test().await(100, TimeUnit.MILLISECONDS)
+
+        verify(playPositionDao).insert(any())
+    }
+
+    @Test
+    fun `saving zero played seconds should call a delete on the DAO`() {
+        val exampleId = 8
+
+        repository.savePlayedSeconds(exampleId, 0).test().await(100, TimeUnit.MILLISECONDS)
+
+        verify(playPositionDao).delete(any())
+    }
+
+    @Test
+    fun `deleting played seconds should call a delete on the DAO`() {
+        val exampleId = 8
+
+        repository.deletePlayedSeconds(exampleId).test().await(100, TimeUnit.MILLISECONDS)
+
+        verify(playPositionDao).delete(any())
     }
 
 }

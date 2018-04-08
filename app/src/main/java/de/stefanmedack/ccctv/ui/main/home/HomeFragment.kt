@@ -28,6 +28,7 @@ class HomeFragment : RowsSupportFragment() {
     private val disposables = CompositeDisposable()
 
     private val bookmarkHeaderString by lazy { getString(R.string.home_header_bookmarked) }
+    private val playedHeaderString by lazy { getString(R.string.home_header_played) }
     private val promotedHeaderString by lazy { getString(R.string.home_header_promoted) }
     private val trendingHeaderString by lazy { getString(R.string.home_header_trending) }
     private val popularHeaderString by lazy { getString(R.string.home_header_popular) }
@@ -76,10 +77,11 @@ class HomeFragment : RowsSupportFragment() {
     private fun render(data: HomeUiModel) {
         mainFragmentAdapter.fragmentHost.notifyDataReady(mainFragmentAdapter)
         (adapter as ArrayObjectAdapter).let { adapter ->
-            adapter.updateEventsRow(bookmarkHeaderString, data.bookmarks)
+            adapter.updateEventsRow(bookmarkHeaderString, data.bookmarkedEvents)
+            adapter.updateEventsRow(playedHeaderString, data.playedEvents)
             // TODO promoted and trending are pretty similar - decide on one
             // adapter.updateEventsRow(promotedHeaderString, data.promoted)
-            adapter.updateEventsRow(trendingHeaderString, data.trending)
+            adapter.updateEventsRow(trendingHeaderString, data.trendingEvents)
             adapter.updateEventsRow(popularHeaderString, data.popularEvents)
             adapter.updateEventsRow(recentHeaderString, data.recentEvents)
         }

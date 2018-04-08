@@ -50,6 +50,8 @@ class DetailFragment : DetailsSupportFragment() {
     private lateinit var detailsBackground: DetailsSupportFragmentBackgroundController
     private lateinit var detailsOverview: DetailsOverviewRow
 
+    private var playerAdapter: ExoPlayerAdapter? = null
+
     private val bookmarkAction by lazy {
         Action(
                 DETAIL_ACTION_BOOKMARK,
@@ -72,6 +74,9 @@ class DetailFragment : DetailsSupportFragment() {
 
     override fun onPause() {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N || activity?.isInPictureInPictureMode == false) {
+            playerAdapter?.currentPosition?.let { currentMillis ->
+                viewModel.inputs.savePlaybackPosition((currentMillis / 1000).toInt())
+            }
             detailsBackground.playbackGlue?.pause()
         }
         super.onPause()
@@ -169,15 +174,16 @@ class DetailFragment : DetailsSupportFragment() {
         detailsOverview.item = result.event
 
         activity?.let { activityContext ->
-            val playerAdapter = ExoPlayerAdapter(activityContext)
-            playerAdapter.bindRecordings(viewModel.outputs.eventWithRecordings)
+            playerAdapter = ExoPlayerAdapter(activityContext).also { newAdapter ->
+                newAdapter.bindRecordings(viewModel.outputs.videoPlaybackData)
 
-            val mediaPlayerGlue = VideoMediaPlayerGlue(activityContext, playerAdapter)
-            mediaPlayerGlue.isSeekEnabled = true
-            mediaPlayerGlue.title = result.event.title
-            mediaPlayerGlue.subtitle = result.event.subtitle
+                val mediaPlayerGlue = VideoMediaPlayerGlue(activityContext, newAdapter)
+                mediaPlayerGlue.isSeekEnabled = true
+                mediaPlayerGlue.title = result.event.title
+                mediaPlayerGlue.subtitle = result.event.subtitle
 
-            detailsBackground.setupVideoPlayback(mediaPlayerGlue)
+                detailsBackground.setupVideoPlayback(mediaPlayerGlue)
+            }
         }
 
         val detailsOverviewAdapter = detailsOverview.actionsAdapter as ArrayObjectAdapter

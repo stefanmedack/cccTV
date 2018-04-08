@@ -9,6 +9,7 @@
     <string name="main_about_app">Über cccTV</string>
 
     <string name="home_header_bookmarked">Auf Deiner Watchlist</string>
+    <string name="home_header_played">Weiter schauen</string>
     <string name="home_header_promoted">Ausgewählte Videos</string>
     <string name="home_header_trending">Trending Videos</string>
     <string name="home_header_recent">Neueste Videos</string>

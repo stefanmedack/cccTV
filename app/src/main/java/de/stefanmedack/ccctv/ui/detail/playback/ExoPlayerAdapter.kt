@@ -5,7 +5,8 @@ import android.content.Context
 import android.net.Uri
 import android.view.KeyEvent
 import com.google.android.exoplayer2.Player
-import com.google.android.exoplayer2.SimpleExoPlayer
+import com.google.android.exoplayer2.video.VideoListener
+import de.stefanmedack.ccctv.ui.detail.uiModels.VideoPlaybackUiModel
 import de.stefanmedack.ccctv.util.bestRecording
 import de.stefanmedack.ccctv.util.switchAspectRatio
 import info.metadude.kotlin.library.c3media.models.Event
@@ -33,12 +34,15 @@ class ExoPlayerAdapter(context: Context) : BaseExoPlayerAdapter(context) {
         super.onDetachedFromHost()
     }
 
-    fun bindRecordings(recordings: Single<Event>) {
+    fun bindRecordings(recordings: Single<VideoPlaybackUiModel>) {
         disposables.add(recordings.subscribeBy(
                 onSuccess = {
-                    event = it
-                    extractBestRecording(it)
+                    event = it.event
+                    extractBestRecording(it.event)
                     prepareMediaForPlaying()
+                    if (it.retainedPlaybackSeconds > 0) {
+                        player.seekTo(it.retainedPlaybackSeconds * 1000L)
+                    }
                 }
         ))
     }
@@ -71,7 +75,7 @@ class ExoPlayerAdapter(context: Context) : BaseExoPlayerAdapter(context) {
             player.prepare(onCreateMediaSource(it))
         }
 
-        player.addVideoListener(object : SimpleExoPlayer.VideoListener {
+        player.addVideoListener(object : VideoListener {
             override fun onVideoSizeChanged(width: Int, height: Int, unappliedRotationDegrees: Int, pixelWidthHeightRatio: Float) {
                 currentRecordingWidth = (width * pixelWidthHeightRatio).toInt()
                 currentRecordingHeight = height

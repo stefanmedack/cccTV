@@ -1,9 +1,12 @@
 package de.stefanmedack.ccctv.repository
 
+import android.arch.persistence.room.EmptyResultSetException
 import de.stefanmedack.ccctv.persistence.daos.BookmarkDao
 import de.stefanmedack.ccctv.persistence.daos.EventDao
+import de.stefanmedack.ccctv.persistence.daos.PlayPositionDao
 import de.stefanmedack.ccctv.persistence.entities.Bookmark
 import de.stefanmedack.ccctv.persistence.entities.Event
+import de.stefanmedack.ccctv.persistence.entities.PlayPosition
 import de.stefanmedack.ccctv.persistence.toEntity
 import de.stefanmedack.ccctv.util.applySchedulers
 import info.metadude.kotlin.library.c3media.RxC3MediaService
@@ -20,7 +23,8 @@ import info.metadude.kotlin.library.c3media.models.Event as EventRemote
 class EventRepository @Inject constructor(
         private val mediaService: RxC3MediaService,
         private val eventDao: EventDao,
-        private val bookmarkDao: BookmarkDao
+        private val bookmarkDao: BookmarkDao,
+        private val playPositionDao: PlayPositionDao
 ) {
     fun getEvent(id: Int): Flowable<Event> = eventDao.getEventById(id)
             .onErrorResumeNext(
@@ -57,6 +61,26 @@ class EventRepository @Inject constructor(
                 } else {
                     bookmarkDao.delete(Bookmark(eventId))
                 }
+            }.applySchedulers()
+
+    fun getPlayedEvents(): Flowable<List<Event>> = playPositionDao.getPlayedEvents()
+
+    fun getPlayedSeconds(eventId: Int): Single<Int> = playPositionDao.getPlaybackSeconds(eventId)
+            .applySchedulers()
+            .onErrorReturn { if (it is EmptyResultSetException) 0 else throw it }
+
+    fun savePlayedSeconds(eventId: Int, seconds: Int): Completable =
+            Completable.fromAction {
+                if (seconds > 0) {
+                    playPositionDao.insert(PlayPosition(eventId, seconds))
+                } else {
+                    playPositionDao.delete(PlayPosition(eventId))
+                }
+            }.applySchedulers()
+
+    fun deletePlayedSeconds(eventId: Int): Completable =
+            Completable.fromAction {
+                playPositionDao.delete(PlayPosition(eventId))
             }.applySchedulers()
 
 }
