@@ -52,7 +52,7 @@ class BookmarkDaoTest : BaseDbTest() {
     }
 
     @Test
-    fun loading_bookmarked_events_does_not_load_not_bookmarked_events() {
+    fun loading_bookmarked_events_filters_not_bookmarked_events() {
         eventDao.insert(minimalEventEntity.copy(conferenceId = 3, id = 42))
         bookmarkDao.insert(Bookmark(42))
 
@@ -79,7 +79,7 @@ class BookmarkDaoTest : BaseDbTest() {
     }
 
     @Test
-    fun not_bookmarked_events_are_not_bookmarked() {
+    fun isBookmarked_returns_false_for_not_bookmarked_events() {
 
         val isBookmarked = bookmarkDao.isBookmarked(8).getSingleTestResult()
 
@@ -87,7 +87,7 @@ class BookmarkDaoTest : BaseDbTest() {
     }
 
     @Test
-    fun bookmarked_events_are_bookmarked() {
+    fun isBookmarked_returns_true_for_bookmarked_events() {
         bookmarkDao.insert(Bookmark(8))
 
         val isBookmarked = bookmarkDao.isBookmarked(8).getSingleTestResult()

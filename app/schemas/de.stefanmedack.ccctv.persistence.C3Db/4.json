@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 4,
-    "identityHash": "cd89c8f60268f6b3b60ca331f42333bb",
+    "identityHash": "8deca95e4d1e11f6d774d8f45772a2a2",
     "entities": [
       {
         "tableName": "bookmarks",
@@ -29,12 +29,12 @@
         },
         "indices": [
           {
-            "name": "event_idx",
+            "name": "event_bookmark_idx",
             "unique": false,
             "columnNames": [
               "event_id"
             ],
-            "createSql": "CREATE  INDEX `event_idx` ON `${TABLE_NAME}` (`event_id`)"
+            "createSql": "CREATE  INDEX `event_bookmark_idx` ON `${TABLE_NAME}` (`event_id`)"
           }
         ],
         "foreignKeys": [
@@ -273,11 +273,58 @@
             ]
           }
         ]
+      },
+      {
+        "tableName": "play_positions",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`event_id` INTEGER NOT NULL, `created_at` TEXT NOT NULL, PRIMARY KEY(`event_id`), FOREIGN KEY(`event_id`) REFERENCES `events`(`id`) ON UPDATE NO ACTION ON DELETE NO ACTION )",
+        "fields": [
+          {
+            "fieldPath": "eventId",
+            "columnName": "event_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "createdAt",
+            "columnName": "created_at",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "event_id"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [
+          {
+            "name": "event_play_position_idx",
+            "unique": false,
+            "columnNames": [
+              "event_id"
+            ],
+            "createSql": "CREATE  INDEX `event_play_position_idx` ON `${TABLE_NAME}` (`event_id`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "events",
+            "onDelete": "NO ACTION",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "event_id"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          }
+        ]
       }
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"cd89c8f60268f6b3b60ca331f42333bb\")"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"8deca95e4d1e11f6d774d8f45772a2a2\")"
     ]
   }
 }
