@@ -27,6 +27,9 @@ data class PlayPosition(
         @ColumnInfo(name = "event_id")
         val eventId: Int,
 
+        @ColumnInfo(name = "seconds")
+        val seconds: Int = 0,
+
         @ColumnInfo(name = "created_at")
         val createdAt: OffsetDateTime = OffsetDateTime.now()
 

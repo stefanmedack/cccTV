@@ -1,5 +1,6 @@
 package de.stefanmedack.ccctv.persistence
 
+import android.arch.persistence.room.EmptyResultSetException
 import android.database.sqlite.SQLiteException
 import android.support.test.runner.AndroidJUnit4
 import de.stefanmedack.ccctv.getSingleTestResult
@@ -32,7 +33,7 @@ class PlayPositionDaoTest : BaseDbTest() {
     @Test
     fun insert_play_position_without_matching_event_throws_exception() {
         val exception = try {
-            playPositionDao.insert(PlayPosition(42))
+            playPositionDao.insert(PlayPosition(eventId = 42))
         } catch (ex: SQLiteException) {
             ex
         }
@@ -43,7 +44,7 @@ class PlayPositionDaoTest : BaseDbTest() {
 
     @Test
     fun insert_and_retrieve_played_event() {
-        playPositionDao.insert(PlayPosition(8))
+        playPositionDao.insert(PlayPosition(eventId = 8))
 
         val playedEvents = playPositionDao.getPlayedEvents().getSingleTestResult()
 
@@ -54,7 +55,7 @@ class PlayPositionDaoTest : BaseDbTest() {
     @Test
     fun loading_played_events_filters_not_played_events() {
         eventDao.insert(minimalEventEntity.copy(conferenceId = 3, id = 42))
-        playPositionDao.insert(PlayPosition(42))
+        playPositionDao.insert(PlayPosition(eventId = 42))
 
         val playedEvents = playPositionDao.getPlayedEvents().getSingleTestResult()
 
@@ -79,56 +80,43 @@ class PlayPositionDaoTest : BaseDbTest() {
     }
 
     @Test
-    fun isPlayed_returns_false_for_not_played_events() {
+    fun loading_playback_seconds_errors_for_not_played_events() {
 
-        val isPlayPositioned = playPositionDao.isPlayed(8).getSingleTestResult()
+        val seconds = playPositionDao.getPlaybackSeconds(8).test().errors()
 
-        isPlayPositioned shouldEqual false
+        seconds.first() shouldBeInstanceOf EmptyResultSetException::class.java
     }
 
     @Test
-    fun isPlayed_returns_true_for_played_events() {
-        playPositionDao.insert(PlayPosition(8))
+    fun loading_playback_seconds_returns_same_seconds_for_played_events() {
+        playPositionDao.insert(PlayPosition(eventId = 8, seconds = 123))
 
-        val isPlayPositioned = playPositionDao.isPlayed(8).getSingleTestResult()
+        val seconds = playPositionDao.getPlaybackSeconds(8).getSingleTestResult()
 
-        isPlayPositioned shouldEqual true
-    }
-
-    @Test
-    fun changing_played_state_should_emit_events() {
-        val isPlayedStream = playPositionDao.isPlayed(8).test()
-
-        playPositionDao.insert(PlayPosition(8))
-        playPositionDao.delete(PlayPosition(8))
-
-        isPlayedStream.values().let { isPlayedValues ->
-            isPlayedValues.size shouldEqual 3
-            isPlayedValues[0] shouldEqual false
-            isPlayedValues[1] shouldEqual true
-            isPlayedValues[2] shouldEqual false
-        }
+        seconds shouldEqual 123
     }
 
     @Test
     fun delete_play_position_removes_existing_play_position() {
-        playPositionDao.insert(PlayPosition(8))
-        playPositionDao.isPlayed(8).getSingleTestResult() shouldEqual true
+        playPositionDao.insert(PlayPosition(eventId = 8, seconds = 123))
+        playPositionDao.getPlayedEvents().getSingleTestResult().size shouldEqual 1
+        playPositionDao.getPlaybackSeconds(8).getSingleTestResult() shouldEqual 123
 
-        playPositionDao.delete(PlayPosition(8))
-        playPositionDao.isPlayed(8).getSingleTestResult() shouldEqual false
+        playPositionDao.delete(PlayPosition(eventId = 8))
+        playPositionDao.getPlayedEvents().getSingleTestResult().size shouldEqual 0
+        playPositionDao.getPlaybackSeconds(8).test().errorCount() shouldEqual 1
     }
 
     @Test
     fun delete_play_position_without_matching_event_does_nothing() {
-        playPositionDao.delete(PlayPosition(42))
-        playPositionDao.delete(PlayPosition(43))
+        playPositionDao.delete(PlayPosition(eventId = 42))
+        playPositionDao.delete(PlayPosition(eventId = 43))
     }
 
     @Test
     fun updating_a_played_event_does_not_change_play_position() {
         val updatedEvent = minimalEventEntity.copy(conferenceId = 3, id = 8, title = "updated")
-        playPositionDao.insert(PlayPosition(8))
+        playPositionDao.insert(PlayPosition(eventId = 8))
         eventDao.insert(updatedEvent)
 
         val playedEvents = playPositionDao.getPlayedEvents().getSingleTestResult()
