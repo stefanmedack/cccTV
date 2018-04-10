@@ -147,7 +147,10 @@ class DetailFragment : DetailsSupportFragment() {
                     } catch (e: Exception) {
                         Timber.w(e, "Could not switch to video on detailsBackground - probably not initialized yet")
                     }
-                    DETAIL_ACTION_RESTART -> playerAdapter?.seekTo(0)
+                    DETAIL_ACTION_RESTART -> {
+                        playerAdapter?.seekTo(0)
+                        (detailsOverview.actionsAdapter as ArrayObjectAdapter).removeItems(1, 1)
+                    }
                     DETAIL_ACTION_BOOKMARK -> viewModel.inputs.toggleBookmark()
                     DETAIL_ACTION_SPEAKER -> setSelectedPosition(1)
                     DETAIL_ACTION_RELATED -> setSelectedPosition(2)
