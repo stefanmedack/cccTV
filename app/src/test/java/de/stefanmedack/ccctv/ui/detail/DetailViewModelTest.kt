@@ -1,5 +1,6 @@
 package de.stefanmedack.ccctv.ui.detail
 
+import com.nhaarman.mockito_kotlin.never
 import com.nhaarman.mockito_kotlin.reset
 import com.nhaarman.mockito_kotlin.verify
 import com.nhaarman.mockito_kotlin.verifyNoMoreInteractions
@@ -9,6 +10,7 @@ import io.reactivex.Flowable
 import io.reactivex.android.plugins.RxAndroidPlugins
 import io.reactivex.schedulers.Schedulers
 import org.amshove.kluent.When
+import org.amshove.kluent.any
 import org.amshove.kluent.calling
 import org.amshove.kluent.itReturns
 import org.junit.Before
@@ -29,6 +31,8 @@ class DetailViewModelTest {
     fun setUp() {
         MockitoAnnotations.initMocks(this)
         RxAndroidPlugins.setInitMainThreadSchedulerHandler { _ -> Schedulers.trampoline() }
+
+        When calling repository.isBookmarked(any()) itReturns Flowable.just(true)
     }
 
     @Test
@@ -70,6 +74,26 @@ class DetailViewModelTest {
         detailViewModel.toggleBookmark()
 
         verifyNoMoreInteractions(repository)
+    }
+
+    @Test
+    fun `saving playback position after a minimum playback time should be saved in repository`() {
+        val testEventId = 3
+        detailViewModel.init(testEventId)
+
+        detailViewModel.inputs.savePlaybackPosition(seconds = 180)
+
+        verify(repository).savePlayedSeconds(eventId = testEventId, seconds = 180)
+    }
+
+    @Test
+    fun `saving playback position before the minimum playback time should not trigger repository`() {
+        val testEventId = 3
+        detailViewModel.init(testEventId)
+
+        detailViewModel.inputs.savePlaybackPosition(seconds = 30)
+
+        verify(repository, never()).savePlayedSeconds(any(), any())
     }
 
 }

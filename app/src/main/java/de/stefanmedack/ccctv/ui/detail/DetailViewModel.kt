@@ -25,6 +25,8 @@ class DetailViewModel @Inject constructor(
     internal val inputs: Inputs = this
     internal val outputs: Outputs = this
 
+    private val SAVE_PLAYBACK_SECONDS_THRESHOLD = 60
+
     private var eventId: Int = -1
 
     fun init(eventId: Int) {
@@ -75,7 +77,9 @@ class DetailViewModel @Inject constructor(
                 .flatMapCompletable { updateBookmarkState(it) }
 
     private val doSavePlayedSeconds
-        get() = savePlayPositionStream.flatMapCompletable { repository.savePlayedSeconds(eventId, it) }
+        get() = savePlayPositionStream
+                .filter { it > SAVE_PLAYBACK_SECONDS_THRESHOLD }
+                .flatMapCompletable { repository.savePlayedSeconds(eventId, it) }
 
     private fun getRelatedEvents(event: Event): Flowable<List<Event>> = repository.getEvents(event.getRelatedEventIdsWeighted())
 
