@@ -13,7 +13,7 @@ import android.support.v17.leanback.widget.*
 import android.util.DisplayMetrics
 import android.view.View
 import android.widget.Toast
-import androidx.os.bundleOf
+import androidx.core.os.bundleOf
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.SimpleTarget

@@ -13,7 +13,8 @@ import android.support.v4.content.ContextCompat
 import android.view.KeyEvent
 import android.view.View
 import android.widget.Toast
-import androidx.os.bundleOf
+import androidx.core.os.bundleOf
+import androidx.core.widget.toast
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.SimpleTarget
@@ -146,6 +147,7 @@ class DetailFragment : DetailsSupportFragment() {
                     } catch (e: Exception) {
                         Timber.w(e, "Could not switch to video on detailsBackground - probably not initialized yet")
                     }
+                    DETAIL_ACTION_RESTART -> playerAdapter?.seekTo(0)
                     DETAIL_ACTION_BOOKMARK -> viewModel.inputs.toggleBookmark()
                     DETAIL_ACTION_SPEAKER -> setSelectedPosition(1)
                     DETAIL_ACTION_RELATED -> setSelectedPosition(2)
@@ -160,7 +162,7 @@ class DetailFragment : DetailsSupportFragment() {
     private fun bindViewModel() {
         disposables.addAll(
                 viewModel.outputs.detailData.subscribeBy(
-                        onNext = ::render,
+                        onSuccess = ::render,
                         // TODO proper error handling
                         onError = { it.printStackTrace() }),
                 viewModel.outputs.isBookmarked.subscribeBy(
@@ -196,6 +198,16 @@ class DetailFragment : DetailsSupportFragment() {
                     EMPTY_STRING,
                     context?.getDrawable(R.drawable.ic_watch)
             ))
+
+            if (result.wasPlayed) {
+                detailsOverviewAdapter.add(Action(
+                        DETAIL_ACTION_RESTART,
+                        getString(R.string.action_restart),
+                        EMPTY_STRING,
+                        context?.getDrawable(R.drawable.ic_restart)
+                ))
+                context?.toast(R.string.playback_resumed_toast, Toast.LENGTH_LONG)
+            }
 
             // add bookmark-button to DetailOverviewRow on the very top
             detailsOverviewAdapter.add(bookmarkAction)

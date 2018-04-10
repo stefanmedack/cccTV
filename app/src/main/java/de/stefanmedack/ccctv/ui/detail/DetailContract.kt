@@ -11,7 +11,7 @@ internal interface Inputs {
 }
 
 internal interface Outputs {
-    val detailData: Flowable<DetailUiModel>
+    val detailData: Single<DetailUiModel>
     val videoPlaybackData: Single<VideoPlaybackUiModel>
     val isBookmarked: Flowable<Boolean>
 }

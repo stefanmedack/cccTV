@@ -23,9 +23,10 @@ const val SEARCH_QUERY = "SearchQuery"
 const val FRAGMENT_ARGUMENTS = "FragmentArguments"
 
 const val DETAIL_ACTION_PLAY: Long = 1
-const val DETAIL_ACTION_BOOKMARK: Long = 2
-const val DETAIL_ACTION_SPEAKER: Long = 3
-const val DETAIL_ACTION_RELATED: Long = 4
+const val DETAIL_ACTION_RESTART: Long = 2
+const val DETAIL_ACTION_BOOKMARK: Long = 3
+const val DETAIL_ACTION_SPEAKER: Long = 4
+const val DETAIL_ACTION_RELATED: Long = 5
 
 const val SHARED_DETAIL_TRANSITION = "SHARED_DETAIL_TRANSITION"
 

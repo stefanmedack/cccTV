@@ -9,7 +9,7 @@ apply plugin: 'io.fabric'
 apply plugin: 'com.google.gms.oss.licenses.plugin'
 
 ext {
-    androidKtx = "0.2"
+    androidKtx = "0.3"
     archComponentsVersion = "1.0.0"
     archComponentsLifecycleVersion = "1.1.0"
     assertjVersion = "3.8.0"

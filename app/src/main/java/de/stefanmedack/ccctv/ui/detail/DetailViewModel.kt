@@ -52,10 +52,11 @@ class DetailViewModel @Inject constructor(
 
     //<editor-fold desc="Outputs">
 
-    override val detailData: Flowable<DetailUiModel>
-        get() = repository.getEvent(eventId).flatMap { event ->
-            getRelatedEvents(event).map { DetailUiModel(event = event, speaker = event.persons.map { SpeakerUiModel(it) }, related = it) }
-        }
+    override val detailData: Single<DetailUiModel>
+        get() = Singles.zip(
+                eventWithRelated.firstOrError(),
+                wasPlayed,
+                { first, wasPlayed -> first.copy(wasPlayed = wasPlayed) })
 
     override val videoPlaybackData: Single<VideoPlaybackUiModel>
         get() = Singles.zip(
@@ -81,7 +82,16 @@ class DetailViewModel @Inject constructor(
                 .filter { it > SAVE_PLAYBACK_SECONDS_THRESHOLD }
                 .flatMapCompletable { repository.savePlayedSeconds(eventId, it) }
 
+    private val eventWithRelated: Flowable<DetailUiModel>
+        get() = repository.getEvent(eventId)
+                .flatMap { event ->
+                    getRelatedEvents(event).map { DetailUiModel(event = event, speaker = event.persons.map { SpeakerUiModel(it) }, related = it) }
+                }
+
     private fun getRelatedEvents(event: Event): Flowable<List<Event>> = repository.getEvents(event.getRelatedEventIdsWeighted())
+
+    private val wasPlayed: Single<Boolean>
+        get() = repository.getPlayedSeconds(eventId).map { it > 0 }
 
     private fun updateBookmarkState(isBookmarked: Boolean): Completable = repository.changeBookmarkState(eventId, !isBookmarked)
 

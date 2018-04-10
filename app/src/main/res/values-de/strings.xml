@@ -16,6 +16,7 @@
     <string name="home_header_popular">Populärste Videos</string>
 
     <string name="action_watch">Ansehen</string>
+    <string name="action_restart">Von Anfang abspielen</string>
     <string name="action_add_bookmark">Hinzufügen zur</string>
     <string name="action_remove_bookmark">Entfernen von der</string>
     <string name="action_bookmark_second_line">Watchlist</string>
@@ -23,6 +24,7 @@
     <string name="action_show_related">Ähnliches</string>
     <string name="header_speaker">Vortragende</string>
     <string name="header_related">Ähnliche Videos</string>
+    <string name="playback_resumed_toast">Das Video wird vom letzten Mal fortgesetzt</string>
 
     <string name="about_description">\ncccTV ist ein Open Source Projekt entwickelt von Stefan Medack.
         Sämtlicher Source Code ist unter der Apache License 2.0 auf github.com/stefanmedack/cccTV zu finden.

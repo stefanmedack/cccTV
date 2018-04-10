@@ -12,7 +12,7 @@ import android.support.v17.leanback.widget.OnItemViewClickedListener
 import android.support.v17.leanback.widget.VerticalGridPresenter
 import android.view.View
 import android.widget.Toast
-import androidx.os.bundleOf
+import androidx.core.os.bundleOf
 import dagger.android.support.AndroidSupportInjection
 import de.stefanmedack.ccctv.model.ConferenceGroup
 import de.stefanmedack.ccctv.model.Resource
