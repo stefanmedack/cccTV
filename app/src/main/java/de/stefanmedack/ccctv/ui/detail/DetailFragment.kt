@@ -209,7 +209,7 @@ class DetailFragment : DetailsSupportFragment() {
                         EMPTY_STRING,
                         context?.getDrawable(R.drawable.ic_restart)
                 ))
-                context?.toast(R.string.playback_resumed_toast, Toast.LENGTH_LONG)
+                context?.toast(R.string.playback_resumed_toast)
             }
 
             // add bookmark-button to DetailOverviewRow on the very top
