@@ -1,6 +1,5 @@
 package de.stefanmedack.ccctv.ui.detail
 
-import com.nhaarman.mockito_kotlin.never
 import com.nhaarman.mockito_kotlin.reset
 import com.nhaarman.mockito_kotlin.verify
 import com.nhaarman.mockito_kotlin.verifyNoMoreInteractions
@@ -87,13 +86,13 @@ class DetailViewModelTest {
     }
 
     @Test
-    fun `saving playback position before the minimum playback time should not trigger repository`() {
+    fun `saving playback position before the minimum playback time should delete saved playback position`() {
         val testEventId = 3
         detailViewModel.init(testEventId)
 
         detailViewModel.inputs.savePlaybackPosition(seconds = 30)
 
-        verify(repository, never()).savePlayedSeconds(any(), any())
+        verify(repository).deletePlayedSeconds(3)
     }
 
 }

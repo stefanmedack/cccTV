@@ -79,8 +79,13 @@ class DetailViewModel @Inject constructor(
 
     private val doSavePlayedSeconds
         get() = savePlayPositionStream
-                .filter { it > SAVE_PLAYBACK_SECONDS_THRESHOLD }
-                .flatMapCompletable { repository.savePlayedSeconds(eventId, it) }
+                .flatMapCompletable {
+                    if (it > SAVE_PLAYBACK_SECONDS_THRESHOLD) {
+                        repository.savePlayedSeconds(eventId, it)
+                    } else {
+                        repository.deletePlayedSeconds(eventId)
+                    }
+                }
 
     private val eventWithRelated: Flowable<DetailUiModel>
         get() = repository.getEvent(eventId)
