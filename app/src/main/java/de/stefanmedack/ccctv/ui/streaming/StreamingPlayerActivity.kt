@@ -4,7 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.FragmentActivity
 import android.view.WindowManager
-import androidx.os.bundleOf
+import androidx.core.os.bundleOf
 import de.stefanmedack.ccctv.R
 import de.stefanmedack.ccctv.util.STREAM_URL
 import de.stefanmedack.ccctv.util.addFragmentInTransaction

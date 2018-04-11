@@ -9,6 +9,7 @@ import de.stefanmedack.ccctv.persistence.C3Db
 import de.stefanmedack.ccctv.persistence.daos.BookmarkDao
 import de.stefanmedack.ccctv.persistence.daos.ConferenceDao
 import de.stefanmedack.ccctv.persistence.daos.EventDao
+import de.stefanmedack.ccctv.persistence.daos.PlayPositionDao
 import javax.inject.Singleton
 
 @Module
@@ -33,5 +34,9 @@ class DatabaseModule {
     @Provides
     @Singleton
     fun provideEventDao(db: C3Db): EventDao = db.eventDao()
+
+    @Provides
+    @Singleton
+    fun providePlayPositionDao(db: C3Db): PlayPositionDao = db.playPositionDao()
 
 }

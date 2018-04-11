@@ -5,10 +5,12 @@ import de.stefanmedack.ccctv.repository.EventRepository
 import de.stefanmedack.ccctv.ui.base.BaseDisposableViewModel
 import de.stefanmedack.ccctv.ui.detail.uiModels.DetailUiModel
 import de.stefanmedack.ccctv.ui.detail.uiModels.SpeakerUiModel
+import de.stefanmedack.ccctv.ui.detail.uiModels.VideoPlaybackUiModel
 import de.stefanmedack.ccctv.util.getRelatedEventIdsWeighted
 import io.reactivex.Completable
 import io.reactivex.Flowable
 import io.reactivex.Single
+import io.reactivex.rxkotlin.Singles
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.rxkotlin.withLatestFrom
 import io.reactivex.subjects.PublishSubject
@@ -23,34 +25,44 @@ class DetailViewModel @Inject constructor(
     internal val inputs: Inputs = this
     internal val outputs: Outputs = this
 
+    private val SAVE_PLAYBACK_SECONDS_THRESHOLD = 60
+
     private var eventId: Int = -1
 
     fun init(eventId: Int) {
         this.eventId = eventId
 
-        disposables.add(
-                doToggleBookmark.subscribeBy(
-                        onError = { Timber.w("DetailViewModel - doToggleBookmark - onError $it") })
+        disposables.addAll(
+                doToggleBookmark.subscribeBy(onError = { Timber.w("DetailViewModel - doToggleBookmark - onError $it") }),
+                doSavePlayedSeconds.subscribeBy(onError = { Timber.w("DetailViewModel - doSavePlayedSeconds - onError $it") })
         )
     }
 
     //<editor-fold desc="Inputs">
 
     override fun toggleBookmark() {
-        this.bookmarkClickStream.onNext(0)
+        bookmarkClickStream.onNext(0)
+    }
+
+    override fun savePlaybackPosition(seconds: Int) {
+        savePlayPositionStream.onNext(seconds)
     }
 
     //</editor-fold>
 
     //<editor-fold desc="Outputs">
 
-    override val detailData: Flowable<DetailUiModel>
-        get() = repository.getEvent(eventId).flatMap { event ->
-            getRelatedEvents(event).map { DetailUiModel(event = event, speaker = event.persons.map { SpeakerUiModel(it) }, related = it) }
-        }
+    override val detailData: Single<DetailUiModel>
+        get() = Singles.zip(
+                eventWithRelated.firstOrError(),
+                wasPlayed,
+                { first, wasPlayed -> first.copy(wasPlayed = wasPlayed) })
 
-    override val eventWithRecordings: Single<EventRemote>
-        get() = repository.getEventWithRecordings(eventId)
+    override val videoPlaybackData: Single<VideoPlaybackUiModel>
+        get() = Singles.zip(
+                repository.getEventWithRecordings(eventId),
+                repository.getPlayedSeconds(eventId),
+                ::VideoPlaybackUiModel)
 
     override val isBookmarked: Flowable<Boolean>
         get() = repository.isBookmarked(eventId)
@@ -58,13 +70,33 @@ class DetailViewModel @Inject constructor(
     //</editor-fold>
 
     private val bookmarkClickStream = PublishSubject.create<Int>()
+    private val savePlayPositionStream = PublishSubject.create<Int>()
 
     private val doToggleBookmark
         get() = bookmarkClickStream
                 .withLatestFrom(isBookmarked.toObservable(), { _, t2 -> t2 })
                 .flatMapCompletable { updateBookmarkState(it) }
 
+    private val doSavePlayedSeconds
+        get() = savePlayPositionStream
+                .flatMapCompletable {
+                    if (it > SAVE_PLAYBACK_SECONDS_THRESHOLD) {
+                        repository.savePlayedSeconds(eventId, it)
+                    } else {
+                        repository.deletePlayedSeconds(eventId)
+                    }
+                }
+
+    private val eventWithRelated: Flowable<DetailUiModel>
+        get() = repository.getEvent(eventId)
+                .flatMap { event ->
+                    getRelatedEvents(event).map { DetailUiModel(event = event, speaker = event.persons.map { SpeakerUiModel(it) }, related = it) }
+                }
+
     private fun getRelatedEvents(event: Event): Flowable<List<Event>> = repository.getEvents(event.getRelatedEventIdsWeighted())
+
+    private val wasPlayed: Single<Boolean>
+        get() = repository.getPlayedSeconds(eventId).map { it > 0 }
 
     private fun updateBookmarkState(isBookmarked: Boolean): Completable = repository.changeBookmarkState(eventId, !isBookmarked)
 

@@ -11,6 +11,7 @@ import org.amshove.kluent.shouldNotEqual
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.threeten.bp.OffsetDateTime
 
 @RunWith(AndroidJUnit4::class)
 class BookmarkDaoTest : BaseDbTest() {
@@ -51,7 +52,7 @@ class BookmarkDaoTest : BaseDbTest() {
     }
 
     @Test
-    fun loading_bookmarked_events_does_not_load_not_bookmarked_events() {
+    fun loading_bookmarked_events_filters_not_bookmarked_events() {
         eventDao.insert(minimalEventEntity.copy(conferenceId = 3, id = 42))
         bookmarkDao.insert(Bookmark(42))
 
@@ -62,7 +63,23 @@ class BookmarkDaoTest : BaseDbTest() {
     }
 
     @Test
-    fun not_bookmarked_events_are_not_bookmarked() {
+    fun loading_bookmarked_events_should_deliver_the_latest_bookmarks_first() {
+        for (i in 42..44) {
+            eventDao.insert(minimalEventEntity.copy(conferenceId = 3, id = i))
+        }
+        bookmarkDao.insert(Bookmark(eventId = 42, createdAt = OffsetDateTime.now().minusDays(1)))
+        bookmarkDao.insert(Bookmark(eventId = 43, createdAt = OffsetDateTime.now()))
+        bookmarkDao.insert(Bookmark(eventId = 44, createdAt = OffsetDateTime.now().minusDays(2)))
+
+        val bookmarkedEvents = bookmarkDao.getBookmarkedEvents().getSingleTestResult()
+
+        bookmarkedEvents[0].id shouldEqual 43
+        bookmarkedEvents[1].id shouldEqual 42
+        bookmarkedEvents[2].id shouldEqual 44
+    }
+
+    @Test
+    fun isBookmarked_returns_false_for_not_bookmarked_events() {
 
         val isBookmarked = bookmarkDao.isBookmarked(8).getSingleTestResult()
 
@@ -70,7 +87,7 @@ class BookmarkDaoTest : BaseDbTest() {
     }
 
     @Test
-    fun bookmarked_events_are_bookmarked() {
+    fun isBookmarked_returns_true_for_bookmarked_events() {
         bookmarkDao.insert(Bookmark(8))
 
         val isBookmarked = bookmarkDao.isBookmarked(8).getSingleTestResult()

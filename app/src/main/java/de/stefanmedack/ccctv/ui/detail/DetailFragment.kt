@@ -13,7 +13,8 @@ import android.support.v4.content.ContextCompat
 import android.view.KeyEvent
 import android.view.View
 import android.widget.Toast
-import androidx.os.bundleOf
+import androidx.core.os.bundleOf
+import androidx.core.widget.toast
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.SimpleTarget
@@ -50,6 +51,8 @@ class DetailFragment : DetailsSupportFragment() {
     private lateinit var detailsBackground: DetailsSupportFragmentBackgroundController
     private lateinit var detailsOverview: DetailsOverviewRow
 
+    private var playerAdapter: ExoPlayerAdapter? = null
+
     private val bookmarkAction by lazy {
         Action(
                 DETAIL_ACTION_BOOKMARK,
@@ -72,6 +75,9 @@ class DetailFragment : DetailsSupportFragment() {
 
     override fun onPause() {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N || activity?.isInPictureInPictureMode == false) {
+            playerAdapter?.currentPosition?.let { currentMillis ->
+                viewModel.inputs.savePlaybackPosition((currentMillis / 1000).toInt())
+            }
             detailsBackground.playbackGlue?.pause()
         }
         super.onPause()
@@ -141,6 +147,10 @@ class DetailFragment : DetailsSupportFragment() {
                     } catch (e: Exception) {
                         Timber.w(e, "Could not switch to video on detailsBackground - probably not initialized yet")
                     }
+                    DETAIL_ACTION_RESTART -> {
+                        playerAdapter?.seekTo(0)
+                        (detailsOverview.actionsAdapter as ArrayObjectAdapter).removeItems(1, 1)
+                    }
                     DETAIL_ACTION_BOOKMARK -> viewModel.inputs.toggleBookmark()
                     DETAIL_ACTION_SPEAKER -> setSelectedPosition(1)
                     DETAIL_ACTION_RELATED -> setSelectedPosition(2)
@@ -155,7 +165,7 @@ class DetailFragment : DetailsSupportFragment() {
     private fun bindViewModel() {
         disposables.addAll(
                 viewModel.outputs.detailData.subscribeBy(
-                        onNext = ::render,
+                        onSuccess = ::render,
                         // TODO proper error handling
                         onError = { it.printStackTrace() }),
                 viewModel.outputs.isBookmarked.subscribeBy(
@@ -169,15 +179,16 @@ class DetailFragment : DetailsSupportFragment() {
         detailsOverview.item = result.event
 
         activity?.let { activityContext ->
-            val playerAdapter = ExoPlayerAdapter(activityContext)
-            playerAdapter.bindRecordings(viewModel.outputs.eventWithRecordings)
+            playerAdapter = ExoPlayerAdapter(activityContext).also { newAdapter ->
+                newAdapter.bindRecordings(viewModel.outputs.videoPlaybackData)
 
-            val mediaPlayerGlue = VideoMediaPlayerGlue(activityContext, playerAdapter)
-            mediaPlayerGlue.isSeekEnabled = true
-            mediaPlayerGlue.title = result.event.title
-            mediaPlayerGlue.subtitle = result.event.subtitle
+                val mediaPlayerGlue = VideoMediaPlayerGlue(activityContext, newAdapter)
+                mediaPlayerGlue.isSeekEnabled = true
+                mediaPlayerGlue.title = result.event.title
+                mediaPlayerGlue.subtitle = result.event.subtitle
 
-            detailsBackground.setupVideoPlayback(mediaPlayerGlue)
+                detailsBackground.setupVideoPlayback(mediaPlayerGlue)
+            }
         }
 
         val detailsOverviewAdapter = detailsOverview.actionsAdapter as ArrayObjectAdapter
@@ -190,6 +201,17 @@ class DetailFragment : DetailsSupportFragment() {
                     EMPTY_STRING,
                     context?.getDrawable(R.drawable.ic_watch)
             ))
+
+            // add restart-video-from-beginning Button
+            if (result.wasPlayed) {
+                detailsOverviewAdapter.add(Action(
+                        DETAIL_ACTION_RESTART,
+                        getString(R.string.action_restart),
+                        EMPTY_STRING,
+                        context?.getDrawable(R.drawable.ic_restart)
+                ))
+                context?.toast(R.string.playback_resumed_toast)
+            }
 
             // add bookmark-button to DetailOverviewRow on the very top
             detailsOverviewAdapter.add(bookmarkAction)
@@ -208,6 +230,7 @@ class DetailFragment : DetailsSupportFragment() {
                         context?.getDrawable(R.drawable.ic_speaker)
                 ))
             }
+
             // add related
             if (!result.related.isEmpty()) {
                 val listRowAdapter = ArrayObjectAdapter(EventCardPresenter())

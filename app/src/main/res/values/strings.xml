@@ -9,12 +9,14 @@
     <string name="main_about_app">About cccTV</string>
 
     <string name="home_header_bookmarked">On Your Watchlist</string>
+    <string name="home_header_played">Continue Watching</string>
     <string name="home_header_promoted">Promoted Videos</string>
     <string name="home_header_trending">Trending Videos</string>
     <string name="home_header_recent">Most Recent Videos</string>
     <string name="home_header_popular">Most Popular Videos</string>
 
     <string name="action_watch">Watch</string>
+    <string name="action_restart">Play from beginning</string>
     <string name="action_add_bookmark">Add to</string>
     <string name="action_remove_bookmark">Remove from</string>
     <string name="action_bookmark_second_line">Watchlist</string>
@@ -22,6 +24,7 @@
     <string name="action_show_related">Related</string>
     <string name="header_speaker">Speaker</string>
     <string name="header_related">Related Videos</string>
+    <string name="playback_resumed_toast">Picked up playback from last time</string>
 
     <string name="about_description">\ncccTV is an Open Source project developed by Stefan Medack.
         All sources are available under the Apache License 2.0 on github.com/stefanmedack/cccTV.

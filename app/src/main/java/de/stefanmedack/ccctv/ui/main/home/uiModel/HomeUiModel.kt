@@ -3,9 +3,10 @@ package de.stefanmedack.ccctv.ui.main.home.uiModel
 import de.stefanmedack.ccctv.persistence.entities.Event
 
 data class HomeUiModel(
-        val bookmarks: List<Event>,
-        val promoted: List<Event>,
-        val trending: List<Event>,
+        val bookmarkedEvents: List<Event>,
+        val playedEvents: List<Event>,
+        val promotedEvents: List<Event>,
+        val trendingEvents: List<Event>,
         val popularEvents: List<Event>,
         val recentEvents: List<Event>
 )

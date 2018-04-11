@@ -22,7 +22,7 @@ class MainViewModel @Inject constructor(
     )
 
     val data: Flowable<MainUiModel>
-        get() = Flowables.combineLatest(conferences, streams, { conferences, streams -> MainUiModel(conferences, streams) })
+        get() = Flowables.combineLatest(conferences, streams, ::MainUiModel)
 
     private val conferences: Flowable<Resource<List<ConferenceGroup>>>
         get() = conferenceRepository.conferences

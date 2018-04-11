@@ -31,6 +31,7 @@ abstract class BaseDbTest {
     val bookmarkDao get() = db.bookmarkDao()
     val conferenceDao get() = db.conferenceDao()
     val eventDao get() = db.eventDao()
+    val playPositionDao get() = db.playPositionDao()
 
     fun initDbWithConference(conferenceId: Int) {
         conferenceDao.insert(minimalConferenceEntity.copy(id = conferenceId))
