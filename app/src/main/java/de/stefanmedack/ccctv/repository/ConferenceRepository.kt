@@ -39,6 +39,7 @@ class ConferenceRepository @Inject constructor(
                 conferenceWithEventsResource(conferenceId = it.id, forceUpdate = true)
                         .filter { it is Resource.Success }
             }
+            .applySchedulers()
             .toList()
 
     private fun conferenceResource(forceUpdate: Boolean): Flowable<Resource<List<ConferenceEntity>>> = object

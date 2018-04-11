@@ -202,6 +202,7 @@ class DetailFragment : DetailsSupportFragment() {
                     context?.getDrawable(R.drawable.ic_watch)
             ))
 
+            // add restart-video-from-beginning Button
             if (result.wasPlayed) {
                 detailsOverviewAdapter.add(Action(
                         DETAIL_ACTION_RESTART,
@@ -229,6 +230,7 @@ class DetailFragment : DetailsSupportFragment() {
                         context?.getDrawable(R.drawable.ic_speaker)
                 ))
             }
+
             // add related
             if (!result.related.isEmpty()) {
                 val listRowAdapter = ArrayObjectAdapter(EventCardPresenter())
