@@ -4,12 +4,16 @@ import android.support.v17.leanback.widget.ImageCardView
 import android.support.v17.leanback.widget.Presenter
 import android.support.v4.content.ContextCompat
 import android.support.v7.view.ContextThemeWrapper
+import android.view.MenuItem
+import android.view.View
 import android.view.ViewGroup
+import android.widget.PopupMenu
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import de.stefanmedack.ccctv.R
 import de.stefanmedack.ccctv.persistence.entities.Event
 import de.stefanmedack.ccctv.util.stripHtml
+import timber.log.Timber
 import kotlin.properties.Delegates
 
 class EventCardPresenter : Presenter() {
@@ -36,16 +40,17 @@ class EventCardPresenter : Presenter() {
 
     override fun onBindViewHolder(viewHolder: Presenter.ViewHolder, item: Any) {
         if (item is Event) {
-            (viewHolder.view as ImageCardView).let {
-                it.titleText = item.title.stripHtml()
-                it.contentText = item.description.stripHtml()
+            (viewHolder.view as ImageCardView).let { imageCardView ->
+                imageCardView.titleText = item.title.stripHtml()
+                imageCardView.contentText = item.description.stripHtml()
                 Glide.with(viewHolder.view)
                         .load(item.thumbUrl)
                         .apply(RequestOptions()
                                 .error(R.drawable.voctocat)
                                 .centerCrop()
                         )
-                        .into(it.mainImageView)
+                        .into(imageCardView.mainImageView)
+                imageCardView.setOnLongClickListener { showPopup(imageCardView) }
             }
         }
     }
@@ -63,4 +68,21 @@ class EventCardPresenter : Presenter() {
         view.setBackgroundColor(color)
         view.setInfoAreaBackgroundColor(color)
     }
+
+    private fun showPopup(v: View) : Boolean {
+        val popup = PopupMenu(v.context, v)
+        popup.menuInflater.inflate(R.menu.menu_popup_event_card, popup.menu)
+        popup.setOnMenuItemClickListener { onMenuItemClick(it) }
+        popup.show()
+        return true
+    }
+
+    private fun onMenuItemClick(it: MenuItem) : Boolean {
+        when (it.itemId) {
+            // TODO open video
+            R.id.menu_play -> Timber.d("play")
+        }
+        return true
+    }
+
 }

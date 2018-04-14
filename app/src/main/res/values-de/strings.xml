@@ -26,6 +26,8 @@
     <string name="header_related">Ähnliche Videos</string>
     <string name="playback_resumed_toast">Video wird vom letzten Mal fortgesetzt</string>
 
+    <string name="event_card_overflow_play">Abspielen</string>
+
     <string name="about_description">\ncccTV ist ein Open Source Projekt entwickelt von Stefan Medack.
         Sämtlicher Source Code ist unter der Apache License 2.0 auf github.com/stefanmedack/cccTV zu finden.
         \n\nDas Video Material wird freundlicherweise von media.ccc.de bereitgestellt.

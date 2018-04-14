@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/menu_play"
+        android:icon="@drawable/exo_controls_play"
+        android:title="@string/event_card_overflow_play"
+        />
+
+</menu>
