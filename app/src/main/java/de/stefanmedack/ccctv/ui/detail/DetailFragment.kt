@@ -75,8 +75,13 @@ class DetailFragment : DetailsSupportFragment() {
 
     override fun onPause() {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N || activity?.isInPictureInPictureMode == false) {
-            playerAdapter?.currentPosition?.let { currentMillis ->
-                viewModel.inputs.savePlaybackPosition((currentMillis / 1000).toInt())
+            val currentMillis = playerAdapter?.currentPosition
+            val durationMillis = playerAdapter?.duration
+            if(currentMillis != null && durationMillis != null) {
+                viewModel.inputs.savePlaybackPosition(
+                        playedSeconds = (currentMillis / 1000).toInt(),
+                        totalDurationSeconds = (durationMillis /1000).toInt()
+                )
             }
             detailsBackground.playbackGlue?.pause()
         }

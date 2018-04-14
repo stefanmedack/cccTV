@@ -80,7 +80,7 @@ class DetailViewModelTest {
         val testEventId = 3
         detailViewModel.init(testEventId)
 
-        detailViewModel.inputs.savePlaybackPosition(seconds = 180)
+        detailViewModel.inputs.savePlaybackPosition(playedSeconds = 180, totalDurationSeconds = 2300)
 
         verify(repository).savePlayedSeconds(eventId = testEventId, seconds = 180)
     }
@@ -90,7 +90,17 @@ class DetailViewModelTest {
         val testEventId = 3
         detailViewModel.init(testEventId)
 
-        detailViewModel.inputs.savePlaybackPosition(seconds = 30)
+        detailViewModel.inputs.savePlaybackPosition(playedSeconds = 30, totalDurationSeconds = 2300)
+
+        verify(repository).deletePlayedSeconds(3)
+    }
+
+    @Test
+    fun `saving playback position when video is almost finished should delete saved playback position`() {
+        val testEventId = 3
+        detailViewModel.init(testEventId)
+
+        detailViewModel.inputs.savePlaybackPosition(playedSeconds = 2250, totalDurationSeconds = 2300)
 
         verify(repository).deletePlayedSeconds(3)
     }
