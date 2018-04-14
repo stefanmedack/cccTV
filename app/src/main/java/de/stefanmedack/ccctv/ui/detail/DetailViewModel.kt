@@ -25,8 +25,6 @@ class DetailViewModel @Inject constructor(
     internal val inputs: Inputs = this
     internal val outputs: Outputs = this
 
-    private val SAVE_PLAYBACK_SECONDS_THRESHOLD = 60
-
     private var eventId: Int = -1
 
     fun init(eventId: Int) {
@@ -44,8 +42,8 @@ class DetailViewModel @Inject constructor(
         bookmarkClickStream.onNext(0)
     }
 
-    override fun savePlaybackPosition(seconds: Int) {
-        savePlayPositionStream.onNext(seconds)
+    override fun savePlaybackPosition(playedSeconds: Int, totalDurationSeconds: Int) {
+        savePlayPositionStream.onNext(PlaybackData(playedSeconds, totalDurationSeconds))
     }
 
     //</editor-fold>
@@ -70,7 +68,7 @@ class DetailViewModel @Inject constructor(
     //</editor-fold>
 
     private val bookmarkClickStream = PublishSubject.create<Int>()
-    private val savePlayPositionStream = PublishSubject.create<Int>()
+    private val savePlayPositionStream = PublishSubject.create<PlaybackData>()
 
     private val doToggleBookmark
         get() = bookmarkClickStream
@@ -80,8 +78,8 @@ class DetailViewModel @Inject constructor(
     private val doSavePlayedSeconds
         get() = savePlayPositionStream
                 .flatMapCompletable {
-                    if (it > SAVE_PLAYBACK_SECONDS_THRESHOLD) {
-                        repository.savePlayedSeconds(eventId, it)
+                    if (it.hasPlayedMinimumToSave() && !it.hasAlmostFinished()) {
+                        repository.savePlayedSeconds(eventId, it.playedSeconds)
                     } else {
                         repository.deletePlayedSeconds(eventId)
                     }
@@ -99,5 +97,21 @@ class DetailViewModel @Inject constructor(
         get() = repository.getPlayedSeconds(eventId).map { it > 0 }
 
     private fun updateBookmarkState(isBookmarked: Boolean): Completable = repository.changeBookmarkState(eventId, !isBookmarked)
+
+    private data class PlaybackData(
+            val playedSeconds: Int,
+            val totalDurationSeconds: Int
+    ) {
+
+        private val MINIMUM_PLAYBACK_SECONDS_TO_SAVE = 60
+        private val MAXIMUM_PLAYBACK_PERCENT_TO_SAVE = .9f
+
+        fun hasPlayedMinimumToSave(): Boolean = this.playedSeconds > MINIMUM_PLAYBACK_SECONDS_TO_SAVE
+
+        fun hasAlmostFinished(): Boolean = when {
+            totalDurationSeconds > 0 -> (playedSeconds.toFloat() / totalDurationSeconds.toFloat()) > MAXIMUM_PLAYBACK_PERCENT_TO_SAVE
+            else -> true
+        }
+    }
 
 }

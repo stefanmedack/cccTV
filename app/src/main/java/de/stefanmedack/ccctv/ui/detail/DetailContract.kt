@@ -7,7 +7,7 @@ import io.reactivex.Single
 
 internal interface Inputs {
     fun toggleBookmark()
-    fun savePlaybackPosition(seconds: Int)
+    fun savePlaybackPosition(playedSeconds: Int, totalDurationSeconds: Int)
 }
 
 internal interface Outputs {
