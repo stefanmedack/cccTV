@@ -34,6 +34,7 @@ class HomeFragment : RowsSupportFragment() {
     private val popularHeaderString by lazy { getString(R.string.home_header_popular) }
     private val recentHeaderString by lazy { getString(R.string.home_header_recent) }
 
+    // remember all EventListAdapter created by their title, so updating their content is easier
     private val eventAdapterMap = mutableMapOf<String, ArrayObjectAdapter>()
 
     private val eventDiffCallback: DiffCallback<Event> = object : DiffCallback<Event>() {
@@ -87,26 +88,31 @@ class HomeFragment : RowsSupportFragment() {
         }
     }
 
-    private fun ArrayObjectAdapter.updateEventsRow(title: String, events: List<Event>) {
+    private fun ArrayObjectAdapter.updateEventsRow(headerItemTitle: String, events: List<Event>) {
         if (events.isNotEmpty()) {
-            // get or create adapter for this title and update its events
-            eventAdapterMap.getOrPut(title, { addNewEventListAdapter(title) }).setItems(events, eventDiffCallback)
+            // get or create (and remember) EventListAdapter for this headerItemTitle and update its events
+            eventAdapterMap.getOrPut(
+                    key = headerItemTitle,
+                    defaultValue = { createAndAddHorizontalEventListAdapter(headerItemTitle) }
+            ).setItems(events, eventDiffCallback)
         } else {
-            getListRow(title)?.let { listRow -> remove(listRow) }
-            eventAdapterMap.remove(title)
+            // remove entire listRow and do not remember its EventListAdapter for this headerItemTitle
+            getListRow(headerItemTitle)?.let { listRow -> remove(listRow) }
+            eventAdapterMap.remove(headerItemTitle)
         }
     }
 
-    private fun ArrayObjectAdapter.addNewEventListAdapter(title: String): ArrayObjectAdapter = ArrayObjectAdapter(EventCardPresenter())
-            .also { eventsAdapter -> add(ListRow(title.hashCode().toLong(), HeaderItem(title), eventsAdapter)) }
+    private fun ArrayObjectAdapter.createAndAddHorizontalEventListAdapter(headerItemTitle: String): ArrayObjectAdapter {
+        val eventListAdapter = ArrayObjectAdapter(EventCardPresenter())
+        add(ListRow(headerItemTitle.hashCode().toLong(), HeaderItem(headerItemTitle), eventListAdapter))
+        return eventListAdapter
+    }
 
     private fun ArrayObjectAdapter.getListRow(title: String): ListRow? {
-        if (size() > 0) {
-            for (index in 0..size()) {
-                val listRow = get(index) as? ListRow
-                if (listRow?.id == title.hashCode().toLong()) {
-                    return listRow
-                }
+        for (index in 0 until size()) {
+            val listRow = get(index) as? ListRow
+            if (listRow?.id == title.hashCode().toLong()) {
+                return listRow
             }
         }
         return null
