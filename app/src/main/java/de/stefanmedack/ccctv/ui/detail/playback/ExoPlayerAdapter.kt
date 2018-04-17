@@ -113,6 +113,11 @@ class ExoPlayerAdapter(context: Context) : BaseExoPlayerAdapter(context) {
 
     private var shouldTriggerDpadCenterKeyEvent = false
 
+    fun simpleSeekTo(newPosition: Long) {
+        seekTo(newPosition)
+        shouldTriggerDpadCenterKeyEvent = false
+    }
+
     override fun seekTo(newPosition: Long) {
         super.seekTo(newPosition)
         if (initialized) {
