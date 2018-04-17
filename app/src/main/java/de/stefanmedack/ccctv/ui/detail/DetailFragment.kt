@@ -77,10 +77,10 @@ class DetailFragment : DetailsSupportFragment() {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N || activity?.isInPictureInPictureMode == false) {
             val currentMillis = playerAdapter?.currentPosition
             val durationMillis = playerAdapter?.duration
-            if(currentMillis != null && durationMillis != null) {
+            if (currentMillis != null && durationMillis != null) {
                 viewModel.inputs.savePlaybackPosition(
                         playedSeconds = (currentMillis / 1000).toInt(),
-                        totalDurationSeconds = (durationMillis /1000).toInt()
+                        totalDurationSeconds = (durationMillis / 1000).toInt()
                 )
             }
             detailsBackground.playbackGlue?.pause()
@@ -263,7 +263,9 @@ class DetailFragment : DetailsSupportFragment() {
                 icon = context?.getDrawable(R.drawable.ic_bookmark_plus)
             }
         }
-        detailsOverview.actionsAdapter.notifyItemRangeChanged(1, 1)
+        detailsOverview.actionsAdapter.indexOf(bookmarkAction)?.let { indexOfBookmark ->
+            detailsOverview.actionsAdapter.notifyItemRangeChanged(indexOfBookmark, 1)
+        }
     }
 
     fun onKeyDown(keyCode: Int): Boolean =

@@ -33,7 +33,7 @@ class BookmarkDaoTest : BaseDbTest() {
     fun insert_bookmark_without_matching_event_throws_exception() {
         val exception = try {
             bookmarkDao.insert(Bookmark(42))
-        } catch (ex: SQLiteException) {
+        } catch (ex: Exception) {
             ex
         }
 
