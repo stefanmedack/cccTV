@@ -24,7 +24,7 @@ ext {
     rxBindingVersion = "2.1.1"
     rxJavaVersion = "2.1.10"
     rxKotlinVersion = "2.2.0"
-    supportLibVersion = "27.0.2"
+    supportLibVersion = "27.1.1"
     timberVersion = "4.6.1"
 
     // Test dependencies
