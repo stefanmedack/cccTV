@@ -55,7 +55,6 @@ class C3TypeConverters {
     // *** Metadata ********************************************
     // *********************************************************
 
-    // TODO test
     @TypeConverter
     fun fromRelatedEventsString(metadataString: String?): List<RelatedEvent>? = gson
             .fromJson(metadataString, object : TypeToken<List<RelatedEvent>>() {}.type)
