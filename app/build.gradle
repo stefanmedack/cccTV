@@ -136,8 +136,9 @@ dependencies {
     kapt "com.google.dagger:dagger-android-processor:$daggerVersion"
     kapt "com.google.dagger:dagger-compiler:$daggerVersion"
 
-    // c3media library
-    implementation "info.metadude.kotlin.library.c3media:c3media-rx-java-2:$c3mediaVersion"
+    // c3media library TODO update import after release
+//    implementation "info.metadude.kotlin.library.c3media:c3media-rx-java-2:$c3mediaVersion"
+    implementation "com.github.stefanmedack.c3media-base:c3media-rx-java-2:api_update_beta1"
     // c3media streaming
     implementation "com.github.johnjohndoe:Brockman:1886e90a92029ceba978e3326202383c63ed8efd"
 

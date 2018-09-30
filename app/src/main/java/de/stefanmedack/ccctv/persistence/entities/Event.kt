@@ -1,9 +1,13 @@
 package de.stefanmedack.ccctv.persistence.entities
 
-import android.arch.persistence.room.*
+import android.arch.persistence.room.ColumnInfo
+import android.arch.persistence.room.Entity
+import android.arch.persistence.room.ForeignKey
 import android.arch.persistence.room.ForeignKey.NO_ACTION
+import android.arch.persistence.room.Index
+import android.arch.persistence.room.PrimaryKey
 import de.stefanmedack.ccctv.util.EMPTY_STRING
-import info.metadude.kotlin.library.c3media.models.Metadata
+import info.metadude.kotlin.library.c3media.models.RelatedEvent
 import org.threeten.bp.LocalDate
 import org.threeten.bp.OffsetDateTime
 
@@ -11,22 +15,22 @@ import org.threeten.bp.OffsetDateTime
         foreignKeys = [
             ForeignKey(
                     entity = Conference::class,
-                    parentColumns = arrayOf("id"),
-                    childColumns = arrayOf("conference_id"),
+                    parentColumns = arrayOf("acronym"),
+                    childColumns = arrayOf("conference_acronym"),
                     onUpdate = NO_ACTION,
                     onDelete = NO_ACTION
             )],
         indices = [
-            Index(name = "conference_idx", value = ["conference_id"])
+            Index(name = "conference_idx", value = ["conference_acronym"])
         ]
 )
 data class Event(
 
         @PrimaryKey
-        val id: Int,
+        val id: String,
 
-        @ColumnInfo(name = "conference_id")
-        val conferenceId: Int,
+        @ColumnInfo(name = "conference_acronym")
+        val conferenceAcronym: String,
 
         @ColumnInfo(name = "url")
         val url: String,
@@ -67,8 +71,8 @@ data class Event(
         @ColumnInfo(name = "tags")
         val tags: List<String> = listOf(),
 
-        @ColumnInfo(name = "metadata")
-        val metadata: Metadata? = null,
+        @ColumnInfo(name = "related")
+        val related: List<RelatedEvent> = listOf(),
 
         @ColumnInfo(name = "release_date")
         val releaseDate: LocalDate? = null,

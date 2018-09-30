@@ -4,8 +4,8 @@ import de.stefanmedack.ccctv.minimalEvent
 import de.stefanmedack.ccctv.minimalEventEntity
 import de.stefanmedack.ccctv.minimalRecording
 import info.metadude.kotlin.library.c3media.models.Language
-import info.metadude.kotlin.library.c3media.models.Metadata
 import info.metadude.kotlin.library.c3media.models.MimeType
+import info.metadude.kotlin.library.c3media.models.RelatedEvent
 import org.amshove.kluent.shouldBe
 import org.amshove.kluent.shouldBeNull
 import org.amshove.kluent.shouldEqual
@@ -92,15 +92,21 @@ class EventExtensionsTest {
 
     @Test
     fun `Related event-ids should be extracted from metadata and be sorted by weight`() {
-        val testEvent = minimalEventEntity.copy(metadata = Metadata(
-                related = mapOf("1" to 23, "2" to 43, "3" to 13, "4" to 1, "5" to 42)))
+        val testEvent = minimalEventEntity.copy(related = listOf(
+                RelatedEvent(1, "1", 23),
+                RelatedEvent(2, "2", 43),
+                RelatedEvent(3, "3", 13),
+                RelatedEvent(4, "4", 1),
+                RelatedEvent(5, "5", 42)
+        ))
 
-        val related = testEvent.getRelatedEventIdsWeighted()
+        val related = testEvent.getRelatedEventGuidsWeighted()
 
-        related[0] shouldBe 2
-        related[1] shouldBe 5
-        related[2] shouldBe 1
-        related[3] shouldBe 3
-        related[4] shouldBe 4
+        related[0] shouldBe "2"
+        related[1] shouldBe "5"
+        related[2] shouldBe "1"
+        related[3] shouldBe "3"
+        related[4] shouldBe "4"
     }
+
 }

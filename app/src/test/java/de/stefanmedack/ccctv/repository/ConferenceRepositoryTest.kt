@@ -14,7 +14,11 @@ import io.reactivex.Flowable
 import io.reactivex.Single
 import io.reactivex.android.plugins.RxAndroidPlugins
 import io.reactivex.schedulers.Schedulers
-import org.amshove.kluent.*
+import org.amshove.kluent.When
+import org.amshove.kluent.any
+import org.amshove.kluent.calling
+import org.amshove.kluent.itReturns
+import org.amshove.kluent.shouldEqual
 import org.junit.Before
 import org.junit.Test
 import org.mockito.InjectMocks
@@ -42,7 +46,7 @@ class ConferenceRepositoryTest {
         RxAndroidPlugins.setInitMainThreadSchedulerHandler { _ -> Schedulers.trampoline() }
 
         When calling conferenceDao.getConferences() itReturns Flowable.empty()
-        When calling conferenceDao.getConferenceWithEventsById(any()) itReturns Flowable.empty()
+        When calling conferenceDao.getConferenceWithEventsByAcronym(any()) itReturns Flowable.empty()
     }
 
     @Test
@@ -78,7 +82,7 @@ class ConferenceRepositoryTest {
     fun `update content should fetch remote data and save it locally`() {
         val conferenceRemote = minimalConference.copy(events = listOf(minimalEvent))
         val conferenceEntityList = listOf(conferenceRemote.toEntity()!!)
-        val conferenceId = conferenceEntityList.first().id
+        val conferenceId = conferenceEntityList.first().acronym
         val eventEntityList = listOf(minimalEvent.toEntity(conferenceId)!!)
         When calling mediaService.getConferences() itReturns Single.just(ConferencesResponse(listOf(conferenceRemote)))
         When calling mediaService.getConference(conferenceId) itReturns Single.just(conferenceRemote)
@@ -93,22 +97,22 @@ class ConferenceRepositoryTest {
 
     @Test
     fun `update content should iterate multiple conferences and their events`() {
-        val remoteEvent1 = minimalEvent.copy(conferenceId = 37, url = "url/13")
-        val remoteEvent2 = minimalEvent.copy(conferenceId = 38, url = "url/14")
-        val remoteConf1 = minimalConference.copy(url = "url/37", events = listOf(remoteEvent1))
-        val remoteConf2 = minimalConference.copy(url = "url/38", events = listOf(remoteEvent2))
-        val eventEntityList1 = listOf(remoteEvent1.toEntity(37)!!)
-        val eventEntityList2 = listOf(remoteEvent2.toEntity(38)!!)
+        val remoteEvent1 = minimalEvent.copy(conferenceUrl = "url/33c3")
+        val remoteEvent2 = minimalEvent.copy(conferenceUrl = "url/34c3")
+        val remoteConf1 = minimalConference.copy(acronym = "33c3", events = listOf(remoteEvent1))
+        val remoteConf2 = minimalConference.copy(acronym = "34c3", events = listOf(remoteEvent2))
+        val eventEntityList1 = listOf(remoteEvent1.toEntity("33c3")!!)
+        val eventEntityList2 = listOf(remoteEvent2.toEntity("34c3")!!)
         When calling mediaService.getConferences() itReturns Single.just(ConferencesResponse(listOf(remoteConf1, remoteConf2)))
-        When calling mediaService.getConference(37) itReturns Single.just(remoteConf1)
-        When calling mediaService.getConference(38) itReturns Single.just(remoteConf2)
+        When calling mediaService.getConference("33c3") itReturns Single.just(remoteConf1)
+        When calling mediaService.getConference("34c3") itReturns Single.just(remoteConf2)
 
         repositoy.updateContent().test().await()
 
         verify(mediaService).getConferences()
         verify(conferenceDao).insertAll(listOf(remoteConf1.toEntity()!!, remoteConf2.toEntity()!!))
-        verify(mediaService).getConference(37)
-        verify(mediaService).getConference(38)
+        verify(mediaService).getConference("33c3")
+        verify(mediaService).getConference("34c3")
 
         verify(eventDao).insertAll(eventEntityList1)
         verify(eventDao).insertAll(eventEntityList2)

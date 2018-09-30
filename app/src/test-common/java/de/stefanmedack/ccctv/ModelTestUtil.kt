@@ -6,46 +6,44 @@ import de.stefanmedack.ccctv.persistence.entities.Event
 import de.stefanmedack.ccctv.persistence.entities.LanguageList
 import info.metadude.kotlin.library.c3media.models.AspectRatio
 import info.metadude.kotlin.library.c3media.models.Language
-import info.metadude.kotlin.library.c3media.models.Metadata
 import info.metadude.kotlin.library.c3media.models.MimeType
 import info.metadude.kotlin.library.c3media.models.Recording
+import info.metadude.kotlin.library.c3media.models.RelatedEvent
 import org.threeten.bp.LocalDate
 import org.threeten.bp.OffsetDateTime
 import info.metadude.kotlin.library.c3media.models.Conference as ConferenceRemote
 import info.metadude.kotlin.library.c3media.models.Event as EventRemote
 
 val minimalConferenceEntity = Conference(
-        id = 42,
+        acronym = "34c3",
         url = "url",
         slug = "slug",
         group = ConferenceGroup.OTHER,
-        title = "title",
-        acronym = "acronym"
+        title = "title"
 )
 
 val fullConferenceEntity = Conference(
-        id = 42,
+        acronym = "34c3",
         url = "url",
         slug = "slug",
         group = ConferenceGroup.OTHER,
         title = "title",
-        acronym = "acronym",
         aspectRatio = AspectRatio._16_X_9,
         logoUrl = "logoUrl",
         updatedAt = OffsetDateTime.now()
 )
 
 val minimalEventEntity = Event(
-        id = 43,
-        conferenceId = 42,
+        id = "43",
+        conferenceAcronym = "34c3",
         url = "url",
         slug = "slug",
         title = "title"
 )
 
 val fullEventEntity = Event(
-        id = 43,
-        conferenceId = 42,
+        id = "43",
+        conferenceAcronym = "34c3",
         url = "url",
         slug = "slug",
         title = "title",
@@ -59,7 +57,10 @@ val fullEventEntity = Event(
         viewCount = 8,
         promoted = true,
         tags = listOf("33c3", "fnord"),
-        metadata = Metadata(mapOf("0" to 8, "15" to 9), 42),
+        related = listOf(
+                RelatedEvent(0, "8", 15),
+                RelatedEvent(23, "42", 3)
+        ),
         releaseDate = LocalDate.now(),
         date = OffsetDateTime.now(),
         updatedAt = OffsetDateTime.now()

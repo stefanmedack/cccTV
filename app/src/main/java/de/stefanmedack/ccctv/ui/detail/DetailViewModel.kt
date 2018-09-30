@@ -6,7 +6,8 @@ import de.stefanmedack.ccctv.ui.base.BaseDisposableViewModel
 import de.stefanmedack.ccctv.ui.detail.uiModels.DetailUiModel
 import de.stefanmedack.ccctv.ui.detail.uiModels.SpeakerUiModel
 import de.stefanmedack.ccctv.ui.detail.uiModels.VideoPlaybackUiModel
-import de.stefanmedack.ccctv.util.getRelatedEventIdsWeighted
+import de.stefanmedack.ccctv.util.EMPTY_STRING
+import de.stefanmedack.ccctv.util.getRelatedEventGuidsWeighted
 import io.reactivex.Completable
 import io.reactivex.Flowable
 import io.reactivex.Single
@@ -25,9 +26,9 @@ class DetailViewModel @Inject constructor(
     internal val inputs: Inputs = this
     internal val outputs: Outputs = this
 
-    private var eventId: Int = -1
+    private var eventId: String = EMPTY_STRING
 
-    fun init(eventId: Int) {
+    fun init(eventId: String) {
         this.eventId = eventId
 
         disposables.addAll(
@@ -91,7 +92,7 @@ class DetailViewModel @Inject constructor(
                     getRelatedEvents(event).map { DetailUiModel(event = event, speaker = event.persons.map { SpeakerUiModel(it) }, related = it) }
                 }
 
-    private fun getRelatedEvents(event: Event): Flowable<List<Event>> = repository.getEvents(event.getRelatedEventIdsWeighted())
+    private fun getRelatedEvents(event: Event): Flowable<List<Event>> = repository.getEvents(event.getRelatedEventGuidsWeighted())
 
     private val wasPlayed: Single<Boolean>
         get() = repository.getPlayedSeconds(eventId).map { it > 0 }

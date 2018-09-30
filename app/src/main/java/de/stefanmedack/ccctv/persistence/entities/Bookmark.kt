@@ -25,7 +25,7 @@ import org.threeten.bp.OffsetDateTime
 data class Bookmark(
 
         @ColumnInfo(name = "event_id")
-        val eventId: Int,
+        val eventId: String,
 
         @ColumnInfo(name = "created_at")
         val createdAt: OffsetDateTime = OffsetDateTime.now()

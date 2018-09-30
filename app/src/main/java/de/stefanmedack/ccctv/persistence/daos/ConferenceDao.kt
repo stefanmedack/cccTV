@@ -1,6 +1,10 @@
 package de.stefanmedack.ccctv.persistence.daos
 
-import android.arch.persistence.room.*
+import android.arch.persistence.room.Dao
+import android.arch.persistence.room.Insert
+import android.arch.persistence.room.OnConflictStrategy
+import android.arch.persistence.room.Query
+import android.arch.persistence.room.Transaction
 import de.stefanmedack.ccctv.persistence.entities.Conference
 import de.stefanmedack.ccctv.persistence.entities.ConferenceWithEvents
 import de.stefanmedack.ccctv.persistence.entities.Event
@@ -15,8 +19,8 @@ interface ConferenceDao {
     @Query("SELECT * FROM Conferences WHERE c_group LIKE :conferenceGroupName")
     fun getConferences(conferenceGroupName: String): Flowable<List<Conference>>
 
-    @Query("SELECT * FROM Conferences WHERE id = :id")
-    fun getConferenceById(id: Int): Flowable<Conference>
+    @Query("SELECT * FROM Conferences WHERE acronym = :acronym")
+    fun getConferenceByAcronym(acronym: String): Flowable<Conference>
 
     @Transaction
     @Query("SELECT * FROM Conferences")
@@ -27,8 +31,8 @@ interface ConferenceDao {
     fun getConferencesWithEvents(conferenceGroupName: String): Flowable<List<ConferenceWithEvents>>
 
     @Transaction
-    @Query("SELECT * FROM Conferences WHERE id = :id")
-    fun getConferenceWithEventsById(id: Int): Flowable<ConferenceWithEvents>
+    @Query("SELECT * FROM Conferences WHERE acronym = :acronym")
+    fun getConferenceWithEventsByAcronym(acronym: String): Flowable<ConferenceWithEvents>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(conference: Conference)

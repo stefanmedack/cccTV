@@ -9,12 +9,18 @@ import de.stefanmedack.ccctv.persistence.daos.BookmarkDao
 import de.stefanmedack.ccctv.persistence.daos.EventDao
 import de.stefanmedack.ccctv.persistence.daos.PlayPositionDao
 import de.stefanmedack.ccctv.persistence.toEntity
+import de.stefanmedack.ccctv.util.EMPTY_STRING
 import info.metadude.kotlin.library.c3media.RxC3MediaService
 import io.reactivex.Flowable
 import io.reactivex.Single
 import io.reactivex.android.plugins.RxAndroidPlugins
 import io.reactivex.schedulers.Schedulers
-import org.amshove.kluent.*
+import org.amshove.kluent.When
+import org.amshove.kluent.any
+import org.amshove.kluent.calling
+import org.amshove.kluent.itReturns
+import org.amshove.kluent.shouldBe
+import org.amshove.kluent.shouldEqual
 import org.junit.Before
 import org.junit.Test
 import org.mockito.InjectMocks
@@ -59,14 +65,14 @@ class EventRepositoryTest {
 
     @Test
     fun `fetch event by id from remote source when local source throws an error`() {
-        val exampleId = 8
+        val exampleId = "8"
         val eventRemote = minimalEvent.copy(url = "https://api.media.ccc.de/public/events/8")
         When calling eventDao.getEventById(exampleId) itReturns Single.error(Exception("EventDao throw an error"))
         When calling mediaService.getEvent(exampleId) itReturns Single.just(eventRemote)
 
         val result = repository.getEvent(exampleId).getSingleTestResult(waitUntilCompletion = true)
 
-        result shouldEqual eventRemote.toEntity(-1)
+        result shouldEqual eventRemote.toEntity(EMPTY_STRING)
     }
 
     // TODO test for getEvents missing
@@ -123,7 +129,7 @@ class EventRepositoryTest {
 
     @Test
     fun `bookmark state should be passed through from bookmarkDao`() {
-        val exampleId = 8
+        val exampleId = "8"
         When calling bookmarkDao.isBookmarked(exampleId) itReturns Flowable.just(true, false, true)
 
         val results = repository.isBookmarked(exampleId).test().values()
@@ -136,7 +142,7 @@ class EventRepositoryTest {
 
     @Test
     fun `bookmarking an event should insert a bookmark into the DAO`() {
-        val exampleId = 8
+        val exampleId = "8"
 
         repository.changeBookmarkState(exampleId, shouldBeBookmarked = true).test().await(100, TimeUnit.MILLISECONDS)
 
@@ -145,7 +151,7 @@ class EventRepositoryTest {
 
     @Test
     fun `un-bookmarking an event should delete a bookmark in the DAO`() {
-        val exampleId = 8
+        val exampleId = "8"
 
         repository.changeBookmarkState(exampleId, shouldBeBookmarked = false).test().await(100, TimeUnit.MILLISECONDS)
 
@@ -164,8 +170,8 @@ class EventRepositoryTest {
 
     @Test
     fun `fetch played seconds from local source`() {
-        val exampleId = 8
-        When calling playPositionDao.getPlaybackSeconds(8) itReturns Single.just(48)
+        val exampleId = "8"
+        When calling playPositionDao.getPlaybackSeconds(exampleId) itReturns Single.just(48)
 
         val results = repository.getPlayedSeconds(exampleId).getSingleTestResult()
 
@@ -174,8 +180,8 @@ class EventRepositoryTest {
 
     @Test
     fun `fetching played seconds returns 0 instead of an error for videos without a saved play position`() {
-        val exampleId = 8
-        When calling playPositionDao.getPlaybackSeconds(8) itReturns Single.error(EmptyResultSetException("no PPS"))
+        val exampleId = "8"
+        When calling playPositionDao.getPlaybackSeconds(exampleId) itReturns Single.error(EmptyResultSetException("no PPS"))
 
         val results = repository.getPlayedSeconds(exampleId).getSingleTestResult()
 
@@ -184,7 +190,7 @@ class EventRepositoryTest {
 
     @Test
     fun `saving played seconds should call an insert into the DAO`() {
-        val exampleId = 8
+        val exampleId = "8"
 
         repository.savePlayedSeconds(exampleId, 48).test().await(100, TimeUnit.MILLISECONDS)
 
@@ -193,7 +199,7 @@ class EventRepositoryTest {
 
     @Test
     fun `saving zero played seconds should call a delete on the DAO`() {
-        val exampleId = 8
+        val exampleId = "8"
 
         repository.savePlayedSeconds(exampleId, 0).test().await(100, TimeUnit.MILLISECONDS)
 
@@ -202,7 +208,7 @@ class EventRepositoryTest {
 
     @Test
     fun `deleting played seconds should call a delete on the DAO`() {
-        val exampleId = 8
+        val exampleId = "8"
 
         repository.deletePlayedSeconds(exampleId).test().await(100, TimeUnit.MILLISECONDS)
 

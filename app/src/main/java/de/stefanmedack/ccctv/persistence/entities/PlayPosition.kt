@@ -25,7 +25,7 @@ import org.threeten.bp.OffsetDateTime
 data class PlayPosition(
 
         @ColumnInfo(name = "event_id")
-        val eventId: Int,
+        val eventId: String,
 
         @ColumnInfo(name = "seconds")
         val seconds: Int = 0,

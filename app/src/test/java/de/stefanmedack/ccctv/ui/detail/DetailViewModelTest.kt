@@ -36,7 +36,7 @@ class DetailViewModelTest {
 
     @Test
     fun `bookmarking a not-bookmarked event should change bookmark state to true`() {
-        val testEventId = 3
+        val testEventId = "3"
         val isBookmarked = false
         When calling repository.isBookmarked(testEventId) itReturns Flowable.just(isBookmarked)
         When calling repository.changeBookmarkState(testEventId, isBookmarked) itReturns Completable.complete()
@@ -49,7 +49,7 @@ class DetailViewModelTest {
 
     @Test
     fun `un-bookmarking an event should change bookmark state to false`() {
-        val testEventId = 3
+        val testEventId = "3"
         val isBookmarked = true
         When calling repository.isBookmarked(testEventId) itReturns Flowable.just(isBookmarked)
         When calling repository.changeBookmarkState(testEventId, isBookmarked) itReturns Completable.complete()
@@ -62,7 +62,7 @@ class DetailViewModelTest {
 
     @Test
     fun `bookmarking an event after disposing the view model is ignored`() {
-        val testEventId = 3
+        val testEventId = "3"
         val isBookmarked = true
         When calling repository.isBookmarked(testEventId) itReturns Flowable.just(isBookmarked)
         When calling repository.changeBookmarkState(testEventId, isBookmarked) itReturns Completable.complete()
@@ -77,7 +77,7 @@ class DetailViewModelTest {
 
     @Test
     fun `saving playback position after a minimum playback time should be saved in repository`() {
-        val testEventId = 3
+        val testEventId = "3"
         detailViewModel.init(testEventId)
 
         detailViewModel.inputs.savePlaybackPosition(playedSeconds = 180, totalDurationSeconds = 2300)
@@ -87,22 +87,22 @@ class DetailViewModelTest {
 
     @Test
     fun `saving playback position before the minimum playback time should delete saved playback position`() {
-        val testEventId = 3
+        val testEventId = "3"
         detailViewModel.init(testEventId)
 
         detailViewModel.inputs.savePlaybackPosition(playedSeconds = 30, totalDurationSeconds = 2300)
 
-        verify(repository).deletePlayedSeconds(3)
+        verify(repository).deletePlayedSeconds(testEventId)
     }
 
     @Test
     fun `saving playback position when video is almost finished should delete saved playback position`() {
-        val testEventId = 3
+        val testEventId = "3"
         detailViewModel.init(testEventId)
 
         detailViewModel.inputs.savePlaybackPosition(playedSeconds = 2250, totalDurationSeconds = 2300)
 
-        verify(repository).deletePlayedSeconds(3)
+        verify(repository).deletePlayedSeconds(testEventId)
     }
 
 }

@@ -27,7 +27,7 @@ class ConferenceDaoTest : BaseDbTest() {
     fun insert_and_retrieve_minimal_conference() {
         conferenceDao.insert(minimalConferenceEntity)
 
-        val loadedConference = conferenceDao.getConferenceById(minimalConferenceEntity.id).getSingleTestResult()
+        val loadedConference = conferenceDao.getConferenceByAcronym(minimalConferenceEntity.acronym).getSingleTestResult()
 
         loadedConference shouldEqual minimalConferenceEntity
     }
@@ -36,7 +36,7 @@ class ConferenceDaoTest : BaseDbTest() {
     fun insert_and_retrieve_full_conference() {
         conferenceDao.insert(fullConferenceEntity)
 
-        val loadedConferences = conferenceDao.getConferenceById(fullConferenceEntity.id).getSingleTestResult()
+        val loadedConferences = conferenceDao.getConferenceByAcronym(fullConferenceEntity.acronym).getSingleTestResult()
 
         loadedConferences shouldEqual fullConferenceEntity
     }
@@ -44,8 +44,8 @@ class ConferenceDaoTest : BaseDbTest() {
     @Test
     fun insert_and_retrieve_multiple_conferences() {
         val conferences = listOf(
-                minimalConferenceEntity.copy(id = 1),
-                fullConferenceEntity.copy(id = 2)
+                minimalConferenceEntity.copy(acronym = "1"),
+                fullConferenceEntity.copy(acronym = "2")
         )
         conferenceDao.insertAll(conferences)
 
@@ -71,8 +71,8 @@ class ConferenceDaoTest : BaseDbTest() {
     @Test
     fun insert_and_retrieve_multiple_conferences_filtered_by_group() {
         val conferences = listOf(
-                minimalConferenceEntity.copy(id = 1, group = ConferenceGroup.CONGRESS),
-                fullConferenceEntity.copy(id = 2, group = ConferenceGroup.OTHER)
+                minimalConferenceEntity.copy(acronym = "1", group = ConferenceGroup.CONGRESS),
+                fullConferenceEntity.copy(acronym = "2", group = ConferenceGroup.OTHER)
         )
 
         conferenceDao.insertAll(conferences)
@@ -105,8 +105,9 @@ class ConferenceDaoTest : BaseDbTest() {
 
     @Test
     fun insert_and_retrieve_multiple_conferences_with_events() {
-        val conferences = listOf(minimalConferenceEntity.copy(id = 1), fullConferenceEntity.copy(id = 2))
-        val eventForFirstConference = minimalEventEntity.copy(conferenceId = 1)
+        val conferenceAcronym = "34c3"
+        val conferences = listOf(minimalConferenceEntity.copy(acronym = conferenceAcronym), fullConferenceEntity.copy(acronym = "33c3"))
+        val eventForFirstConference = minimalEventEntity.copy(conferenceAcronym = conferenceAcronym)
         conferenceDao.insertAll(conferences)
         eventDao.insert(eventForFirstConference)
 
@@ -121,11 +122,12 @@ class ConferenceDaoTest : BaseDbTest() {
 
     @Test
     fun insert_and_retrieve_multiple_conferences_with_events_in_single_insert() {
+        val conferenceAcronym = "34c3"
         val conferences = listOf(
-                minimalConferenceEntity.copy(id = 1),
-                minimalConferenceEntity.copy(id = 2)
+                minimalConferenceEntity.copy(acronym = conferenceAcronym),
+                minimalConferenceEntity.copy(acronym = "33c3")
         )
-        val eventForConf1 = minimalEventEntity.copy(conferenceId = 1)
+        val eventForConf1 = minimalEventEntity.copy(conferenceAcronym = conferenceAcronym)
         val conferencesWithEvents = conferences.mapIndexed { index, conf ->
             ConferenceWithEvents(
                     conf,
@@ -143,8 +145,8 @@ class ConferenceDaoTest : BaseDbTest() {
     @Test
     fun insert_and_retrieve_multiple_conferences_with_events_filtered_by_group() {
         val conferences = listOf(
-                minimalConferenceEntity.copy(id = 1, group = ConferenceGroup.CONGRESS),
-                fullConferenceEntity.copy(id = 2, group = ConferenceGroup.OTHER)
+                minimalConferenceEntity.copy(acronym = "1", group = ConferenceGroup.CONGRESS),
+                fullConferenceEntity.copy(acronym = "2", group = ConferenceGroup.OTHER)
         )
 
         conferenceDao.insertAll(conferences)
@@ -156,14 +158,15 @@ class ConferenceDaoTest : BaseDbTest() {
 
     @Test
     fun insert_and_retrieve_multiple_conferences_with_events_by_conference_id() {
-        val conferenceNum2 = fullConferenceEntity.copy(id = 2, group = ConferenceGroup.OTHER)
+        val acronym = "2"
+        val conferenceNum2 = fullConferenceEntity.copy(acronym = acronym, group = ConferenceGroup.OTHER)
         val conferences = listOf(
-                minimalConferenceEntity.copy(id = 1, group = ConferenceGroup.CONGRESS),
+                minimalConferenceEntity.copy(acronym = "1", group = ConferenceGroup.CONGRESS),
                 conferenceNum2
         )
 
         conferenceDao.insertAll(conferences)
-        val loadedConference = conferenceDao.getConferenceWithEventsById(2).getSingleTestResult()
+        val loadedConference = conferenceDao.getConferenceWithEventsByAcronym(acronym).getSingleTestResult()
 
         loadedConference shouldEqual ConferenceWithEvents(conferenceNum2, listOf())
     }

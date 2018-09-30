@@ -30,7 +30,7 @@ class EventsActivity : BaseInjectableActivity() {
         fun startForConference(activity: Activity, conference: Conference) {
             val intent = Intent(activity.baseContext, EventsActivity::class.java)
             intent.putExtra(FRAGMENT_ARGUMENTS, EventsFragment.getBundleForConference(
-                    conferenceId = conference.id,
+                    conferenceAcronym = conference.acronym,
                     title = conference.title,
                     conferenceLogoUrl = conference.logoUrl
             ))

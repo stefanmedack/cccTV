@@ -1,10 +1,8 @@
 package de.stefanmedack.ccctv.persistence
 
 import de.stefanmedack.ccctv.model.ConferenceGroup
-import de.stefanmedack.ccctv.persistence.entities.ConferenceWithEvents
 import de.stefanmedack.ccctv.persistence.entities.LanguageList
 import de.stefanmedack.ccctv.util.EMPTY_STRING
-import de.stefanmedack.ccctv.util.id
 import info.metadude.kotlin.library.c3media.models.AspectRatio
 import info.metadude.kotlin.library.c3media.models.Conference
 import timber.log.Timber
@@ -15,12 +13,11 @@ import info.metadude.kotlin.library.c3media.models.Event as EventRemote
 
 fun ConferenceRemote.toEntity() = try {
     ConferenceEntity(
-            id = id() ?: throw EntityMappingException("invalid conference id: ${id()}"),
+            acronym = acronym,
             url = url ?: throw EntityMappingException("invalid conference url: $url"),
             group = extractConferenceGroup(),
             slug = slug,
             title = title ?: throw EntityMappingException("invalid conference title: $title"),
-            acronym = acronym,
             aspectRatio = aspectRatio ?: AspectRatio.UNKNOWN,
             logoUrl = logoUrl,
             updatedAt = updatedAt,
@@ -41,10 +38,11 @@ private fun Conference.extractConferenceGroup(): ConferenceGroup {
     return longestSlugPrefixGroup
 }
 
-fun EventRemote.toEntity(conferenceId: Int) = try {
+// TODO conferenceAcronym could be retrieved from conference_url, instead of passing it here
+fun EventRemote.toEntity(conferenceAcronym: String) = try {
     EventEntity(
-            id = id() ?: throw EntityMappingException("invalid event id: ${id()}"),
-            conferenceId = conferenceId,
+            id = guid,
+            conferenceAcronym = conferenceAcronym,
             url = url ?: throw EntityMappingException("invalid conference url: $url"),
             slug = slug,
             title = title,
@@ -58,7 +56,7 @@ fun EventRemote.toEntity(conferenceId: Int) = try {
             viewCount = viewCount ?: 0,
             promoted = promoted ?: false,
             tags = tags?.filterNotNull() ?: listOf(),
-            metadata = metadata,
+            related = related ?: listOf(),
             releaseDate = releaseDate,
             date = date,
             updatedAt = updatedAt
@@ -67,10 +65,5 @@ fun EventRemote.toEntity(conferenceId: Int) = try {
     Timber.w(e)
     null
 }
-
-fun List<ConferenceWithEvents>.separateLists(): Pair<List<ConferenceEntity>, List<EventEntity>> = Pair(
-        map { it.conference },
-        map { it.events }.flatten()
-)
 
 private class EntityMappingException(msg: String) : Exception(msg)

@@ -8,7 +8,17 @@ import android.os.Build
 import android.os.Bundle
 import android.support.v17.leanback.app.DetailsSupportFragment
 import android.support.v17.leanback.app.DetailsSupportFragmentBackgroundController
-import android.support.v17.leanback.widget.*
+import android.support.v17.leanback.widget.Action
+import android.support.v17.leanback.widget.ArrayObjectAdapter
+import android.support.v17.leanback.widget.ClassPresenterSelector
+import android.support.v17.leanback.widget.DetailsOverviewRow
+import android.support.v17.leanback.widget.FullWidthDetailsOverviewRowPresenter
+import android.support.v17.leanback.widget.FullWidthDetailsOverviewSharedElementHelper
+import android.support.v17.leanback.widget.HeaderItem
+import android.support.v17.leanback.widget.ImageCardView
+import android.support.v17.leanback.widget.ListRow
+import android.support.v17.leanback.widget.ListRowPresenter
+import android.support.v17.leanback.widget.OnItemViewClickedListener
 import android.support.v4.content.ContextCompat
 import android.view.KeyEvent
 import android.view.View
@@ -29,7 +39,17 @@ import de.stefanmedack.ccctv.ui.detail.playback.VideoMediaPlayerGlue
 import de.stefanmedack.ccctv.ui.detail.uiModels.DetailUiModel
 import de.stefanmedack.ccctv.ui.detail.uiModels.SpeakerUiModel
 import de.stefanmedack.ccctv.ui.events.EventsActivity
-import de.stefanmedack.ccctv.util.*
+import de.stefanmedack.ccctv.util.DETAIL_ACTION_BOOKMARK
+import de.stefanmedack.ccctv.util.DETAIL_ACTION_PLAY
+import de.stefanmedack.ccctv.util.DETAIL_ACTION_RELATED
+import de.stefanmedack.ccctv.util.DETAIL_ACTION_RESTART
+import de.stefanmedack.ccctv.util.DETAIL_ACTION_SPEAKER
+import de.stefanmedack.ccctv.util.EMPTY_STRING
+import de.stefanmedack.ccctv.util.EVENT_ID
+import de.stefanmedack.ccctv.util.EVENT_PICTURE
+import de.stefanmedack.ccctv.util.SHARED_DETAIL_TRANSITION
+import de.stefanmedack.ccctv.util.indexOf
+import de.stefanmedack.ccctv.util.plusAssign
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.subscribeBy
 import timber.log.Timber
@@ -42,7 +62,7 @@ class DetailFragment : DetailsSupportFragment() {
 
     private val viewModel: DetailViewModel by lazy {
         ViewModelProviders.of(this, viewModelFactory).get(DetailViewModel::class.java).apply {
-            init(arguments?.getInt(EVENT_ID) ?: -1)
+            init(arguments?.getString(EVENT_ID) ?: EMPTY_STRING)
         }
     }
 
@@ -283,7 +303,7 @@ class DetailFragment : DetailsSupportFragment() {
     }
 
     companion object {
-        fun getBundle(eventId: Int, eventThumbUrl: String?) = bundleOf(EVENT_ID to eventId, EVENT_PICTURE to eventThumbUrl)
+        fun getBundle(eventId: String, eventThumbUrl: String?) = bundleOf(EVENT_ID to eventId, EVENT_PICTURE to eventThumbUrl)
     }
 
 }

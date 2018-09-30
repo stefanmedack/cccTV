@@ -9,7 +9,11 @@ import android.graphics.Paint
 import android.os.Bundle
 import android.support.v17.leanback.app.BackgroundManager
 import android.support.v17.leanback.app.VerticalGridSupportFragment
-import android.support.v17.leanback.widget.*
+import android.support.v17.leanback.widget.ArrayObjectAdapter
+import android.support.v17.leanback.widget.FocusHighlight
+import android.support.v17.leanback.widget.ImageCardView
+import android.support.v17.leanback.widget.OnItemViewClickedListener
+import android.support.v17.leanback.widget.VerticalGridPresenter
 import android.util.DisplayMetrics
 import android.view.View
 import android.widget.Toast
@@ -24,7 +28,7 @@ import de.stefanmedack.ccctv.model.Resource
 import de.stefanmedack.ccctv.persistence.entities.Event
 import de.stefanmedack.ccctv.ui.cards.EventCardPresenter
 import de.stefanmedack.ccctv.ui.detail.DetailActivity
-import de.stefanmedack.ccctv.util.CONFERENCE_ID
+import de.stefanmedack.ccctv.util.CONFERENCE_ACRONYM
 import de.stefanmedack.ccctv.util.CONFERENCE_LOGO_URL
 import de.stefanmedack.ccctv.util.EVENTS_VIEW_TITLE
 import de.stefanmedack.ccctv.util.SEARCH_QUERY
@@ -43,11 +47,11 @@ class EventsFragment : VerticalGridSupportFragment() {
     private val viewModel: EventsViewModel by lazy {
         ViewModelProviders.of(this, viewModelFactory).get(EventsViewModel::class.java).apply {
             if (arguments?.getString(SEARCH_QUERY) != null) {
-                initWithSearchString(searchQuery = arguments?.getString(SEARCH_QUERY)
+                initWithSearch(searchQuery = arguments?.getString(SEARCH_QUERY)
                         ?: throw IllegalArgumentException("SearchQuery can not be null or empty")
                 )
             } else {
-                initWithConferenceId(conferenceId = arguments?.getInt(CONFERENCE_ID, -1)
+                initWithConference(conferenceAcronym = arguments?.getString(CONFERENCE_ACRONYM)
                         ?: throw IllegalArgumentException("ConferenceId can not be null or empty")
                 )
             }
@@ -161,8 +165,8 @@ class EventsFragment : VerticalGridSupportFragment() {
 
     companion object {
 
-        fun getBundleForConference(conferenceId: Int, title: String, conferenceLogoUrl: String?) = bundleOf(
-                CONFERENCE_ID to conferenceId,
+        fun getBundleForConference(conferenceAcronym: String, title: String, conferenceLogoUrl: String?) = bundleOf(
+                CONFERENCE_ACRONYM to conferenceAcronym,
                 EVENTS_VIEW_TITLE to title,
                 CONFERENCE_LOGO_URL to conferenceLogoUrl
         )
