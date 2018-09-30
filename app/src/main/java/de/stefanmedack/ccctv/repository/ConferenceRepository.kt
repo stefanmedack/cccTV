@@ -23,8 +23,8 @@ class ConferenceRepository @Inject constructor(
     val conferences: Flowable<Resource<List<ConferenceEntity>>>
         get() = conferenceResource(forceUpdate = false)
 
-    fun conferenceWithEvents(conferenceId: Int): Flowable<Resource<ConferenceWithEvents>> =
-            conferenceWithEventsResource(conferenceId, forceUpdate = false)
+    fun conferenceWithEvents(acronym: String): Flowable<Resource<ConferenceWithEvents>> =
+            conferenceWithEventsResource(acronym, forceUpdate = false)
 
     fun loadedConferences(conferenceGroup: String): Flowable<Resource<List<ConferenceEntity>>> = conferenceDao
             .getConferences(conferenceGroup)
@@ -36,7 +36,7 @@ class ConferenceRepository @Inject constructor(
             .firstOrError()
             .flattenAsFlowable { it.data }
             .flatMap {
-                conferenceWithEventsResource(conferenceId = it.id, forceUpdate = true)
+                conferenceWithEventsResource(acronym = it.acronym, forceUpdate = true)
                         .filter { it is Resource.Success }
             }
             .applySchedulers()
@@ -65,10 +65,10 @@ class ConferenceRepository @Inject constructor(
 
     }.resource
 
-    private fun conferenceWithEventsResource(conferenceId: Int, forceUpdate: Boolean): Flowable<Resource<ConferenceWithEvents>> = object
+    private fun conferenceWithEventsResource(acronym: String, forceUpdate: Boolean): Flowable<Resource<ConferenceWithEvents>> = object
         : NetworkBoundResource<ConferenceWithEvents, ConferenceRemote>() {
 
-        override fun fetchLocal(): Flowable<ConferenceWithEvents> = conferenceDao.getConferenceWithEventsById(conferenceId)
+        override fun fetchLocal(): Flowable<ConferenceWithEvents> = conferenceDao.getConferenceWithEventsByAcronym(acronym)
 
         override fun saveLocal(data: ConferenceWithEvents) =
                 data.let { (_, events) ->
@@ -81,14 +81,14 @@ class ConferenceRepository @Inject constructor(
             is Resource.Error -> true
         }
 
-        override fun fetchNetwork(): Single<ConferenceRemote> = mediaService.getConference(conferenceId)
+        override fun fetchNetwork(): Single<ConferenceRemote> = mediaService.getConference(acronym)
                 .applySchedulers()
 
         override fun mapNetworkToLocal(data: ConferenceRemote): ConferenceWithEvents =
                 data.toEntity()?.let { conference ->
                     ConferenceWithEvents(
                             conference = conference,
-                            events = data.events?.mapNotNull { it?.toEntity(conferenceId) } ?: listOf()
+                            events = data.events?.mapNotNull { it?.toEntity(acronym) } ?: listOf()
                     )
                 } ?: throw IllegalArgumentException("Could not parse ConferenceRemote to ConferenceEntity")
 

@@ -14,12 +14,8 @@ import de.stefanmedack.ccctv.persistence.entities.Conference as ConferenceEntity
 import info.metadude.kotlin.library.c3media.models.Conference as ConferenceRemote
 import info.metadude.kotlin.library.c3media.models.Event as EventRemote
 
-fun ConferenceRemote.id(): Int? = this.url?.substringAfterLast('/')?.toIntOrNull()
-
 fun List<Conference>.groupConferences(): Map<ConferenceGroup, List<ConferenceEntity>> = groupBy { it.group }
         .toSortedMap()
-
-fun EventRemote.id(): Int? = this.url?.substringAfterLast('/')?.toIntOrNull()
 
 fun EventRemote.bestRecording(favoriteLanguage: Language, isFavoriteQualityHigh: Boolean = true): Recording? {
     val sortedRecordings = this.recordings
@@ -37,20 +33,18 @@ fun EventRemote.bestRecording(favoriteLanguage: Language, isFavoriteQualityHigh:
             })
     if (DEBUG) {
         sortedRecordings?.forEach {
-            Timber.d("EventId:${this.id()}:mime=${it.mimeType}; hq=${it.highQuality}; res=${it.height}/${it.width};lang=${it.language}")
+            Timber.d("EventId:${this.guid}:mime=${it.mimeType}; hq=${it.highQuality}; res=${it.height}/${it.width};lang=${it.language}")
         }
     }
 
     return sortedRecordings?.firstOrNull()
 }
 
-fun Event.getRelatedEventIdsWeighted() : List<Int> =
-        this.metadata
-                ?.related
-                ?.toList()
-                ?.sortedByDescending { (_, value) -> value }
-                ?.mapNotNull { (key, _) -> key.toIntOrNull() }
-                ?: listOf()
+fun Event.getRelatedEventGuidsWeighted(): List<String> = related
+        .asSequence()
+        .sortedByDescending { it.weight }
+        .mapNotNull { it.eventGuid }
+        .toList()
 
 fun Recording.videoSortingIndex(): Int =
         if (SUPPORTED_VIDEO_MIME_TYPE_SORTING.contains(this.mimeType))

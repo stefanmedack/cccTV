@@ -8,6 +8,7 @@ import de.stefanmedack.ccctv.persistence.entities.Bookmark
 import de.stefanmedack.ccctv.persistence.entities.Event
 import de.stefanmedack.ccctv.persistence.entities.PlayPosition
 import de.stefanmedack.ccctv.persistence.toEntity
+import de.stefanmedack.ccctv.util.EMPTY_STRING
 import de.stefanmedack.ccctv.util.applySchedulers
 import info.metadude.kotlin.library.c3media.RxC3MediaService
 import io.reactivex.Completable
@@ -26,14 +27,14 @@ class EventRepository @Inject constructor(
         private val bookmarkDao: BookmarkDao,
         private val playPositionDao: PlayPositionDao
 ) {
-    fun getEvent(id: Int): Flowable<Event> = eventDao.getEventById(id)
+    fun getEvent(id: String): Flowable<Event> = eventDao.getEventById(id)
             .onErrorResumeNext(
                     mediaService.getEvent(id)
                             .applySchedulers()
-                            .map { it.toEntity(-1)!! }
+                            .map { it.toEntity(EMPTY_STRING)!! }
             ).toFlowable()
 
-    fun getEvents(ids: List<Int>): Flowable<List<Event>> = ids.toFlowable()
+    fun getEvents(ids: List<String>): Flowable<List<Event>> = ids.toFlowable()
             .flatMap { getEvent(it) }
             .toList()
             .toFlowable()
@@ -47,14 +48,14 @@ class EventRepository @Inject constructor(
     fun getTrendingEvents(): Flowable<List<Event>> = eventDao.getPopularEventsYoungerThan(OffsetDateTime.now().minusDays(90))
 
     // TODO change to Resource<Single<EventRemote>>
-    fun getEventWithRecordings(id: Int): Single<EventRemote> = mediaService.getEvent(id)
+    fun getEventWithRecordings(id: String): Single<EventRemote> = mediaService.getEvent(id)
             .applySchedulers()
 
     fun getBookmarkedEvents(): Flowable<List<Event>> = bookmarkDao.getBookmarkedEvents()
 
-    fun isBookmarked(eventId: Int): Flowable<Boolean> = bookmarkDao.isBookmarked(eventId)
+    fun isBookmarked(eventId: String): Flowable<Boolean> = bookmarkDao.isBookmarked(eventId)
 
-    fun changeBookmarkState(eventId: Int, shouldBeBookmarked: Boolean): Completable =
+    fun changeBookmarkState(eventId: String, shouldBeBookmarked: Boolean): Completable =
             Completable.fromAction {
                 if (shouldBeBookmarked) {
                     bookmarkDao.insert(Bookmark(eventId))
@@ -65,11 +66,11 @@ class EventRepository @Inject constructor(
 
     fun getPlayedEvents(): Flowable<List<Event>> = playPositionDao.getPlayedEvents()
 
-    fun getPlayedSeconds(eventId: Int): Single<Int> = playPositionDao.getPlaybackSeconds(eventId)
-            .applySchedulers()
+    fun getPlayedSeconds(eventId: String): Single<Int> = playPositionDao.getPlaybackSeconds(eventId)
+            .applySchedulers() // TODO fix tests when applySchedulers is added
             .onErrorReturn { if (it is EmptyResultSetException) 0 else throw it }
 
-    fun savePlayedSeconds(eventId: Int, seconds: Int): Completable =
+    fun savePlayedSeconds(eventId: String, seconds: Int): Completable =
             Completable.fromAction {
                 if (seconds > 0) {
                     playPositionDao.insert(PlayPosition(eventId, seconds))
@@ -78,7 +79,7 @@ class EventRepository @Inject constructor(
                 }
             }.applySchedulers()
 
-    fun deletePlayedSeconds(eventId: Int): Completable =
+    fun deletePlayedSeconds(eventId: String): Completable =
             Completable.fromAction {
                 playPositionDao.delete(PlayPosition(eventId))
             }.applySchedulers()

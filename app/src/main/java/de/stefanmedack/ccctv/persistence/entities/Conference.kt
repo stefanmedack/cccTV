@@ -12,7 +12,7 @@ import org.threeten.bp.OffsetDateTime
 data class Conference(
 
         @PrimaryKey
-        val id: Int,
+        val acronym: String,
 
         @ColumnInfo(name = "url")
         val url: String,
@@ -26,9 +26,6 @@ data class Conference(
 
         @ColumnInfo(name = "title")
         val title: String,
-
-        @ColumnInfo(name = "acronym")
-        val acronym: String,
 
         @ColumnInfo(name = "aspect_ratio")
         val aspectRatio: AspectRatio = AspectRatio.UNKNOWN,

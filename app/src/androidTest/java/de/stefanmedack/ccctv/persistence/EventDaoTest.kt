@@ -7,7 +7,12 @@ import de.stefanmedack.ccctv.getSingleTestResult
 import de.stefanmedack.ccctv.minimalConferenceEntity
 import de.stefanmedack.ccctv.minimalEventEntity
 import de.stefanmedack.ccctv.model.ConferenceGroup
-import org.amshove.kluent.*
+import org.amshove.kluent.shouldBe
+import org.amshove.kluent.shouldBeInstanceOf
+import org.amshove.kluent.shouldContainAll
+import org.amshove.kluent.shouldEqual
+import org.amshove.kluent.shouldNotContain
+import org.amshove.kluent.shouldNotEqual
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.threeten.bp.OffsetDateTime
@@ -37,7 +42,7 @@ class EventDaoTest : BaseDbTest() {
 
     @Test
     fun insert_and_retrieve_minimal_event() {
-        initDbWithConference(minimalEventEntity.conferenceId)
+        initDbWithConference(minimalEventEntity.conferenceAcronym)
         eventDao.insert(minimalEventEntity)
 
         val loadedData = eventDao.getEventById(minimalEventEntity.id).getSingleTestResult()
@@ -47,7 +52,7 @@ class EventDaoTest : BaseDbTest() {
 
     @Test
     fun insert_and_retrieve_full_event() {
-        initDbWithConference(minimalEventEntity.conferenceId)
+        initDbWithConference(minimalEventEntity.conferenceAcronym)
         eventDao.insert(minimalEventEntity)
 
         val loadedData = eventDao.getEventById(minimalEventEntity.id).getSingleTestResult()
@@ -57,10 +62,10 @@ class EventDaoTest : BaseDbTest() {
 
     @Test
     fun insert_and_retrieve_multiple_events() {
-        initDbWithConference(minimalEventEntity.conferenceId)
+        initDbWithConference(minimalEventEntity.conferenceAcronym)
         val events = listOf(
-                minimalEventEntity.copy(id = 1),
-                fullEventEntity.copy(id = 2)
+                minimalEventEntity.copy(id = "1"),
+                fullEventEntity.copy(id = "2")
         )
         eventDao.insertAll(events)
 
@@ -71,16 +76,16 @@ class EventDaoTest : BaseDbTest() {
 
     @Test
     fun insert_and_retrieve_multiple_events_filtered_by_id_list() {
-        initDbWithConference(minimalEventEntity.conferenceId)
+        initDbWithConference(minimalEventEntity.conferenceAcronym)
         val events = listOf(
-                minimalEventEntity.copy(id = 1),
-                fullEventEntity.copy(id = 2),
-                minimalEventEntity.copy(id = 3),
-                fullEventEntity.copy(id = 4)
+                minimalEventEntity.copy(id = "1"),
+                fullEventEntity.copy(id = "2"),
+                minimalEventEntity.copy(id = "3"),
+                fullEventEntity.copy(id = "4")
         )
         eventDao.insertAll(events)
 
-        val loadedData = eventDao.getEvents(listOf(1, 2, 3)).getSingleTestResult()
+        val loadedData = eventDao.getEvents(listOf("1", "2", "3")).getSingleTestResult()
 
         loadedData.size shouldEqual 3
         loadedData[0] shouldEqual events[0]
@@ -90,11 +95,11 @@ class EventDaoTest : BaseDbTest() {
 
     @Test
     fun get_recent_events_sorts_results_by_date() {
-        initDbWithConference(minimalEventEntity.conferenceId)
+        initDbWithConference(minimalEventEntity.conferenceAcronym)
         val events = listOf(
-                minimalEventEntity.copy(id = 1, date = OffsetDateTime.now().minusDays(1)),
-                minimalEventEntity.copy(id = 2, date = OffsetDateTime.now()),
-                minimalEventEntity.copy(id = 3, date = OffsetDateTime.now().minusDays(2))
+                minimalEventEntity.copy(id = "1", date = OffsetDateTime.now().minusDays(1)),
+                minimalEventEntity.copy(id = "2", date = OffsetDateTime.now()),
+                minimalEventEntity.copy(id = "3", date = OffsetDateTime.now().minusDays(2))
         )
         eventDao.insertAll(events)
 
@@ -108,28 +113,28 @@ class EventDaoTest : BaseDbTest() {
 
     @Test
     fun get_promoted_events_loads_only_promoted_events() {
-        initDbWithConference(minimalEventEntity.conferenceId)
+        initDbWithConference(minimalEventEntity.conferenceAcronym)
         val events = listOf(
-                minimalEventEntity.copy(id = 1, promoted = true),
-                minimalEventEntity.copy(id = 2, promoted = false),
-                minimalEventEntity.copy(id = 3, promoted = true)
+                minimalEventEntity.copy(id = "1", promoted = true),
+                minimalEventEntity.copy(id = "2", promoted = false),
+                minimalEventEntity.copy(id = "3", promoted = true)
         )
         eventDao.insertAll(events)
 
         val loadedData = eventDao.getPromotedEvents().getSingleTestResult()
 
         loadedData.size shouldEqual 2
-        loadedData.map { it.id } shouldContainAll listOf(1, 3)
-        loadedData.map { it.id } shouldNotContain 2
+        loadedData.map { it.id } shouldContainAll listOf("1", "3")
+        loadedData.map { it.id } shouldNotContain "2"
     }
 
     @Test
     fun get_popular_events_sorts_results_by_view_count() {
-        initDbWithConference(minimalEventEntity.conferenceId)
+        initDbWithConference(minimalEventEntity.conferenceAcronym)
         val events = listOf(
-                minimalEventEntity.copy(id = 1, viewCount = 42),
-                minimalEventEntity.copy(id = 2, viewCount = 43),
-                minimalEventEntity.copy(id = 3, viewCount = 41)
+                minimalEventEntity.copy(id = "1", viewCount = 42),
+                minimalEventEntity.copy(id = "2", viewCount = 43),
+                minimalEventEntity.copy(id = "3", viewCount = 41)
         )
         eventDao.insertAll(events)
 
@@ -143,11 +148,11 @@ class EventDaoTest : BaseDbTest() {
 
     @Test
     fun get_popular_events_younger_than_some_date_sorts_by_view_count() {
-        initDbWithConference(fullEventEntity.conferenceId)
+        initDbWithConference(fullEventEntity.conferenceAcronym)
         val events = listOf(
-                fullEventEntity.copy(id = 1, viewCount = 42),
-                fullEventEntity.copy(id = 2, viewCount = 43),
-                fullEventEntity.copy(id = 3, viewCount = 41)
+                fullEventEntity.copy(id = "1", viewCount = 42),
+                fullEventEntity.copy(id = "2", viewCount = 43),
+                fullEventEntity.copy(id = "3", viewCount = 41)
         )
         eventDao.insertAll(events)
 
@@ -161,25 +166,25 @@ class EventDaoTest : BaseDbTest() {
 
     @Test
     fun get_popular_events_younger_than_two_days_filters_events_older_than_two_days() {
-        initDbWithConference(minimalEventEntity.conferenceId)
+        initDbWithConference(minimalEventEntity.conferenceAcronym)
         val twoDaysAgoDate = OffsetDateTime.now().minusDays(2)
         val events = listOf(
-                minimalEventEntity.copy(id = 1, date = OffsetDateTime.now()),
-                minimalEventEntity.copy(id = 2, date = OffsetDateTime.now().minusDays(3)),
-                minimalEventEntity.copy(id = 3, date = OffsetDateTime.now().minusDays(1))
+                minimalEventEntity.copy(id = "1", date = OffsetDateTime.now()),
+                minimalEventEntity.copy(id = "2", date = OffsetDateTime.now().minusDays(3)),
+                minimalEventEntity.copy(id = "3", date = OffsetDateTime.now().minusDays(1))
         )
         eventDao.insertAll(events)
 
         val loadedData = eventDao.getPopularEventsYoungerThan(twoDaysAgoDate).getSingleTestResult()
 
         loadedData.size shouldEqual 2
-        loadedData.map { it.id } shouldContainAll listOf(1, 3)
-        loadedData.map { it.id } shouldNotContain 2
+        loadedData.map { it.id } shouldContainAll listOf("1", "3")
+        loadedData.map { it.id } shouldNotContain "2"
     }
 
     @Test
     fun insert_an_event_with_same_id_should_override_old_event() {
-        initDbWithConference(minimalEventEntity.conferenceId)
+        initDbWithConference(minimalEventEntity.conferenceAcronym)
         eventDao.insert(minimalEventEntity)
         val newEvent = minimalEventEntity.copy(title = "new_title")
         eventDao.insert(newEvent)
@@ -193,8 +198,8 @@ class EventDaoTest : BaseDbTest() {
 
     @Test
     fun updating_a_conference_should_not_delete_events() {
-        val conference = minimalConferenceEntity.copy(id = 1, group = ConferenceGroup.CONGRESS)
-        val eventForConf = minimalEventEntity.copy(conferenceId = 1)
+        val conference = minimalConferenceEntity.copy(acronym = "34c3", group = ConferenceGroup.CONGRESS)
+        val eventForConf = minimalEventEntity.copy(conferenceAcronym = "34c3")
         conferenceDao.insertConferencesWithEvents(listOf(conference), listOf(eventForConf))
 
         conferenceDao.insert(conference.copy(title = "new Title"))

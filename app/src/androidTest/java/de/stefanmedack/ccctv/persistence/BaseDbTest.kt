@@ -33,13 +33,13 @@ abstract class BaseDbTest {
     val eventDao get() = db.eventDao()
     val playPositionDao get() = db.playPositionDao()
 
-    fun initDbWithConference(conferenceId: Int) {
-        conferenceDao.insert(minimalConferenceEntity.copy(id = conferenceId))
+    fun initDbWithConference(conferenceAcronym: String) {
+        conferenceDao.insert(minimalConferenceEntity.copy(acronym = conferenceAcronym))
     }
 
-    fun initDbWithConferenceAndEvent(conferenceId: Int, eventId: Int) {
-        conferenceDao.insert(minimalConferenceEntity.copy(id = conferenceId))
-        eventDao.insert(minimalEventEntity.copy(id = eventId, conferenceId = conferenceId))
+    fun initDbWithConferenceAndEvent(conferenceAcronym: String, eventId: String) {
+        conferenceDao.insert(minimalConferenceEntity.copy(acronym = conferenceAcronym))
+        eventDao.insert(minimalEventEntity.copy(id = eventId, conferenceAcronym = conferenceAcronym))
     }
 
 }

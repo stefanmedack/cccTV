@@ -16,7 +16,7 @@ interface EventDao {
     fun getEvents(): Flowable<List<Event>>
 
     @Query("SELECT * FROM Events WHERE id in (:ids)")
-    fun getEvents(ids: List<Int>): Flowable<List<Event>>
+    fun getEvents(ids: List<String>): Flowable<List<Event>>
 
     @Query("SELECT * FROM Events ORDER BY date(date) DESC Limit 25")
     fun getRecentEvents(): Flowable<List<Event>>
@@ -31,7 +31,7 @@ interface EventDao {
     fun getPopularEventsYoungerThan(date: OffsetDateTime): Flowable<List<Event>>
 
     @Query("SELECT * FROM Events WHERE id = :id")
-    fun getEventById(id: Int): Single<Event>
+    fun getEventById(id: String): Single<Event>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(event: Event)

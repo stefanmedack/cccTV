@@ -19,7 +19,7 @@ import de.stefanmedack.ccctv.persistence.entities.PlayPosition
             Event::class,
             PlayPosition::class
         ],
-        version = 4)
+        version = 5)
 @TypeConverters(C3TypeConverters::class)
 abstract class C3Db : RoomDatabase() {
 

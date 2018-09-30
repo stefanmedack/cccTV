@@ -7,7 +7,7 @@ import de.stefanmedack.ccctv.model.ConferenceGroup
 import de.stefanmedack.ccctv.persistence.entities.LanguageList
 import de.stefanmedack.ccctv.util.EMPTY_STRING
 import info.metadude.kotlin.library.c3media.models.AspectRatio
-import info.metadude.kotlin.library.c3media.models.Metadata
+import info.metadude.kotlin.library.c3media.models.RelatedEvent
 import org.threeten.bp.DateTimeException
 import org.threeten.bp.LocalDate
 import org.threeten.bp.OffsetDateTime
@@ -56,10 +56,11 @@ class C3TypeConverters {
     // *********************************************************
 
     @TypeConverter
-    fun fromMetadataString(metadataString: String?): Metadata? = gson.fromJson(metadataString, object : TypeToken<Metadata>() {}.type)
+    fun fromRelatedEventsString(metadataString: String?): List<RelatedEvent>? = gson
+            .fromJson(metadataString, object : TypeToken<List<RelatedEvent>>() {}.type)
 
     @TypeConverter
-    fun toMetadataString(metadata: Metadata?) = metadata?.let { gson.toJson(it) }
+    fun toRelatedEventsString(metadata: List<RelatedEvent>?) = metadata?.let { gson.toJson(it) }
 
     // *********************************************************
     // *** AspectRatio *****************************************
